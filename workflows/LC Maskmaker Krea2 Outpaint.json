@@ -1,0 +1,2177 @@
+{
+  "id": "1589c53c-ce1b-4143-a402-3b7ef37fb971",
+  "revision": 0,
+  "last_node_id": 63,
+  "last_link_id": 220,
+  "nodes": [
+    {
+      "id": 6,
+      "type": "CLIPLoader",
+      "pos": [
+        -1880,
+        -600
+      ],
+      "size": [
+        400,
+        110
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            48
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "CLIPLoader",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "qwen3vl_4b_fp8_scaled.safetensors",
+        "krea2",
+        "default"
+      ],
+      "widgets_values_named": {
+        "clip_name": "qwen3vl_4b_fp8_scaled.safetensors",
+        "type": "krea2",
+        "device": "default"
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 7,
+      "type": "VAELoader",
+      "pos": [
+        -1880,
+        -450
+      ],
+      "size": [
+        400,
+        60
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            49
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "VAELoader",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "qwen_image_vae.safetensors"
+      ],
+      "widgets_values_named": {
+        "vae_name": "qwen_image_vae.safetensors"
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 5,
+      "type": "UNETLoader",
+      "pos": [
+        -1880,
+        -740
+      ],
+      "size": [
+        400,
+        100
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "UNETLoader",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Krea 2\\krea2_Turbo_Bf16.safetensors",
+        "default"
+      ],
+      "widgets_values_named": {
+        "unet_name": "Krea 2\\krea2_Turbo_Bf16.safetensors",
+        "weight_dtype": "default"
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 35,
+      "type": "GetNode",
+      "pos": [
+        -830,
+        -200
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            57
+          ]
+        }
+      ],
+      "title": "Get_Orgpic",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Orgpic"
+      ],
+      "widgets_values_named": {
+        "Constant": "Orgpic"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 37,
+      "type": "GetNode",
+      "pos": [
+        -830,
+        -160
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            56
+          ]
+        }
+      ],
+      "title": "Get_Seed",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Seed"
+      ],
+      "widgets_values_named": {
+        "Constant": "Seed"
+      },
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
+    },
+    {
+      "id": 11,
+      "type": "VAEEncode",
+      "pos": [
+        -830,
+        -120
+      ],
+      "size": [
+        140,
+        50
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 8
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            107,
+            145
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "VAEEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 14,
+      "type": "VAEDecode",
+      "pos": [
+        -830,
+        -80
+      ],
+      "size": [
+        140,
+        50
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 16
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            58
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "VAEDecode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 38,
+      "type": "LCVRAMCacheClear",
+      "pos": [
+        -830,
+        -40
+      ],
+      "size": [
+        270,
+        30
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any",
+          "type": "*",
+          "link": 58
+        }
+      ],
+      "outputs": [
+        {
+          "name": "any",
+          "type": "*",
+          "links": [
+            175
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCVRAMCacheClear",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 13,
+      "type": "KSampler",
+      "pos": [
+        -570,
+        -200
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 98
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 102
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 103
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 145
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 56
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            16
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "KSampler",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        743488471216694,
+        "randomize",
+        8,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "widgets_values_named": {
+        "seed": 743488471216694,
+        "control_after_generate": "randomize",
+        "steps": 8,
+        "cfg": 1,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "denoise": 1
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 16,
+      "type": "PreviewImage",
+      "pos": [
+        -290,
+        -200
+      ],
+      "size": [
+        490,
+        620
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 175
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            84
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 48,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        -1880,
+        -350
+      ],
+      "size": [
+        400,
+        120
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 196
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            195
+          ]
+        }
+      ],
+      "title": "🪪 Identity Edit LoRA",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.26.0",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Krea 2\\Utilities\\krea2_identity_edit_v1_1_r128.safetensors",
+        1
+      ],
+      "widgets_values_named": {
+        "lora_name": "Krea 2\\Utilities\\krea2_identity_edit_v1_1_r128.safetensors",
+        "strength_model": 1
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 3,
+      "type": "LCImageOutpaint",
+      "pos": [
+        -1140,
+        -200
+      ],
+      "size": [
+        300,
+        520
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 57
+        }
+      ],
+      "outputs": [
+        {
+          "name": "control_image",
+          "type": "IMAGE",
+          "links": [
+            8,
+            100,
+            101
+          ]
+        },
+        {
+          "name": "control_mask",
+          "type": "MASK",
+          "links": []
+        },
+        {
+          "name": "mask_image",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCImageOutpaint",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        true,
+        25,
+        0,
+        23.78,
+        32.81,
+        "free",
+        "16"
+      ],
+      "widgets_values_named": {
+        "block": true,
+        "hold_mask": true,
+        "left": 25,
+        "top": 0,
+        "right": 23.78,
+        "bottom": 32.81,
+        "aspect": "free",
+        "snap_to": "16"
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 46,
+      "type": "Krea2EditGroundedEncode",
+      "pos": [
+        -830,
+        0
+      ],
+      "size": [
+        400,
+        210
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        },
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 100
+        },
+        {
+          "name": "image_b",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 209
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            102
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-krea2edit",
+        "ver": "86f886dac23013d88996e3a2e99093ba44d322fb",
+        "Node name for S&R": "Krea2EditGroundedEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        768,
+        ""
+      ],
+      "widgets_values_named": {
+        "prompt": "",
+        "grounding_px": 768,
+        "system_prompt": ""
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 49,
+      "type": "Krea2EditGroundedEncode",
+      "pos": [
+        -830,
+        40
+      ],
+      "size": [
+        400,
+        210
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        },
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 101
+        },
+        {
+          "name": "image_b",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            103
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-krea2edit",
+        "ver": "86f886dac23013d88996e3a2e99093ba44d322fb",
+        "Node name for S&R": "Krea2EditGroundedEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        768,
+        ""
+      ],
+      "widgets_values_named": {
+        "prompt": "",
+        "grounding_px": 768,
+        "system_prompt": ""
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 47,
+      "type": "Krea2EditModelPatch",
+      "pos": [
+        -830,
+        80
+      ],
+      "size": [
+        240,
+        250
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": null
+        },
+        {
+          "name": "source_latent",
+          "type": "LATENT",
+          "link": 107
+        },
+        {
+          "name": "source_latent_b",
+          "shape": 7,
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "ref_boost_mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        },
+        {
+          "name": "source_image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "source_image_b",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "target_latent",
+          "shape": 7,
+          "type": "LATENT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            98
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-krea2edit",
+        "ver": "86f886dac23013d88996e3a2e99093ba44d322fb",
+        "Node name for S&R": "Krea2EditModelPatch",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        1,
+        1.13,
+        "fit"
+      ],
+      "widgets_values_named": {
+        "ref_boost": 1,
+        "ref_boost_a": 1.13,
+        "fit_mode": "fit"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 28,
+      "type": "LCImageMaskResize",
+      "pos": [
+        -1470,
+        -20
+      ],
+      "size": [
+        280,
+        354
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 38
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            54,
+            216
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": []
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "lc_w": 280,
+        "lc_h": 354,
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCImageMaskResize",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        false,
+        "custom",
+        1024,
+        1024,
+        "megapixels",
+        1,
+        1,
+        "lanczos",
+        "resize",
+        "center",
+        8
+      ],
+      "widgets_values_named": {
+        "match_aspect_ratio": false,
+        "aspect_ratio": "custom",
+        "custom_width": 1024,
+        "custom_height": 1024,
+        "upscale_by": "megapixels",
+        "multiplier": 1,
+        "megapixels": 1,
+        "upscale_method": "lanczos",
+        "proportion": "resize",
+        "crop_location": "center",
+        "divisible_by": 8
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 33,
+      "type": "SetNode",
+      "pos": [
+        -1470,
+        380
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "title": "Set_Orgpic",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Orgpic",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Orgpic"
+      ],
+      "widgets_values_named": {
+        "Constant": "Orgpic"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 54,
+      "type": "LC Bypasser",
+      "pos": [
+        -1470,
+        420
+      ],
+      "size": [
+        310,
+        120
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "LC Image-Mask Resize 📐",
+          "type": "*",
+          "link": 216
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        },
+        {
+          "name": "",
+          "type": "*",
+          "link": null
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": [
+            218
+          ]
+        }
+      ],
+      "title": "Resize Image?",
+      "properties": {
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        true
+      ],
+      "widgets_values_named": {
+        "Enable LC Image-Mask Resize 📐": true
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 8,
+      "type": "ModelSamplingAuraFlow",
+      "pos": [
+        -1460,
+        -740
+      ],
+      "size": [
+        270,
+        60
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            196
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "ModelSamplingAuraFlow",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        4
+      ],
+      "widgets_values_named": {
+        "shift": 4
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 36,
+      "type": "SetNode",
+      "pos": [
+        -1460,
+        -510
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "link": 53
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "title": "Set_Seed",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Seed",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Seed"
+      ],
+      "widgets_values_named": {
+        "Constant": "Seed"
+      },
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
+    },
+    {
+      "id": 32,
+      "type": "Anything Everywhere",
+      "pos": [
+        -1450,
+        -470
+      ],
+      "size": [
+        190,
+        110
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "color_on": "#B39DDB",
+          "label": "MODEL",
+          "name": "anything",
+          "shape": 7,
+          "type": "MODEL",
+          "link": 195
+        },
+        {
+          "color_on": "#FFD500",
+          "label": "CLIP",
+          "name": "anything11",
+          "type": "CLIP",
+          "link": 48
+        },
+        {
+          "color_on": "#FF6E6E",
+          "label": "VAE",
+          "name": "anything12",
+          "type": "VAE",
+          "link": 49
+        },
+        {
+          "label": "anything",
+          "name": "anything14",
+          "type": "*",
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "cg-use-everywhere",
+        "ver": "50ae9f8c5d8b9538589663c90a15d4067a02969c",
+        "Node name for S&R": "Anything Everywhere",
+        "ue_properties": {
+          "version": "7.8",
+          "group_restricted": 0,
+          "color_restricted": 0,
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "title_regex": null,
+          "input_regex": null,
+          "group_regex": null,
+          "title_regex_invert": false,
+          "input_regex_invert": false,
+          "group_regex_invert": false,
+          "repeated_type_rule": 0,
+          "apply_to_unrepeated": 0,
+          "string_to_combo": 0,
+          "send_to_any": 0,
+          "next_input_index": 14
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 26,
+      "type": "LCSeed",
+      "pos": [
+        -1460,
+        -640
+      ],
+      "size": [
+        270,
+        90
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "seed",
+          "type": "INT",
+          "links": [
+            53
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCSeed",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        8675309,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "base_seed": 8675309,
+        "seed_mode": "fixed"
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 55,
+      "type": "LC Bypasser Panel",
+      "pos": [
+        -1470,
+        -140
+      ],
+      "size": [
+        280,
+        78
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "hub",
+          "type": "*",
+          "link": 218
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        true
+      ],
+      "widgets_values_named": {
+        "Enable LC Image-Mask Resize 📐": true
+      },
+      "color": "#c87a2c",
+      "bgcolor": "#b46618"
+    },
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [
+        -1880,
+        -140
+      ],
+      "size": [
+        390,
+        560
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            38
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "LoadImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "4dc9a43802aed0a296587e7f753629a4.jpg",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "4dc9a43802aed0a296587e7f753629a4.jpg",
+        "upload": "image"
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 42,
+      "type": "LCEasyFolder",
+      "pos": [
+        250,
+        -80
+      ],
+      "size": [
+        300,
+        160
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "links": [
+            83
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCEasyFolder",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Test",
+        "Maskmaker",
+        "",
+        "%Y-%m-%d",
+        "auto"
+      ],
+      "widgets_values_named": {
+        "folder": "Test",
+        "prefix": "Maskmaker",
+        "suffix": "",
+        "timestamp": "%Y-%m-%d",
+        "path_separator": "auto"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 58,
+      "type": "LC Bypasser Panel",
+      "pos": [
+        250,
+        -200
+      ],
+      "size": [
+        300,
+        78
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "hub",
+          "type": "*",
+          "link": 220
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        true
+      ],
+      "widgets_values_named": {
+        "Enable Save Image": true
+      },
+      "color": "#c87a2c",
+      "bgcolor": "#b46618"
+    },
+    {
+      "id": 57,
+      "type": "LC Bypasser",
+      "pos": [
+        260,
+        120
+      ],
+      "size": [
+        270,
+        120
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "Save Image",
+          "type": "*",
+          "link": 219
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        },
+        {
+          "name": "",
+          "type": "*",
+          "link": null
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": [
+            220
+          ]
+        }
+      ],
+      "properties": {
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        true
+      ],
+      "widgets_values_named": {
+        "Enable Save Image": true
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 43,
+      "type": "SaveImage",
+      "pos": [
+        560,
+        -200
+      ],
+      "size": [
+        340,
+        510
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 84
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 83
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            219
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "SaveImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "ComfyUI"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 60,
+      "type": "Label (rgthree)",
+      "pos": [
+        -1040,
+        -450
+      ],
+      "size": [
+        339.55078125,
+        75
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": " Lonecat's",
+      "properties": {
+        "fontSize": 75,
+        "fontFamily": "Arial",
+        "fontColor": "#ffdd77",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 61,
+      "type": "Label (rgthree)",
+      "pos": [
+        -680,
+        -450
+      ],
+      "size": [
+        504.4921875,
+        75
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Krea2 Outpaint",
+      "properties": {
+        "fontSize": 75,
+        "fontFamily": "Arial",
+        "fontColor": "#ffffff",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 59,
+      "type": "LCImageLabel",
+      "pos": [
+        -1130,
+        -470
+      ],
+      "size": [
+        110,
+        110
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "size": 100,
+        "padding": 5,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0,
+        "backgroundColor": "transparent",
+        "bgTransparent": true,
+        "syncImageRadius": true,
+        "imageRadius": 0,
+        "embeddedData": "data:image/webp;base64,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",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "{\"filename\":\"Logo no background_00001_.png\",\"subfolder\":\"\"}"
+      ],
+      "widgets_values_named": {
+        "_image_path": "{\"filename\":\"Logo no background_00001_.png\",\"subfolder\":\"\"}"
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 25,
+      "type": "LCPositive",
+      "pos": [
+        -570,
+        110
+      ],
+      "size": [
+        270,
+        100
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "STRING",
+          "links": [
+            209
+          ]
+        }
+      ],
+      "title": "System Prompt",
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCPositive",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "sharp, detailed, photographic, a seamless continuation of the surrounding scene"
+      ],
+      "widgets_values_named": {
+        "positive": "sharp, detailed, photographic, a seamless continuation of the surrounding scene"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 63,
+      "type": "MarkdownNote",
+      "pos": [
+        -2600,
+        -770
+      ],
+      "size": [
+        680,
+        1200
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n---\n\n## Model links\n\nFor BF16 and NVFP4 variants, see [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC node repos**\n- **Main** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ Read first\n\n**Instructions**\n- Load an image.\n   - You can choose to resize or scale down to save headroom.\n   - With hold_mask on snap_to_image and block on if_empty_mask, the first run snaps the box to the image and stops\n   - Drag the edges of LC Outpaint outward, switch hold_mask to held, then run again\n- **Krea 2 Turbo + Identity Edit LoRA:** the grey canvas goes in as the reference image and the model repaints the grey area to match the scene (8 steps, cfg 1, shift 4)\n- **Prompt:** System Prompt is the only text. Edit it to steer what the new area looks like\n\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n---\n\n## 模型链接\n\nBF16 和 NVFP4 版本请见 [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC 节点仓库**\n- **主页** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ 先看这里\n\n**使用说明**\n- 加载一张图片。\n   - 可以选择缩放或缩小图片，以节省显存余量。\n   - 当 hold_mask 设为 snap_to_image、block 设为 if_empty_mask 时，第一次运行会让边框贴合图片并停止\n   - 向外拖动 LC Outpaint 的边缘，把 hold_mask 切换为 held，然后再运行一次\n- **Krea 2 Turbo + Identity Edit LoRA：** 灰色画布作为参考图输入，模型会按场景重绘灰色区域（8 步，cfg 1，shift 4）\n- **提示词：** System Prompt 是唯一的文字输入，修改它可以引导新区域的样子"
+      ],
+      "widgets_values_named": {
+        "text": "### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n---\n\n## Model links\n\nFor BF16 and NVFP4 variants, see [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC node repos**\n- **Main** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ Read first\n\n**Instructions**\n- Load an image.\n   - You can choose to resize or scale down to save headroom.\n   - With hold_mask on snap_to_image and block on if_empty_mask, the first run snaps the box to the image and stops\n   - Drag the edges of LC Outpaint outward, switch hold_mask to held, then run again\n- **Krea 2 Turbo + Identity Edit LoRA:** the grey canvas goes in as the reference image and the model repaints the grey area to match the scene (8 steps, cfg 1, shift 4)\n- **Prompt:** System Prompt is the only text. Edit it to steer what the new area looks like\n\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n---\n\n## 模型链接\n\nBF16 和 NVFP4 版本请见 [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC 节点仓库**\n- **主页** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ 先看这里\n\n**使用说明**\n- 加载一张图片。\n   - 可以选择缩放或缩小图片，以节省显存余量。\n   - 当 hold_mask 设为 snap_to_image、block 设为 if_empty_mask 时，第一次运行会让边框贴合图片并停止\n   - 向外拖动 LC Outpaint 的边缘，把 hold_mask 切换为 held，然后再运行一次\n- **Krea 2 Turbo + Identity Edit LoRA：** 灰色画布作为参考图输入，模型会按场景重绘灰色区域（8 步，cfg 1，shift 4）\n- **提示词：** System Prompt 是唯一的文字输入，修改它可以引导新区域的样子"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    }
+  ],
+  "links": [
+    [
+      5,
+      5,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      8,
+      3,
+      0,
+      11,
+      0,
+      "IMAGE"
+    ],
+    [
+      16,
+      13,
+      0,
+      14,
+      0,
+      "LATENT"
+    ],
+    [
+      38,
+      1,
+      0,
+      28,
+      0,
+      "IMAGE"
+    ],
+    [
+      48,
+      6,
+      0,
+      32,
+      1,
+      "CLIP"
+    ],
+    [
+      49,
+      7,
+      0,
+      32,
+      2,
+      "VAE"
+    ],
+    [
+      53,
+      26,
+      0,
+      36,
+      0,
+      "INT"
+    ],
+    [
+      54,
+      28,
+      0,
+      33,
+      0,
+      "IMAGE"
+    ],
+    [
+      56,
+      37,
+      0,
+      13,
+      4,
+      "INT"
+    ],
+    [
+      57,
+      35,
+      0,
+      3,
+      0,
+      "IMAGE"
+    ],
+    [
+      58,
+      14,
+      0,
+      38,
+      0,
+      "IMAGE"
+    ],
+    [
+      83,
+      42,
+      0,
+      43,
+      1,
+      "STRING"
+    ],
+    [
+      84,
+      16,
+      0,
+      43,
+      0,
+      "IMAGE"
+    ],
+    [
+      98,
+      47,
+      0,
+      13,
+      0,
+      "MODEL"
+    ],
+    [
+      100,
+      3,
+      0,
+      46,
+      1,
+      "IMAGE"
+    ],
+    [
+      101,
+      3,
+      0,
+      49,
+      1,
+      "IMAGE"
+    ],
+    [
+      102,
+      46,
+      0,
+      13,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      103,
+      49,
+      0,
+      13,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      107,
+      11,
+      0,
+      47,
+      1,
+      "LATENT"
+    ],
+    [
+      145,
+      11,
+      0,
+      13,
+      3,
+      "LATENT"
+    ],
+    [
+      175,
+      38,
+      0,
+      16,
+      0,
+      "IMAGE"
+    ],
+    [
+      195,
+      48,
+      0,
+      32,
+      0,
+      "MODEL"
+    ],
+    [
+      196,
+      8,
+      0,
+      48,
+      0,
+      "MODEL"
+    ],
+    [
+      209,
+      25,
+      0,
+      46,
+      3,
+      "STRING"
+    ],
+    [
+      216,
+      28,
+      0,
+      54,
+      0,
+      "IMAGE"
+    ],
+    [
+      218,
+      54,
+      0,
+      55,
+      0,
+      "*"
+    ],
+    [
+      219,
+      43,
+      0,
+      57,
+      0,
+      "IMAGE"
+    ],
+    [
+      220,
+      57,
+      0,
+      58,
+      0,
+      "*"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 6,
+      "title": "Model",
+      "bounding": [
+        -1890,
+        -810,
+        710,
+        590
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 7,
+      "title": "🖼️ & Prompt Prep",
+      "bounding": [
+        -1890,
+        -210,
+        710,
+        640
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 8,
+      "title": "Outpaint",
+      "bounding": [
+        -1150,
+        -270,
+        1360,
+        700
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 9,
+      "title": "💾 Save Image",
+      "bounding": [
+        240,
+        -270,
+        670,
+        590
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ue_links": [
+      {
+        "downstream": "11",
+        "downstream_slot": 1,
+        "upstream": "7",
+        "upstream_slot": 0,
+        "controller": "32",
+        "type": "VAE"
+      },
+      {
+        "downstream": "14",
+        "downstream_slot": 1,
+        "upstream": "7",
+        "upstream_slot": 0,
+        "controller": "32",
+        "type": "VAE"
+      },
+      {
+        "downstream": "46",
+        "downstream_slot": 0,
+        "upstream": "6",
+        "upstream_slot": 0,
+        "controller": "32",
+        "type": "CLIP"
+      },
+      {
+        "downstream": "49",
+        "downstream_slot": 0,
+        "upstream": "6",
+        "upstream_slot": 0,
+        "controller": "32",
+        "type": "CLIP"
+      },
+      {
+        "downstream": "47",
+        "downstream_slot": 0,
+        "upstream": "48",
+        "upstream_slot": 0,
+        "controller": "32",
+        "type": "MODEL"
+      },
+      {
+        "downstream": "47",
+        "downstream_slot": 4,
+        "upstream": "7",
+        "upstream_slot": 0,
+        "controller": "32",
+        "type": "VAE"
+      }
+    ],
+    "links_added_by_ue": [
+      210,
+      211,
+      212,
+      213,
+      214,
+      215
+    ],
+    "ds": {
+      "scale": 1.586309297171508,
+      "offset": [
+        3108.759692926118,
+        808.4206475244722
+      ]
+    },
+    "k2cf_state_id": "k2cf_1784799557580_oihrgm8ndu",
+    "frontendVersion": "1.51.9",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4,
+  "seed_widgets": {
+    "13": 0
+  }
+}

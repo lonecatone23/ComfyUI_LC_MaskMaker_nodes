@@ -1,0 +1,2539 @@
+{
+  "id": "86fcd93a-d40d-4f07-9a47-2e505310d4fe",
+  "revision": 0,
+  "last_node_id": 114,
+  "last_link_id": 156,
+  "nodes": [
+    {
+      "id": 66,
+      "type": "PreviewImage",
+      "pos": [
+        -4370,
+        -3340
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 67,
+      "type": "PreviewImage",
+      "pos": [
+        -4370,
+        -3010
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 98
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 65,
+      "type": "MaskPreview+",
+      "pos": [
+        -4140,
+        -3340
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 97
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 69,
+      "type": "MaskPreview+",
+      "pos": [
+        -4140,
+        -2680
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 133
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 57,
+      "type": "LCNormalBAE",
+      "pos": [
+        -4670,
+        -3010
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 87
+        }
+      ],
+      "outputs": [
+        {
+          "name": "normal_map",
+          "type": "IMAGE",
+          "links": [
+            98
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCNormalBAE",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "scannet.pt (BAE normals, ScanNet-trained; license unclear, verify before commercial use) [from comfyui_controlnet_aux]",
+        512,
+        false
+      ],
+      "widgets_values_named": {
+        "model": "scannet.pt (BAE normals, ScanNet-trained; license unclear, verify before commercial use) [from comfyui_controlnet_aux]",
+        "resolution": 512,
+        "flip_y": false
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 56,
+      "type": "LCDepthAnythingV2",
+      "pos": [
+        -4670,
+        -3340
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 86
+        }
+      ],
+      "outputs": [
+        {
+          "name": "depth",
+          "type": "IMAGE",
+          "links": [
+            96
+          ]
+        },
+        {
+          "name": "depth_mask",
+          "type": "MASK",
+          "links": [
+            97
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCDepthAnythingV2",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "depth_anything_v2_vits.pth (Depth Anything V2 Small, Apache-2.0, from comfyui_controlnet_aux)",
+        518,
+        false
+      ],
+      "widgets_values_named": {
+        "model": "depth_anything_v2_vits.pth (Depth Anything V2 Small, Apache-2.0, from comfyui_controlnet_aux)",
+        "resolution": 518,
+        "invert": false
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 68,
+      "type": "PreviewImage",
+      "pos": [
+        -4370,
+        -2680
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 132
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 70,
+      "type": "MaskPreview+",
+      "pos": [
+        -4140,
+        -1750
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 129
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 75,
+      "type": "PreviewImage",
+      "pos": [
+        -3910,
+        -1750
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 130
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 76,
+      "type": "MaskPreview+",
+      "pos": [
+        -3050,
+        -2680
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 138
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 79,
+      "type": "MaskPreview+",
+      "pos": [
+        -2820,
+        -2680
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 139
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 85,
+      "type": "MaskPreview+",
+      "pos": [
+        -4140,
+        -1350
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 126
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 84,
+      "type": "PreviewImage",
+      "pos": [
+        -4370,
+        -1350
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 125
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 71,
+      "type": "PreviewImage",
+      "pos": [
+        -4370,
+        -1750
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 128
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 86,
+      "type": "LCRemBG",
+      "pos": [
+        -4700,
+        -1750
+      ],
+      "size": [
+        300,
+        340
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 127
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cutout",
+          "type": "IMAGE",
+          "links": [
+            128
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            129
+          ]
+        },
+        {
+          "name": "on_background",
+          "type": "IMAGE",
+          "links": [
+            130
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCRemBG",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "BiRefNet general (MIT)",
+        "none",
+        "models/vitmatte (local)",
+        0,
+        10,
+        10,
+        0,
+        1,
+        0,
+        2,
+        "black"
+      ],
+      "widgets_values_named": {
+        "model": "BiRefNet general (MIT)",
+        "refine": "none",
+        "vitmatte_model": "models/vitmatte (local)",
+        "grow": 0,
+        "edge_erode": 10,
+        "edge_dilate": 10,
+        "black_point": 0,
+        "white_point": 1,
+        "feather": 0,
+        "max_megapixels": 2,
+        "background": "black"
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 89,
+      "type": "MaskPreview+",
+      "pos": [
+        -3040,
+        -1750
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 136
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 90,
+      "type": "PreviewImage",
+      "pos": [
+        -3270,
+        -1750
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 135
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 87,
+      "type": "LCSegmentAnything",
+      "pos": [
+        -4700,
+        -2680
+      ],
+      "size": [
+        300,
+        870
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 131
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cutout",
+          "type": "IMAGE",
+          "links": [
+            132,
+            142
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            133,
+            143,
+            144
+          ]
+        },
+        {
+          "name": "raw_mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCSegmentAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_refine_meta": [
+          {
+            "filename": "lc_segment_temp_vnauf_00001_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_segment_temp_vnauf_00002_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_segment_temp_vnauf_00003_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_segment_temp_vnauf_00004_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ]
+      },
+      "widgets_values": [
+        "subject",
+        "grounding_dino + sam",
+        "grounding-dino-tiny",
+        "sam-vit-base",
+        "sam3.1_multiplex_fp16.safetensors (SAM 3.1, SAM License)",
+        0.3,
+        0.5,
+        0,
+        "vitmatte",
+        "models/vitmatte (local)",
+        10,
+        10,
+        0.01,
+        0.99,
+        2,
+        "cutout"
+      ],
+      "widgets_values_named": {
+        "prompt": "subject",
+        "engine": "grounding_dino + sam",
+        "dino_model": "grounding-dino-tiny",
+        "sam_model": "sam-vit-base",
+        "sam3_model": "sam3.1_multiplex_fp16.safetensors (SAM 3.1, SAM License)",
+        "threshold": 0.3,
+        "sam3_threshold": 0.5,
+        "max_objects": 0,
+        "refine": "vitmatte",
+        "vitmatte_model": "models/vitmatte (local)",
+        "edge_erode": 10,
+        "edge_dilate": 10,
+        "black_point": 0.01,
+        "white_point": 0.99,
+        "max_megapixels": 2,
+        "preview_view": "cutout"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 35,
+      "type": "LCImageDesaturate",
+      "pos": [
+        -2500,
+        -2680
+      ],
+      "size": [
+        300,
+        470
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 66
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            119
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "67527fe62d6d5a67c74c40a43b5425eed665f8ed",
+        "Node name for S&R": "LCImageDesaturate",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_preview_meta": [
+          {
+            "filename": "lc_after_temp_pnjxp_00002_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ],
+        "lc_before_meta": [
+          {
+            "filename": "lc_before_temp_pnjxp_00002_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ]
+      },
+      "widgets_values": [
+        1,
+        "luminance (Rec.709)"
+      ],
+      "widgets_values_named": {
+        "factor": 1,
+        "method": "luminance (Rec.709)"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 80,
+      "type": "LCImageBlendAdvance",
+      "pos": [
+        -2180,
+        -2680
+      ],
+      "size": [
+        290,
+        370
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "layer_image",
+          "type": "IMAGE",
+          "link": 147
+        },
+        {
+          "name": "background_image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 119
+        },
+        {
+          "name": "layer_mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": 148
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            121
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCImageBlendAdvance",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "normal",
+        100,
+        false,
+        false,
+        50,
+        50,
+        "None",
+        1,
+        1,
+        0,
+        "lanczos",
+        2
+      ],
+      "widgets_values_named": {
+        "blend_mode": "normal",
+        "opacity": 100,
+        "swap_roles": false,
+        "invert_mask": false,
+        "x_percent": 50,
+        "y_percent": 50,
+        "mirror": "None",
+        "scale": 1,
+        "aspect_ratio": 1,
+        "rotate": 0,
+        "transform_method": "lanczos",
+        "anti_aliasing": 2
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 55,
+      "type": "PreviewImage",
+      "pos": [
+        -1860,
+        -2680
+      ],
+      "size": [
+        430,
+        540
+      ],
+      "flags": {},
+      "order": 40,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 121
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 88,
+      "type": "LCPersonMask",
+      "pos": [
+        -3600,
+        -1750
+      ],
+      "size": [
+        300,
+        460
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 134
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cutout",
+          "type": "IMAGE",
+          "links": [
+            135
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            136,
+            150
+          ]
+        },
+        {
+          "name": "raw_mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCPersonMask",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "segformer",
+        "models/segformer_b2_clothes (local)",
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        0.4,
+        "vitmatte",
+        "models/vitmatte (local)",
+        10,
+        10,
+        0.01,
+        0.99,
+        2
+      ],
+      "widgets_values_named": {
+        "engine": "segformer",
+        "segformer_model": "models/segformer_b2_clothes (local)",
+        "face": true,
+        "hair": false,
+        "body": false,
+        "clothes": false,
+        "accessories": false,
+        "background": false,
+        "confidence": 0.4,
+        "refine": "vitmatte",
+        "vitmatte_model": "models/vitmatte (local)",
+        "edge_erode": 10,
+        "edge_dilate": 10,
+        "black_point": 0.01,
+        "white_point": 0.99,
+        "max_megapixels": 2
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 92,
+      "type": "LCSkinBeauty",
+      "pos": [
+        -2790,
+        -1750
+      ],
+      "size": [
+        300,
+        740
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 149
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": 150
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "skin_mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCSkinBeauty",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_preview_meta": [
+          {
+            "filename": "lc_after_temp_qxlop_00002_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ],
+        "lc_before_meta": [
+          {
+            "filename": "lc_before_temp_qxlop_00002_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ]
+      },
+      "widgets_values": [
+        "Natural",
+        1,
+        0.22,
+        0.12,
+        0.08,
+        0.18,
+        0.15,
+        0.06,
+        0.88,
+        -0.08,
+        0.75,
+        0.55,
+        0.45
+      ],
+      "widgets_values_named": {
+        "preset": "Natural",
+        "strength": 1,
+        "coolness": 0.22,
+        "brightness": 0.12,
+        "rosy": 0.08,
+        "evenness": 0.18,
+        "shadow_lift": 0.15,
+        "smooth": 0.06,
+        "texture_preserve": 0.88,
+        "saturation": -0.08,
+        "highlight_protect": 0.75,
+        "mask_sensitivity": 0.55,
+        "mask_feather": 0.45
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 81,
+      "type": "LCSplineMask",
+      "pos": [
+        -4700,
+        -1350
+      ],
+      "size": [
+        300,
+        630
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 122
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            125
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            126
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCSplineMask",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        false,
+        false,
+        false,
+        false,
+        0,
+        1,
+        0.45,
+        "[]",
+        null,
+        null
+      ],
+      "widgets_values_named": {
+        "block": false,
+        "pencil": false,
+        "smooth": false,
+        "invert": false,
+        "feather": 0,
+        "opacity": 1,
+        "overlay_opacity": 0.45,
+        "points": "[]",
+        "Undo": null,
+        "Clear": null
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 100,
+      "type": "LCImageLabel",
+      "pos": [
+        -4680,
+        -3640
+      ],
+      "size": [
+        210,
+        210
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "size": 250,
+        "padding": 5,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0,
+        "backgroundColor": "transparent",
+        "bgTransparent": true,
+        "syncImageRadius": true,
+        "imageRadius": 0,
+        "embeddedData": "data:image/webp;base64,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",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "{\"filename\":\"Logo no background_00001_.png\",\"subfolder\":\"\"}"
+      ],
+      "widgets_values_named": {
+        "_image_path": "{\"filename\":\"Logo no background_00001_.png\",\"subfolder\":\"\"}"
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 91,
+      "type": "LCMaskRefine",
+      "pos": [
+        -3600,
+        -2680
+      ],
+      "size": [
+        300,
+        870
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 142
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 143
+        },
+        {
+          "name": "detail_region",
+          "shape": 7,
+          "type": "MASK",
+          "link": 144
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cutout",
+          "type": "IMAGE",
+          "links": [
+            137,
+            147
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            138,
+            148
+          ]
+        },
+        {
+          "name": "trimap",
+          "type": "MASK",
+          "links": [
+            139
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCMaskRefine",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_refine_meta": [
+          {
+            "filename": "lc_refine_temp_jqprz_00005_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_refine_temp_jqprz_00006_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_refine_temp_jqprz_00007_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_refine_temp_jqprz_00008_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ]
+      },
+      "widgets_values": [
+        "vitmatte",
+        "models/vitmatte (local)",
+        0,
+        0,
+        0.75,
+        10,
+        10,
+        0.001,
+        0.5,
+        0.01,
+        0.99,
+        0,
+        0,
+        3,
+        72,
+        64,
+        4,
+        "cutout"
+      ],
+      "widgets_values_named": {
+        "method": "vitmatte",
+        "vitmatte_model": "models/vitmatte (local)",
+        "grow": 0,
+        "fix_gap": 0,
+        "fix_threshold": 0.75,
+        "edge_erode": 10,
+        "edge_dilate": 10,
+        "softness": 0.001,
+        "threshold": 0.5,
+        "black_point": 0.01,
+        "white_point": 0.99,
+        "feather": 0,
+        "edge_color_spread": 0,
+        "max_megapixels": 3,
+        "detail_erode": 72,
+        "detail_dilate": 64,
+        "detail_blur": 4,
+        "preview_view": "cutout"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 104,
+      "type": "MaskPreview+",
+      "pos": [
+        -3040,
+        -3340
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 153
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 103,
+      "type": "PreviewImage",
+      "pos": [
+        -3270,
+        -3340
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 152
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 101,
+      "type": "LCImageOutpaint",
+      "pos": [
+        -3600,
+        -3340
+      ],
+      "size": [
+        300,
+        570
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 151
+        }
+      ],
+      "outputs": [
+        {
+          "name": "control_image",
+          "type": "IMAGE",
+          "links": [
+            152
+          ]
+        },
+        {
+          "name": "control_mask",
+          "type": "MASK",
+          "links": [
+            153
+          ]
+        },
+        {
+          "name": "mask_image",
+          "type": "IMAGE",
+          "links": [
+            154
+          ]
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCImageOutpaint",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        false,
+        false,
+        0,
+        0,
+        0,
+        0,
+        "free",
+        "8"
+      ],
+      "widgets_values_named": {
+        "block": false,
+        "hold_mask": false,
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "aspect": "free",
+        "snap_to": "8"
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 105,
+      "type": "PreviewImage",
+      "pos": [
+        -2810,
+        -3340
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 154
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 99,
+      "type": "Label (rgthree)",
+      "pos": [
+        -3780,
+        -3590
+      ],
+      "size": [
+        1250.390625,
+        150
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Maskmaker Nodes",
+      "properties": {
+        "fontSize": 150,
+        "fontFamily": "Arial",
+        "fontColor": "#ffffff",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 77,
+      "type": "PreviewImage",
+      "pos": [
+        -3280,
+        -2680
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 137
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 106,
+      "type": "LCAutoAdjust",
+      "pos": [
+        -2180,
+        -1750
+      ],
+      "size": [
+        300,
+        250
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 155
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            156
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LCAutoAdjust",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "RGB",
+        100,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "widgets_values_named": {
+        "mode": "RGB",
+        "strength": 100,
+        "brightness": 0,
+        "contrast": 0,
+        "saturation": 0,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 107,
+      "type": "PreviewImage",
+      "pos": [
+        -1850,
+        -1750
+      ],
+      "size": [
+        220,
+        270
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 156
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 98,
+      "type": "Label (rgthree)",
+      "pos": [
+        -4490,
+        -3590
+      ],
+      "size": [
+        679.1015625,
+        150
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": " Lonecat's",
+      "properties": {
+        "fontSize": 150,
+        "fontFamily": "Arial",
+        "fontColor": "#ffdd77",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 3,
+      "type": "LoadImage",
+      "pos": [
+        -5540,
+        -3340
+      ],
+      "size": [
+        600,
+        730
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            66,
+            86,
+            87,
+            122,
+            127,
+            131,
+            134,
+            149,
+            151,
+            155
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "LoadImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "355dbfda71b3ce3d0d4d7011d2bd6b9f.jpg",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "355dbfda71b3ce3d0d4d7011d2bd6b9f.jpg",
+        "upload": "image"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 114,
+      "type": "Label (rgthree)",
+      "pos": [
+        -5620,
+        -2440
+      ],
+      "size": [
+        200,
+        40
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "从这里开始",
+      "properties": {
+        "fontSize": 40,
+        "fontFamily": "Arial",
+        "fontColor": "#ffffff",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 111,
+      "type": "Label (rgthree)",
+      "pos": [
+        -5750,
+        -2520
+      ],
+      "size": [
+        174.23828125,
+        55
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Notes: ",
+      "properties": {
+        "fontSize": 55,
+        "fontFamily": "Arial",
+        "fontColor": "#f00f",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 113,
+      "type": "Label (rgthree)",
+      "pos": [
+        -5750,
+        -2450
+      ],
+      "size": [
+        110,
+        55
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "笔记",
+      "properties": {
+        "fontSize": 55,
+        "fontFamily": "Arial",
+        "fontColor": "#f00f",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 110,
+      "type": "MarkdownNote",
+      "pos": [
+        -5760,
+        -2340
+      ],
+      "size": [
+        1020,
+        1620
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "\n### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n\n---\n\n## Nodes\n\n| Node | What it does |\n|---|---|\n| **LC Outpaint 🖌️➕** | Drag the canvas edges outward on the node. Drag inside the source to reposition it. **free** or locked to a common aspect ratio, grey fill. Outputs **control_image**, **control_mask** (white = new area), **mask_image**, **width**, **height**. **hold_mask**: **snap_to_image** puts the box back on the image every run and passes the image through as is (so a new image always starts clean); **held** keeps the canvas you set up and passes the image through with it. **block** set to **if_empty_mask** stops everything downstream when the mask is empty: with snap_to_image that means every run (drag the edges out, switch to held, run again), with held only if you have not pulled an edge out. Run once to get the preview. *note:* **snap_to** rounds the final size up to a multiple (8 by default), set it to 1 to turn that off. |\n| **LC Create Mask 🖼️✏️** | Draw a mask right on the node. Click to add points (no limit), drag to move, shift+click removes one. Flip the toggle to **pencil** for freehand. **smooth**, **invert**, **feather**, and **opacity** are built in. Undo and Clear buttons on the node. **block** (top widget) set to **if_empty_mask** stops everything downstream until you have drawn something, same idea as Impact Pack's Preview Bridge. Run once to get the preview. |\n| **LC Mask Refine ✨** | Tighten a mask with a **trimap**. **edge_erode** pulls the sure-foreground in from the mask edge, **edge_dilate** sets how far the unknown band reaches out. Only that band is decided by the **method** (**vitmatte** for hair and fine detail, **guided_filter** for speed, or **none**), so a narrower band means a tighter mask. Also **grow** (negative shrinks), **fix_gap**, **black_point** / **white_point**, **feather**, and **edge_color_spread** to cut background halos on the cutout. Plug a mask into **detail_region** (like hair) to give just that area a wider trimap (**detail_erode** / **detail_dilate**). Outputs **cutout** (RGBA), **mask**, **trimap**. Before/after wipe on the node, same as the LC123 previews: hover and the after image sits left of the pointer. **preview_view** switches between cutout, mask and trimap. Run once to get the preview. 💡 Start with 10 / 10, then shrink both toward 3 for a tight edge. **Micro adjust:** every pixel value (**grow**, **fix_gap**, **edge_erode**, **edge_dilate**, the **detail_** ones, **feather**) takes decimals in 0.1 px steps, the points step by 0.001, and the edges are true circles, not blocks. Wire sliders in as **FLOAT** (INT sockets will not plug into these). ⚠️ Numbers are real pixels. |\n| **LC Remove Background ✂️** | Cut the subject out with a BiRefNet model. Outputs **cutout** (RGBA), **mask**, and **on_background** (subject on a solid color). Optional **refine** (guided_filter or vitmatte) with the same trimap controls (**edge_erode** / **edge_dilate**), plus **grow**, **black_point** / **white_point**, and **feather**. No preview on the node (add LC Mask Refine after it if you want one). Uses ComfyUI's built-in background-removal loader, so no extra dependency. 💡 Raise **black_point** to clear faint haze, use **vitmatte** for hair. |\n| **LC Image Blend Advance 🎚️** | Place a layer on a background and blend it. **x_percent** / **y_percent** (0.01 steps), **scale**, **aspect_ratio**, **rotate**, **mirror**, and 29 blend modes, with **opacity** in 0.1 steps and an optional **layer_mask** (multiplied with the layer's own alpha). **background_image** is optional: leave it off and the layer goes on a transparent canvas the size of the layer (RGBA out, like LayerStyle's V3). **transform_method**: lanczos, bicubic, bilinear, nearest. Outputs **image** and **mask** (where the layer landed). Pure torch, no extra dependency. |\n| **LC Segment Anything 🎯** | Select things by describing them: type **hair, eyes, bikini** and each word is found and combined. **engine**: **grounding_dino + sam** (GroundingDINO finds boxes, SAM makes masks) or **sam3** (SAM 3 does both, using ComfyUI's built-in SAM 3 support). Then the same refine as Mask Refine (**refine**, **edge_erode** / **edge_dilate**, **black_point** / **white_point**) and a before/after wipe on the node. Outputs **cutout** (RGBA), **mask**, **raw_mask**. 💡 For sam3, **sam3_threshold** 0.5 is a good start; near 0.3 it invents matches for words that are not in the image. |\n| **LC Person Mask 🧍** | Pick the parts of a person: **face**, **hair**, **body**, **clothes**, **accessories**, **background**, combined into one mask. **engine**: **segformer** (higher resolution, body is arms and legs only) or **mediapipe** (body includes torso and neck skin). Then the same refine as Mask Refine. No preview on the node (add LC Mask Refine after it if you want one). Outputs **cutout** (RGBA), **mask**, **raw_mask**. 💡 For skin work, enable **face** and **body**. |\n| **LC Auto Adjust 🔆** | One-click auto levels. **mode**: **RGB** (each channel on its own, also removes color casts), **lum + sat**, **luminance**, **saturation**, or **mono**. Then **red** / **green** / **blue** balance, **brightness**, **contrast**, **saturation** trims, and **strength** to blend back toward the original. All in 0.1 steps. An optional **mask** limits both where the levels are measured and where the result is applied (an alpha channel works as the mask when none is connected). Pure torch, no extra dependency. |\n| **LC Depth Anything V2 🌊** | Depth map from one image, normalized 0-1 per image, **bright = near** unless **invert** is on. Reads the original Depth Anything V2 weights, so a copy you already have in `models/depthanything` works (it also finds the ones in comfyui_controlnet_aux). Outputs **depth** (3-channel image) and **depth_mask**. **resolution** in steps of 14. Matches comfyui_controlnet_aux's Depth Anything V2 (correlation 1.000). Model code is vendored, no extra package. |\n| **LC Normal Map (BAE) 🗺️** | Surface normal map (RGB = XYZ) with the BAE network, the same style ControlNet's normal_bae makes. **resolution**, and **flip_y** for OpenGL vs DirectX. Matches comfyui_controlnet_aux's BAE (correlation 0.9999). Needs the `timm` package (the installer adds it if missing). 💡 Both maps are what LC Lighting Control in LC123 wants as its **depth_map** and **normal_map**. |\n\n---\n\n## Models and licensing\n\n- ✋ Models are **never bundled or redistributed**. Model-backed nodes download from the original source the first time you use them, or reuse a copy you already have.\n- Each model in a dropdown is labelled with its license, so you can see what you are picking.\n- **VITMatte** (LC Mask Refine): `vitmatte-small-composition-1k` and `vitmatte-base-composition-1k`, both Apache-2.0. Saved under `models/vitmatte`. A copy you already have in `models/vitmatte` is picked up automatically.\n- **BiRefNet** (LC Remove Background): general, matting, portrait, and HR 2048 variants, all MIT. Saved under `models/background_removal`, the same folder ComfyUI's own loader reads.\n- **RMBG-2.0** (BRIA): used if you already have it in `models/RMBG/RMBG-2.0`. Not downloaded for you. ⚠️ Non-commercial license.\n- Older BiRefNet `.pth` files (like `BiRefNet-ep480.pth`) use an older layout that ComfyUI cannot load, so they are not listed.\n- **GroundingDINO + SAM** (LC Segment Anything): `grounding-dino-tiny` / `-base` and `sam-vit-base` / `-large` / `-huge`, all Apache-2.0, Hugging Face format. Saved under `models/grounding-dino` and `models/sam`. Your original-format `.pth` files there are not used (different layout).\n- **SAM 3** (LC Segment Anything, sam3 engine): Meta's original `facebook/sam3` is gated (manual approval), so it is never downloaded for you. Your own `sam3.safetensors` in `models/sam3` (or ComfyUI's `models/detection`) is picked up. For a one-click option, the dropdown offers **SAM 3.1** (`sam3.1_multiplex_fp16.safetensors`, 1.7 GB) from `Comfy-Org/sam3.1`, the same ungated copy ComfyUI's own SAM 3 template uses, saved to `models/sam3`. SAM License terms apply (Hugging Face lists it as *other*).\n- **Segformer clothes** (LC Person Mask): `mattmdjaga/segformer_b2_clothes`, saved under `models/segformer_b2_clothes`. ⚠️ Its Hugging Face card says license *other* and it is built on NVIDIA's SegFormer, so treat it as **not cleared for commercial use** until you have checked.\n- **MediaPipe selfie multiclass** (LC Person Mask): Google's `selfie_multiclass_256x256.tflite`, saved under `models/mediapipe`. Check its model card for terms. The `mediapipe` Python package is not installed by this pack.\n- **Depth Anything V2** (LC Depth Anything V2): **Small is Apache-2.0**, **Base / Large / Giant are CC-BY-NC-4.0 (non-commercial)**. Saved under `models/depthanything`. Small is listed first so it is the default.\n- **BAE normals** (LC Normal Map): `scannet.pt` from lllyasviel/Annotators, saved under `models/normalbae`. ⚠️ Trained on ScanNet and the Hugging Face card only says *other*. Treat as **not cleared for commercial use** until you have checked.\n- ⚠️ Some models are **non-commercial**. The label tells you. Checking the license before commercial use is on you.\n\n---\n\n## License\n\nMIT for the code in this pack.\n\nThird-party model code in `vendor/` is credited in [THIRD_PARTY.md](THIRD_PARTY.md).\n\n---\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n\n---\n\n## 节点\n\n| 节点 | 功能 |\n|---|---|\n| **LC Outpaint 🖌️➕** | 在节点上向外拖动画布边缘。在原图内部拖动可重新定位。可选 **free**（自由比例）或锁定为常用宽高比，灰色填充。输出 **control_image**、**control_mask**（白色 = 新区域）、**mask_image**、**width**、**height**。**hold_mask**：**snap_to_image** 每次运行都会把边框放回图片上，并原样传出图片（这样新图片总是从干净的状态开始）；**held** 保留你设置好的画布，并连同画布一起传出图片。**block** 设为 **if_empty_mask** 时，遮罩为空则停止下游所有节点：在 snap_to_image 下，这意味着每次运行都会停止（先拖出边缘，切换为 held，再运行一次）；在 held 下，只有你没有拖出任何边缘时才会停止。运行一次即可获得预览。*注：* **snap_to** 会把最终尺寸向上取整为某个数的倍数（默认 8），设为 1 可关闭。 |\n| **LC Create Mask 🖼️✏️** | 直接在节点上绘制遮罩。点击添加点（不限数量），拖动移动，shift+点击删除一个点。切换到 **pencil** 可自由绘制。内置 **smooth**、**invert**、**feather** 和 **opacity**。节点上有撤销（Undo）和清除（Clear）按钮。顶部的 **block** 设为 **if_empty_mask** 时，在你画出内容之前会停止下游所有节点，思路与 Impact Pack 的 Preview Bridge 相同。运行一次即可获得预览。 |\n| **LC Mask Refine ✨** | 用 **trimap** 收紧遮罩。**edge_erode** 把确定的前景从遮罩边缘向内收，**edge_dilate** 决定未知区域向外延伸多远。只有这一条区域由 **method** 来判定（**vitmatte** 适合头发和细节，**guided_filter** 速度快，或 **none**），所以区域越窄，遮罩越紧。另有 **grow**（负值为收缩）、**fix_gap**、**black_point** / **white_point**、**feather**，以及 **edge_color_spread**（消除抠图边缘的背景光晕）。把遮罩接入 **detail_region**（例如头发），可以只给该区域更宽的 trimap（**detail_erode** / **detail_dilate**）。输出 **cutout**（RGBA）、**mask**、**trimap**。节点上有前后对比擦除，与 LC123 的预览相同：悬停时，处理后的图像显示在指针左侧。**preview_view** 可在 cutout、mask 和 trimap 之间切换。运行一次即可获得预览。💡 先用 10 / 10，再把两者缩小到 3 左右得到紧致的边缘。**微调：** 所有像素值（**grow**、**fix_gap**、**edge_erode**、**edge_dilate**、**detail_** 系列、**feather**）都支持小数，步进 0.1 像素，points 步进 0.001，边缘是真正的圆形，而不是方块。请以 **FLOAT** 接入滑块（INT 接口无法连接）。⚠️ 数值是真实像素。 |\n| **LC Remove Background ✂️** | 用 BiRefNet 模型抠出主体。输出 **cutout**（RGBA）、**mask** 和 **on_background**（纯色背景上的主体）。可选 **refine**（guided_filter 或 vitmatte），带有相同的 trimap 控制（**edge_erode** / **edge_dilate**），另有 **grow**、**black_point** / **white_point** 和 **feather**。节点上没有预览（需要的话在后面接 LC Mask Refine）。使用 ComfyUI 内置的背景移除加载器，无需额外依赖。💡 提高 **black_point** 可清除淡淡的雾边，头发请用 **vitmatte**。 |\n| **LC Image Blend Advance 🎚️** | 把图层放到背景上并混合。**x_percent** / **y_percent**（0.01 步进）、**scale**、**aspect_ratio**、**rotate**、**mirror**，以及 29 种混合模式，**opacity** 步进 0.1，另有可选的 **layer_mask**（与图层自身的 alpha 相乘）。**background_image** 可选：不接的话，图层会放在与图层同尺寸的透明画布上（输出 RGBA，与 LayerStyle 的 V3 一样）。**transform_method**：lanczos、bicubic、bilinear、nearest。输出 **image** 和 **mask**（图层落下的位置）。纯 torch 实现，无需额外依赖。 |\n| **LC Segment Anything 🎯** | 通过描述来选择对象：输入 **hair, eyes, bikini**，每个词都会被找到并合并。**engine**：**grounding_dino + sam**（GroundingDINO 找框，SAM 生成遮罩）或 **sam3**（SAM 3 两者都做，使用 ComfyUI 内置的 SAM 3 支持）。然后是与 Mask Refine 相同的细化（**refine**、**edge_erode** / **edge_dilate**、**black_point** / **white_point**），节点上有前后对比擦除。输出 **cutout**（RGBA）、**mask**、**raw_mask**。💡 sam3 建议先把 **sam3_threshold** 设为 0.5；接近 0.3 时，会为图中不存在的词凭空生成匹配。 |\n| **LC Person Mask 🧍** | 选择人物的各个部位：**face**、**hair**、**body**、**clothes**、**accessories**、**background**，合并成一张遮罩。**engine**：**segformer**（分辨率更高，body 只包含手臂和腿）或 **mediapipe**（body 包含躯干和颈部皮肤）。然后是与 Mask Refine 相同的细化。节点上没有预览（需要的话在后面接 LC Mask Refine）。输出 **cutout**（RGBA）、**mask**、**raw_mask**。💡 做皮肤处理时，同时启用 **face** 和 **body**。 |\n| **LC Auto Adjust 🔆** | 一键自动色阶。**mode**：**RGB**（每个通道单独处理，同时去除色偏）、**lum + sat**、**luminance**、**saturation** 或 **mono**。然后是 **red** / **green** / **blue** 平衡，**brightness**、**contrast**、**saturation** 微调，以及用来向原图混回的 **strength**。步进均为 0.1。可选的 **mask** 同时限制色阶的测量位置和结果的应用位置（未连接时，alpha 通道会作为遮罩）。纯 torch 实现，无需额外依赖。 |\n| **LC Depth Anything V2 🌊** | 从单张图生成深度图，每张图归一化到 0-1，除非开启 **invert**，否则 **越亮 = 越近**。读取原版 Depth Anything V2 权重，所以你已有的 `models/depthanything` 中的副本可以直接使用（也能找到 comfyui_controlnet_aux 中的）。输出 **depth**（3 通道图像）和 **depth_mask**。**resolution** 以 14 为步进。与 comfyui_controlnet_aux 的 Depth Anything V2 一致（相关性 1.000）。模型代码已内置，无需额外安装包。 |\n| **LC Normal Map (BAE) 🗺️** | 用 BAE 网络生成表面法线图（RGB = XYZ），与 ControlNet 的 normal_bae 风格相同。**resolution**，以及用于 OpenGL 与 DirectX 切换的 **flip_y**。与 comfyui_controlnet_aux 的 BAE 一致（相关性 0.9999）。需要 `timm` 包（缺少时安装程序会自动安装）。💡 这两张图正是 LC123 中 LC Lighting Control 需要的 **depth_map** 和 **normal_map**。 |\n\n---\n\n## 模型与许可\n\n- ✋ 模型**从不打包或再分发**。依赖模型的节点会在你第一次使用时从原始来源下载，或直接使用你已有的副本。\n- 下拉列表中的每个模型都标注了许可证，方便你查看所选模型的授权。\n- **VITMatte**（LC Mask Refine）：`vitmatte-small-composition-1k` 和 `vitmatte-base-composition-1k`，均为 Apache-2.0。保存在 `models/vitmatte`。你已有的 `models/vitmatte` 中的副本会被自动识别。\n- **BiRefNet**（LC Remove Background）：general、matting、portrait 和 HR 2048 版本，均为 MIT。保存在 `models/background_removal`，与 ComfyUI 自带加载器读取的是同一个文件夹。\n- **RMBG-2.0**（BRIA）：如果你已把它放在 `models/RMBG/RMBG-2.0`，就会被使用。不会为你下载。⚠️ 非商业许可。\n- 较旧的 BiRefNet `.pth` 文件（如 `BiRefNet-ep480.pth`）使用旧版结构，ComfyUI 无法加载，因此不会列出。\n- **GroundingDINO + SAM**（LC Segment Anything）：`grounding-dino-tiny` / `-base` 和 `sam-vit-base` / `-large` / `-huge`，均为 Apache-2.0，Hugging Face 格式。保存在 `models/grounding-dino` 和 `models/sam`。你放在那里的原始格式 `.pth` 文件不会被使用（结构不同）。\n- **SAM 3**（LC Segment Anything，sam3 引擎）：Meta 原版的 `facebook/sam3` 需要审批（受限访问），所以不会为你下载。你自己放在 `models/sam3`（或 ComfyUI 的 `models/detection`）中的 `sam3.safetensors` 会被识别。想一键使用的话，下拉列表提供 **SAM 3.1**（`sam3.1_multiplex_fp16.safetensors`，1.7 GB），来自 `Comfy-Org/sam3.1`，也就是 ComfyUI 自带 SAM 3 模板使用的同一个免审批副本，保存到 `models/sam3`。适用 SAM License 条款（Hugging Face 上标注为 *other*）。\n- **Segformer clothes**（LC Person Mask）：`mattmdjaga/segformer_b2_clothes`，保存在 `models/segformer_b2_clothes`。⚠️ 它的 Hugging Face 页面标注的许可证是 *other*，并且基于 NVIDIA 的 SegFormer，所以在你核实之前，请视为**未获商业使用许可**。\n- **MediaPipe selfie multiclass**（LC Person Mask）：Google 的 `selfie_multiclass_256x256.tflite`，保存在 `models/mediapipe`。请查看其模型卡了解条款。本包不会安装 `mediapipe` Python 包。\n- **Depth Anything V2**（LC Depth Anything V2）：**Small 为 Apache-2.0**，**Base / Large / Giant 为 CC-BY-NC-4.0（非商业）**。保存在 `models/depthanything`。Small 排在最前，所以是默认选项。\n- **BAE normals**（LC Normal Map）：来自 lllyasviel/Annotators 的 `scannet.pt`，保存在 `models/normalbae`。⚠️ 基于 ScanNet 训练，Hugging Face 页面只标注了 *other*。在你核实之前，请视为**未获商业使用许可**。\n- ⚠️ 有些模型是**非商业**的，标签会告诉你。商业使用前检查许可证是你自己的责任。\n\n---\n\n## 许可证\n\n本包中的代码采用 MIT 许可。\n\n`vendor/` 中的第三方模型代码已在 [THIRD_PARTY.md](THIRD_PARTY.md) 中注明来源。\n\n---\n\n\"True Nothing is. Permitted Everything is\"- Yoda Auditore, Assassin's Wars"
+      ],
+      "widgets_values_named": {
+        "text": "\n### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n\n---\n\n## Nodes\n\n| Node | What it does |\n|---|---|\n| **LC Outpaint 🖌️➕** | Drag the canvas edges outward on the node. Drag inside the source to reposition it. **free** or locked to a common aspect ratio, grey fill. Outputs **control_image**, **control_mask** (white = new area), **mask_image**, **width**, **height**. **hold_mask**: **snap_to_image** puts the box back on the image every run and passes the image through as is (so a new image always starts clean); **held** keeps the canvas you set up and passes the image through with it. **block** set to **if_empty_mask** stops everything downstream when the mask is empty: with snap_to_image that means every run (drag the edges out, switch to held, run again), with held only if you have not pulled an edge out. Run once to get the preview. *note:* **snap_to** rounds the final size up to a multiple (8 by default), set it to 1 to turn that off. |\n| **LC Create Mask 🖼️✏️** | Draw a mask right on the node. Click to add points (no limit), drag to move, shift+click removes one. Flip the toggle to **pencil** for freehand. **smooth**, **invert**, **feather**, and **opacity** are built in. Undo and Clear buttons on the node. **block** (top widget) set to **if_empty_mask** stops everything downstream until you have drawn something, same idea as Impact Pack's Preview Bridge. Run once to get the preview. |\n| **LC Mask Refine ✨** | Tighten a mask with a **trimap**. **edge_erode** pulls the sure-foreground in from the mask edge, **edge_dilate** sets how far the unknown band reaches out. Only that band is decided by the **method** (**vitmatte** for hair and fine detail, **guided_filter** for speed, or **none**), so a narrower band means a tighter mask. Also **grow** (negative shrinks), **fix_gap**, **black_point** / **white_point**, **feather**, and **edge_color_spread** to cut background halos on the cutout. Plug a mask into **detail_region** (like hair) to give just that area a wider trimap (**detail_erode** / **detail_dilate**). Outputs **cutout** (RGBA), **mask**, **trimap**. Before/after wipe on the node, same as the LC123 previews: hover and the after image sits left of the pointer. **preview_view** switches between cutout, mask and trimap. Run once to get the preview. 💡 Start with 10 / 10, then shrink both toward 3 for a tight edge. **Micro adjust:** every pixel value (**grow**, **fix_gap**, **edge_erode**, **edge_dilate**, the **detail_** ones, **feather**) takes decimals in 0.1 px steps, the points step by 0.001, and the edges are true circles, not blocks. Wire sliders in as **FLOAT** (INT sockets will not plug into these). ⚠️ Numbers are real pixels. |\n| **LC Remove Background ✂️** | Cut the subject out with a BiRefNet model. Outputs **cutout** (RGBA), **mask**, and **on_background** (subject on a solid color). Optional **refine** (guided_filter or vitmatte) with the same trimap controls (**edge_erode** / **edge_dilate**), plus **grow**, **black_point** / **white_point**, and **feather**. No preview on the node (add LC Mask Refine after it if you want one). Uses ComfyUI's built-in background-removal loader, so no extra dependency. 💡 Raise **black_point** to clear faint haze, use **vitmatte** for hair. |\n| **LC Image Blend Advance 🎚️** | Place a layer on a background and blend it. **x_percent** / **y_percent** (0.01 steps), **scale**, **aspect_ratio**, **rotate**, **mirror**, and 29 blend modes, with **opacity** in 0.1 steps and an optional **layer_mask** (multiplied with the layer's own alpha). **background_image** is optional: leave it off and the layer goes on a transparent canvas the size of the layer (RGBA out, like LayerStyle's V3). **transform_method**: lanczos, bicubic, bilinear, nearest. Outputs **image** and **mask** (where the layer landed). Pure torch, no extra dependency. |\n| **LC Segment Anything 🎯** | Select things by describing them: type **hair, eyes, bikini** and each word is found and combined. **engine**: **grounding_dino + sam** (GroundingDINO finds boxes, SAM makes masks) or **sam3** (SAM 3 does both, using ComfyUI's built-in SAM 3 support). Then the same refine as Mask Refine (**refine**, **edge_erode** / **edge_dilate**, **black_point** / **white_point**) and a before/after wipe on the node. Outputs **cutout** (RGBA), **mask**, **raw_mask**. 💡 For sam3, **sam3_threshold** 0.5 is a good start; near 0.3 it invents matches for words that are not in the image. |\n| **LC Person Mask 🧍** | Pick the parts of a person: **face**, **hair**, **body**, **clothes**, **accessories**, **background**, combined into one mask. **engine**: **segformer** (higher resolution, body is arms and legs only) or **mediapipe** (body includes torso and neck skin). Then the same refine as Mask Refine. No preview on the node (add LC Mask Refine after it if you want one). Outputs **cutout** (RGBA), **mask**, **raw_mask**. 💡 For skin work, enable **face** and **body**. |\n| **LC Auto Adjust 🔆** | One-click auto levels. **mode**: **RGB** (each channel on its own, also removes color casts), **lum + sat**, **luminance**, **saturation**, or **mono**. Then **red** / **green** / **blue** balance, **brightness**, **contrast**, **saturation** trims, and **strength** to blend back toward the original. All in 0.1 steps. An optional **mask** limits both where the levels are measured and where the result is applied (an alpha channel works as the mask when none is connected). Pure torch, no extra dependency. |\n| **LC Depth Anything V2 🌊** | Depth map from one image, normalized 0-1 per image, **bright = near** unless **invert** is on. Reads the original Depth Anything V2 weights, so a copy you already have in `models/depthanything` works (it also finds the ones in comfyui_controlnet_aux). Outputs **depth** (3-channel image) and **depth_mask**. **resolution** in steps of 14. Matches comfyui_controlnet_aux's Depth Anything V2 (correlation 1.000). Model code is vendored, no extra package. |\n| **LC Normal Map (BAE) 🗺️** | Surface normal map (RGB = XYZ) with the BAE network, the same style ControlNet's normal_bae makes. **resolution**, and **flip_y** for OpenGL vs DirectX. Matches comfyui_controlnet_aux's BAE (correlation 0.9999). Needs the `timm` package (the installer adds it if missing). 💡 Both maps are what LC Lighting Control in LC123 wants as its **depth_map** and **normal_map**. |\n\n---\n\n## Models and licensing\n\n- ✋ Models are **never bundled or redistributed**. Model-backed nodes download from the original source the first time you use them, or reuse a copy you already have.\n- Each model in a dropdown is labelled with its license, so you can see what you are picking.\n- **VITMatte** (LC Mask Refine): `vitmatte-small-composition-1k` and `vitmatte-base-composition-1k`, both Apache-2.0. Saved under `models/vitmatte`. A copy you already have in `models/vitmatte` is picked up automatically.\n- **BiRefNet** (LC Remove Background): general, matting, portrait, and HR 2048 variants, all MIT. Saved under `models/background_removal`, the same folder ComfyUI's own loader reads.\n- **RMBG-2.0** (BRIA): used if you already have it in `models/RMBG/RMBG-2.0`. Not downloaded for you. ⚠️ Non-commercial license.\n- Older BiRefNet `.pth` files (like `BiRefNet-ep480.pth`) use an older layout that ComfyUI cannot load, so they are not listed.\n- **GroundingDINO + SAM** (LC Segment Anything): `grounding-dino-tiny` / `-base` and `sam-vit-base` / `-large` / `-huge`, all Apache-2.0, Hugging Face format. Saved under `models/grounding-dino` and `models/sam`. Your original-format `.pth` files there are not used (different layout).\n- **SAM 3** (LC Segment Anything, sam3 engine): Meta's original `facebook/sam3` is gated (manual approval), so it is never downloaded for you. Your own `sam3.safetensors` in `models/sam3` (or ComfyUI's `models/detection`) is picked up. For a one-click option, the dropdown offers **SAM 3.1** (`sam3.1_multiplex_fp16.safetensors`, 1.7 GB) from `Comfy-Org/sam3.1`, the same ungated copy ComfyUI's own SAM 3 template uses, saved to `models/sam3`. SAM License terms apply (Hugging Face lists it as *other*).\n- **Segformer clothes** (LC Person Mask): `mattmdjaga/segformer_b2_clothes`, saved under `models/segformer_b2_clothes`. ⚠️ Its Hugging Face card says license *other* and it is built on NVIDIA's SegFormer, so treat it as **not cleared for commercial use** until you have checked.\n- **MediaPipe selfie multiclass** (LC Person Mask): Google's `selfie_multiclass_256x256.tflite`, saved under `models/mediapipe`. Check its model card for terms. The `mediapipe` Python package is not installed by this pack.\n- **Depth Anything V2** (LC Depth Anything V2): **Small is Apache-2.0**, **Base / Large / Giant are CC-BY-NC-4.0 (non-commercial)**. Saved under `models/depthanything`. Small is listed first so it is the default.\n- **BAE normals** (LC Normal Map): `scannet.pt` from lllyasviel/Annotators, saved under `models/normalbae`. ⚠️ Trained on ScanNet and the Hugging Face card only says *other*. Treat as **not cleared for commercial use** until you have checked.\n- ⚠️ Some models are **non-commercial**. The label tells you. Checking the license before commercial use is on you.\n\n---\n\n## License\n\nMIT for the code in this pack.\n\nThird-party model code in `vendor/` is credited in [THIRD_PARTY.md](THIRD_PARTY.md).\n\n---\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n\n---\n\n## 节点\n\n| 节点 | 功能 |\n|---|---|\n| **LC Outpaint 🖌️➕** | 在节点上向外拖动画布边缘。在原图内部拖动可重新定位。可选 **free**（自由比例）或锁定为常用宽高比，灰色填充。输出 **control_image**、**control_mask**（白色 = 新区域）、**mask_image**、**width**、**height**。**hold_mask**：**snap_to_image** 每次运行都会把边框放回图片上，并原样传出图片（这样新图片总是从干净的状态开始）；**held** 保留你设置好的画布，并连同画布一起传出图片。**block** 设为 **if_empty_mask** 时，遮罩为空则停止下游所有节点：在 snap_to_image 下，这意味着每次运行都会停止（先拖出边缘，切换为 held，再运行一次）；在 held 下，只有你没有拖出任何边缘时才会停止。运行一次即可获得预览。*注：* **snap_to** 会把最终尺寸向上取整为某个数的倍数（默认 8），设为 1 可关闭。 |\n| **LC Create Mask 🖼️✏️** | 直接在节点上绘制遮罩。点击添加点（不限数量），拖动移动，shift+点击删除一个点。切换到 **pencil** 可自由绘制。内置 **smooth**、**invert**、**feather** 和 **opacity**。节点上有撤销（Undo）和清除（Clear）按钮。顶部的 **block** 设为 **if_empty_mask** 时，在你画出内容之前会停止下游所有节点，思路与 Impact Pack 的 Preview Bridge 相同。运行一次即可获得预览。 |\n| **LC Mask Refine ✨** | 用 **trimap** 收紧遮罩。**edge_erode** 把确定的前景从遮罩边缘向内收，**edge_dilate** 决定未知区域向外延伸多远。只有这一条区域由 **method** 来判定（**vitmatte** 适合头发和细节，**guided_filter** 速度快，或 **none**），所以区域越窄，遮罩越紧。另有 **grow**（负值为收缩）、**fix_gap**、**black_point** / **white_point**、**feather**，以及 **edge_color_spread**（消除抠图边缘的背景光晕）。把遮罩接入 **detail_region**（例如头发），可以只给该区域更宽的 trimap（**detail_erode** / **detail_dilate**）。输出 **cutout**（RGBA）、**mask**、**trimap**。节点上有前后对比擦除，与 LC123 的预览相同：悬停时，处理后的图像显示在指针左侧。**preview_view** 可在 cutout、mask 和 trimap 之间切换。运行一次即可获得预览。💡 先用 10 / 10，再把两者缩小到 3 左右得到紧致的边缘。**微调：** 所有像素值（**grow**、**fix_gap**、**edge_erode**、**edge_dilate**、**detail_** 系列、**feather**）都支持小数，步进 0.1 像素，points 步进 0.001，边缘是真正的圆形，而不是方块。请以 **FLOAT** 接入滑块（INT 接口无法连接）。⚠️ 数值是真实像素。 |\n| **LC Remove Background ✂️** | 用 BiRefNet 模型抠出主体。输出 **cutout**（RGBA）、**mask** 和 **on_background**（纯色背景上的主体）。可选 **refine**（guided_filter 或 vitmatte），带有相同的 trimap 控制（**edge_erode** / **edge_dilate**），另有 **grow**、**black_point** / **white_point** 和 **feather**。节点上没有预览（需要的话在后面接 LC Mask Refine）。使用 ComfyUI 内置的背景移除加载器，无需额外依赖。💡 提高 **black_point** 可清除淡淡的雾边，头发请用 **vitmatte**。 |\n| **LC Image Blend Advance 🎚️** | 把图层放到背景上并混合。**x_percent** / **y_percent**（0.01 步进）、**scale**、**aspect_ratio**、**rotate**、**mirror**，以及 29 种混合模式，**opacity** 步进 0.1，另有可选的 **layer_mask**（与图层自身的 alpha 相乘）。**background_image** 可选：不接的话，图层会放在与图层同尺寸的透明画布上（输出 RGBA，与 LayerStyle 的 V3 一样）。**transform_method**：lanczos、bicubic、bilinear、nearest。输出 **image** 和 **mask**（图层落下的位置）。纯 torch 实现，无需额外依赖。 |\n| **LC Segment Anything 🎯** | 通过描述来选择对象：输入 **hair, eyes, bikini**，每个词都会被找到并合并。**engine**：**grounding_dino + sam**（GroundingDINO 找框，SAM 生成遮罩）或 **sam3**（SAM 3 两者都做，使用 ComfyUI 内置的 SAM 3 支持）。然后是与 Mask Refine 相同的细化（**refine**、**edge_erode** / **edge_dilate**、**black_point** / **white_point**），节点上有前后对比擦除。输出 **cutout**（RGBA）、**mask**、**raw_mask**。💡 sam3 建议先把 **sam3_threshold** 设为 0.5；接近 0.3 时，会为图中不存在的词凭空生成匹配。 |\n| **LC Person Mask 🧍** | 选择人物的各个部位：**face**、**hair**、**body**、**clothes**、**accessories**、**background**，合并成一张遮罩。**engine**：**segformer**（分辨率更高，body 只包含手臂和腿）或 **mediapipe**（body 包含躯干和颈部皮肤）。然后是与 Mask Refine 相同的细化。节点上没有预览（需要的话在后面接 LC Mask Refine）。输出 **cutout**（RGBA）、**mask**、**raw_mask**。💡 做皮肤处理时，同时启用 **face** 和 **body**。 |\n| **LC Auto Adjust 🔆** | 一键自动色阶。**mode**：**RGB**（每个通道单独处理，同时去除色偏）、**lum + sat**、**luminance**、**saturation** 或 **mono**。然后是 **red** / **green** / **blue** 平衡，**brightness**、**contrast**、**saturation** 微调，以及用来向原图混回的 **strength**。步进均为 0.1。可选的 **mask** 同时限制色阶的测量位置和结果的应用位置（未连接时，alpha 通道会作为遮罩）。纯 torch 实现，无需额外依赖。 |\n| **LC Depth Anything V2 🌊** | 从单张图生成深度图，每张图归一化到 0-1，除非开启 **invert**，否则 **越亮 = 越近**。读取原版 Depth Anything V2 权重，所以你已有的 `models/depthanything` 中的副本可以直接使用（也能找到 comfyui_controlnet_aux 中的）。输出 **depth**（3 通道图像）和 **depth_mask**。**resolution** 以 14 为步进。与 comfyui_controlnet_aux 的 Depth Anything V2 一致（相关性 1.000）。模型代码已内置，无需额外安装包。 |\n| **LC Normal Map (BAE) 🗺️** | 用 BAE 网络生成表面法线图（RGB = XYZ），与 ControlNet 的 normal_bae 风格相同。**resolution**，以及用于 OpenGL 与 DirectX 切换的 **flip_y**。与 comfyui_controlnet_aux 的 BAE 一致（相关性 0.9999）。需要 `timm` 包（缺少时安装程序会自动安装）。💡 这两张图正是 LC123 中 LC Lighting Control 需要的 **depth_map** 和 **normal_map**。 |\n\n---\n\n## 模型与许可\n\n- ✋ 模型**从不打包或再分发**。依赖模型的节点会在你第一次使用时从原始来源下载，或直接使用你已有的副本。\n- 下拉列表中的每个模型都标注了许可证，方便你查看所选模型的授权。\n- **VITMatte**（LC Mask Refine）：`vitmatte-small-composition-1k` 和 `vitmatte-base-composition-1k`，均为 Apache-2.0。保存在 `models/vitmatte`。你已有的 `models/vitmatte` 中的副本会被自动识别。\n- **BiRefNet**（LC Remove Background）：general、matting、portrait 和 HR 2048 版本，均为 MIT。保存在 `models/background_removal`，与 ComfyUI 自带加载器读取的是同一个文件夹。\n- **RMBG-2.0**（BRIA）：如果你已把它放在 `models/RMBG/RMBG-2.0`，就会被使用。不会为你下载。⚠️ 非商业许可。\n- 较旧的 BiRefNet `.pth` 文件（如 `BiRefNet-ep480.pth`）使用旧版结构，ComfyUI 无法加载，因此不会列出。\n- **GroundingDINO + SAM**（LC Segment Anything）：`grounding-dino-tiny` / `-base` 和 `sam-vit-base` / `-large` / `-huge`，均为 Apache-2.0，Hugging Face 格式。保存在 `models/grounding-dino` 和 `models/sam`。你放在那里的原始格式 `.pth` 文件不会被使用（结构不同）。\n- **SAM 3**（LC Segment Anything，sam3 引擎）：Meta 原版的 `facebook/sam3` 需要审批（受限访问），所以不会为你下载。你自己放在 `models/sam3`（或 ComfyUI 的 `models/detection`）中的 `sam3.safetensors` 会被识别。想一键使用的话，下拉列表提供 **SAM 3.1**（`sam3.1_multiplex_fp16.safetensors`，1.7 GB），来自 `Comfy-Org/sam3.1`，也就是 ComfyUI 自带 SAM 3 模板使用的同一个免审批副本，保存到 `models/sam3`。适用 SAM License 条款（Hugging Face 上标注为 *other*）。\n- **Segformer clothes**（LC Person Mask）：`mattmdjaga/segformer_b2_clothes`，保存在 `models/segformer_b2_clothes`。⚠️ 它的 Hugging Face 页面标注的许可证是 *other*，并且基于 NVIDIA 的 SegFormer，所以在你核实之前，请视为**未获商业使用许可**。\n- **MediaPipe selfie multiclass**（LC Person Mask）：Google 的 `selfie_multiclass_256x256.tflite`，保存在 `models/mediapipe`。请查看其模型卡了解条款。本包不会安装 `mediapipe` Python 包。\n- **Depth Anything V2**（LC Depth Anything V2）：**Small 为 Apache-2.0**，**Base / Large / Giant 为 CC-BY-NC-4.0（非商业）**。保存在 `models/depthanything`。Small 排在最前，所以是默认选项。\n- **BAE normals**（LC Normal Map）：来自 lllyasviel/Annotators 的 `scannet.pt`，保存在 `models/normalbae`。⚠️ 基于 ScanNet 训练，Hugging Face 页面只标注了 *other*。在你核实之前，请视为**未获商业使用许可**。\n- ⚠️ 有些模型是**非商业**的，标签会告诉你。商业使用前检查许可证是你自己的责任。\n\n---\n\n## 许可证\n\n本包中的代码采用 MIT 许可。\n\n`vendor/` 中的第三方模型代码已在 [THIRD_PARTY.md](THIRD_PARTY.md) 中注明来源。\n\n---\n\n\"True Nothing is. Permitted Everything is\"- Yoda Auditore, Assassin's Wars"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 112,
+      "type": "Label (rgthree)",
+      "pos": [
+        -5560,
+        -2510
+      ],
+      "size": [
+        182.28515625,
+        40
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Start Here",
+      "properties": {
+        "fontSize": 40,
+        "fontFamily": "Arial",
+        "fontColor": "#ffffff",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    }
+  ],
+  "links": [
+    [
+      66,
+      3,
+      0,
+      35,
+      0,
+      "IMAGE"
+    ],
+    [
+      86,
+      3,
+      0,
+      56,
+      0,
+      "IMAGE"
+    ],
+    [
+      87,
+      3,
+      0,
+      57,
+      0,
+      "IMAGE"
+    ],
+    [
+      96,
+      56,
+      0,
+      66,
+      0,
+      "IMAGE"
+    ],
+    [
+      97,
+      56,
+      1,
+      65,
+      0,
+      "MASK"
+    ],
+    [
+      98,
+      57,
+      0,
+      67,
+      0,
+      "IMAGE"
+    ],
+    [
+      119,
+      35,
+      0,
+      80,
+      1,
+      "IMAGE"
+    ],
+    [
+      121,
+      80,
+      0,
+      55,
+      0,
+      "IMAGE"
+    ],
+    [
+      122,
+      3,
+      0,
+      81,
+      0,
+      "IMAGE"
+    ],
+    [
+      125,
+      81,
+      0,
+      84,
+      0,
+      "IMAGE"
+    ],
+    [
+      126,
+      81,
+      1,
+      85,
+      0,
+      "MASK"
+    ],
+    [
+      127,
+      3,
+      0,
+      86,
+      0,
+      "IMAGE"
+    ],
+    [
+      128,
+      86,
+      0,
+      71,
+      0,
+      "IMAGE"
+    ],
+    [
+      129,
+      86,
+      1,
+      70,
+      0,
+      "MASK"
+    ],
+    [
+      130,
+      86,
+      2,
+      75,
+      0,
+      "IMAGE"
+    ],
+    [
+      131,
+      3,
+      0,
+      87,
+      0,
+      "IMAGE"
+    ],
+    [
+      132,
+      87,
+      0,
+      68,
+      0,
+      "IMAGE"
+    ],
+    [
+      133,
+      87,
+      1,
+      69,
+      0,
+      "MASK"
+    ],
+    [
+      134,
+      3,
+      0,
+      88,
+      0,
+      "IMAGE"
+    ],
+    [
+      135,
+      88,
+      0,
+      90,
+      0,
+      "IMAGE"
+    ],
+    [
+      136,
+      88,
+      1,
+      89,
+      0,
+      "MASK"
+    ],
+    [
+      137,
+      91,
+      0,
+      77,
+      0,
+      "IMAGE"
+    ],
+    [
+      138,
+      91,
+      1,
+      76,
+      0,
+      "MASK"
+    ],
+    [
+      139,
+      91,
+      2,
+      79,
+      0,
+      "MASK"
+    ],
+    [
+      142,
+      87,
+      0,
+      91,
+      0,
+      "IMAGE"
+    ],
+    [
+      143,
+      87,
+      1,
+      91,
+      1,
+      "MASK"
+    ],
+    [
+      144,
+      87,
+      1,
+      91,
+      2,
+      "MASK"
+    ],
+    [
+      147,
+      91,
+      0,
+      80,
+      0,
+      "IMAGE"
+    ],
+    [
+      148,
+      91,
+      1,
+      80,
+      2,
+      "MASK"
+    ],
+    [
+      149,
+      3,
+      0,
+      92,
+      0,
+      "IMAGE"
+    ],
+    [
+      150,
+      88,
+      1,
+      92,
+      1,
+      "MASK"
+    ],
+    [
+      151,
+      3,
+      0,
+      101,
+      0,
+      "IMAGE"
+    ],
+    [
+      152,
+      101,
+      0,
+      103,
+      0,
+      "IMAGE"
+    ],
+    [
+      153,
+      101,
+      1,
+      104,
+      0,
+      "MASK"
+    ],
+    [
+      154,
+      101,
+      2,
+      105,
+      0,
+      "IMAGE"
+    ],
+    [
+      155,
+      3,
+      0,
+      106,
+      0,
+      "IMAGE"
+    ],
+    [
+      156,
+      106,
+      0,
+      107,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "links_added_by_ue": [],
+    "k2cf_state_id": "k2cf_1784799557580_oihrgm8ndu",
+    "ds": {
+      "scale": 0.7400249944258191,
+      "offset": [
+        6425.783164724412,
+        2959.229185647986
+      ]
+    },
+    "frontendVersion": "1.51.9",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4,
+  "seed_widgets": {}
+}

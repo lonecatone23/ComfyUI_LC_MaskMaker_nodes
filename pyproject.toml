@@ -1,0 +1,22 @@
+[project]
+name = "ComfyUI_LC_MaskMaker_nodes"
+version = "0.10.9"
+description = "ComfyUI LC MaskMaker Nodes by lonecatone23: on-node Outpaint and Create Mask, background removal, Segment Anything, person masks, mask refine, image blend, auto adjust, depth and normal maps. Models load on demand and are labelled with their licenses. Companion to ComfyUI_LC123_nodes; separate Registry name."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "lonecatone23" }]
+keywords = [
+  "comfyui", "custom-nodes", "mask", "outpaint", "matting", "segmentation",
+  "background-removal", "image-adjustment", "lonecat", "lc-maskmaker",
+]
+
+[project.urls]
+Repository = "https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes"
+Homepage = "https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes"
+"Buy me a coffee" = "https://ko-fi.com/lonecatone"
+
+[tool.comfy]
+PublisherId = "lonecatone23"
+DisplayName = "ComfyUI LC MaskMaker Nodes"
+Icon = ""
