@@ -62,10 +62,10 @@ class LCImageOutpaint(PreviewImage):
                     "label_on": "held",
                     "label_off": "snap_to_image",
                     "tooltip": (
-                        "held: keep the canvas you set up (the expansions below) and pass the image through with it.\n"
-                        "snap_to_image: the canvas snaps back to the image size on every run and the image passes "
-                        "through as is, so a new image always starts from a clean box. With block set to if_empty_mask "
-                        "the run also stops there, so you can drag the edges out, switch to held, and run again."
+                        "held: keep the canvas you set up (the expansions below) and pass the image through with it, run after run.\n"
+                        "snap_to_image: with nothing pulled out the image passes through as is (and with block set to "
+                        "if_empty_mask the run stops there). Drag the edges out and run again: that run uses them, then "
+                        "the box snaps back to the image, so a new image always starts from a clean box."
                     ),
                 }),
                 "left": _pct("Expansion on the left, % of source width."),
@@ -101,8 +101,15 @@ class LCImageOutpaint(PreviewImage):
     def outpaint(self, image, left, top, right, bottom, aspect="free", snap_to="8", block=False, hold_mask=False, unique_id=None):
         b, h, w, c = image.shape
 
-        if not hold_mask:
-            # Not held: the canvas snaps to the image. Nothing is expanded, so nothing is snap-padded either.
+        l = int(round(w * _clamp(float(left), 0.0, MAX_PCT) / 100.0))
+        r = int(round(w * _clamp(float(right), 0.0, MAX_PCT) / 100.0))
+        t = int(round(h * _clamp(float(top), 0.0, MAX_PCT) / 100.0))
+        bt = int(round(h * _clamp(float(bottom), 0.0, MAX_PCT) / 100.0))
+
+        is_empty = l == 0 and r == 0 and t == 0 and bt == 0
+
+        if not hold_mask and is_empty:
+            # Not held and nothing pulled out: the canvas is the image, passed through as is.
             mask = torch.zeros((b, h, w), dtype=torch.float32, device=image.device)
             out = (image, mask, mask.unsqueeze(-1).repeat(1, 1, 1, 3), int(w), int(h))
             if block:
@@ -110,13 +117,6 @@ class LCImageOutpaint(PreviewImage):
             result = {"ui": {"lc_reset": [True]}, "result": out}
             self._add_preview(result, image, w, h, w, h)
             return result
-
-        l = int(round(w * _clamp(float(left), 0.0, MAX_PCT) / 100.0))
-        r = int(round(w * _clamp(float(right), 0.0, MAX_PCT) / 100.0))
-        t = int(round(h * _clamp(float(top), 0.0, MAX_PCT) / 100.0))
-        bt = int(round(h * _clamp(float(bottom), 0.0, MAX_PCT) / 100.0))
-
-        is_empty = l == 0 and r == 0 and t == 0 and bt == 0
 
         try:
             m = max(1, int(snap_to))
@@ -142,7 +142,8 @@ class LCImageOutpaint(PreviewImage):
         if block and is_empty:
             out = self._blocked(out)
 
-        result = {"ui": {}, "result": out}
+        # Not held: this run uses the edges you pulled out; the box snaps back to the image once the whole run has finished.
+        result = {"ui": {} if hold_mask else {"lc_reset_after": [True]}, "result": out}
         self._add_preview(result, image, w, h, out_w, out_h)
         return result
 

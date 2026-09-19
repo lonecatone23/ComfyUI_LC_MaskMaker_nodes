@@ -339,6 +339,29 @@ function endDrag() {
   }
 }
 
+function snapBox(node) {
+  writeExp(node, { l: 0, t: 0, r: 0, b: 0, aspect: getW(node, "aspect")?.value || "free" });
+  node.setDirtyCanvas?.(true, true);
+}
+
+function outpaintNodes() {
+  return (app.graph?._nodes || []).filter((n) => n?.comfyClass === NODE_CLASS || n?.type === NODE_CLASS);
+}
+
+function installRunListeners() {
+  if (window.__lcOutpaintRun) return;
+  window.__lcOutpaintRun = true;
+  api.addEventListener("execution_success", () => {
+    for (const n of outpaintNodes()) {
+      if (n._lcResetAfter) snapBox(n);
+      n._lcResetAfter = false;
+    }
+  });
+  const failed = () => { for (const n of outpaintNodes()) n._lcResetAfter = false; };
+  api.addEventListener("execution_error", failed);
+  api.addEventListener("execution_interrupted", failed);
+}
+
 function installGlobalMouseUp() {
   if (window.__lcOutpaintMouseUp) return;
   window.__lcOutpaintMouseUp = true;
@@ -354,6 +377,7 @@ app.registerExtension({
 
   async setup() {
     installGlobalMouseUp();
+    installRunListeners();
   },
 
   async beforeRegisterNodeDef(nodeType, nodeData) {
@@ -381,6 +405,20 @@ app.registerExtension({
       setTimeout(() => {
         if (!this._lcOpConfigured) applySize();
       }, 0);
+
+      // Switching to snap_to_image puts the box back on the image right away, so a new image starts clean
+      const hold = getW(this, "hold_mask");
+      if (hold) {
+        const prevHold = hold.callback;
+        hold.callback = (val, ...rest) => {
+          const out = prevHold?.call(this, val, ...rest);
+          if (!val) {
+            writeExp(this, { l: 0, t: 0, r: 0, b: 0, aspect: getW(this, "aspect")?.value || "free" });
+            this.setDirtyCanvas?.(true, true);
+          }
+          return out;
+        };
+      }
 
       const aspect = getW(this, "aspect");
       if (aspect) {
@@ -444,11 +482,10 @@ app.registerExtension({
         this._lcSrcW = sz.width || 0;
         this._lcSrcH = sz.height || 0;
       }
-      // Not held: the run used the plain image, so snap the box back to it
-      if (message?.lc_reset?.[0]) {
-        writeExp(this, { l: 0, t: 0, r: 0, b: 0, aspect: getW(this, "aspect")?.value || "free" });
-        this.setDirtyCanvas?.(true, true);
-      }
+      // Not held and nothing pulled out: the run used the plain image, so the box is already on it
+      if (message?.lc_reset?.[0]) snapBox(this);
+      // Not held and edges pulled out: the box snaps back only after the whole run has finished
+      this._lcResetAfter = !!message?.lc_reset_after?.[0];
       return r;
     };
 

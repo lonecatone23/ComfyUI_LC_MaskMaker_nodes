@@ -1,8 +1,8 @@
 {
   "id": "1589c53c-ce1b-4143-a402-3b7ef37fb971",
   "revision": 0,
-  "last_node_id": 63,
-  "last_link_id": 220,
+  "last_node_id": 68,
+  "last_link_id": 268,
   "nodes": [
     {
       "id": 6,
@@ -460,49 +460,6 @@
       "bgcolor": "#335"
     },
     {
-      "id": 16,
-      "type": "PreviewImage",
-      "pos": [
-        -290,
-        -200
-      ],
-      "size": [
-        490,
-        620
-      ],
-      "flags": {},
-      "order": 29,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 175
-        }
-      ],
-      "outputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "links": [
-            84
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.34.0",
-        "Node name for S&R": "PreviewImage",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "color": "#233",
-      "bgcolor": "#355"
-    },
-    {
       "id": 48,
       "type": "LoraLoaderModelOnly",
       "pos": [
@@ -553,89 +510,6 @@
       },
       "color": "#222",
       "bgcolor": "#000"
-    },
-    {
-      "id": 3,
-      "type": "LCImageOutpaint",
-      "pos": [
-        -1140,
-        -200
-      ],
-      "size": [
-        300,
-        520
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 57
-        }
-      ],
-      "outputs": [
-        {
-          "name": "control_image",
-          "type": "IMAGE",
-          "links": [
-            8,
-            100,
-            101
-          ]
-        },
-        {
-          "name": "control_mask",
-          "type": "MASK",
-          "links": []
-        },
-        {
-          "name": "mask_image",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "width",
-          "type": "INT",
-          "links": []
-        },
-        {
-          "name": "height",
-          "type": "INT",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LCImageOutpaint",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        true,
-        true,
-        25,
-        0,
-        23.78,
-        32.81,
-        "free",
-        "16"
-      ],
-      "widgets_values_named": {
-        "block": true,
-        "hold_mask": true,
-        "left": 25,
-        "top": 0,
-        "right": 23.78,
-        "bottom": 32.81,
-        "aspect": "free",
-        "snap_to": "16"
-      },
-      "color": "#324b4b",
-      "bgcolor": "#324b4b"
     },
     {
       "id": 46,
@@ -1348,56 +1222,6 @@
       "bgcolor": "#b46618"
     },
     {
-      "id": 1,
-      "type": "LoadImage",
-      "pos": [
-        -1880,
-        -140
-      ],
-      "size": [
-        390,
-        560
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            38
-          ]
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.34.0",
-        "Node name for S&R": "LoadImage",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "4dc9a43802aed0a296587e7f753629a4.jpg",
-        "image"
-      ],
-      "widgets_values_named": {
-        "image": "4dc9a43802aed0a296587e7f753629a4.jpg",
-        "upload": "image"
-      },
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
       "id": 42,
       "type": "LCEasyFolder",
       "pos": [
@@ -1409,7 +1233,7 @@
         160
       ],
       "flags": {},
-      "order": 7,
+      "order": 6,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1449,171 +1273,6 @@
       "bgcolor": "#324B4B"
     },
     {
-      "id": 58,
-      "type": "LC Bypasser Panel",
-      "pos": [
-        250,
-        -200
-      ],
-      "size": [
-        300,
-        78
-      ],
-      "flags": {},
-      "order": 32,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "hub",
-          "type": "*",
-          "link": 220
-        }
-      ],
-      "outputs": [
-        {
-          "name": "OPT_CONNECTION",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        true
-      ],
-      "widgets_values_named": {
-        "Enable Save Image": true
-      },
-      "color": "#c87a2c",
-      "bgcolor": "#b46618"
-    },
-    {
-      "id": 57,
-      "type": "LC Bypasser",
-      "pos": [
-        260,
-        120
-      ],
-      "size": [
-        270,
-        120
-      ],
-      "flags": {
-        "collapsed": true
-      },
-      "order": 31,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "Save Image",
-          "type": "*",
-          "link": 219
-        },
-        {
-          "name": "enable",
-          "type": "BOOLEAN",
-          "link": null
-        },
-        {
-          "name": "",
-          "type": "*",
-          "link": null
-        },
-        {
-          "name": "enable",
-          "type": "BOOLEAN",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "OPT_CONNECTION",
-          "type": "*",
-          "links": [
-            220
-          ]
-        }
-      ],
-      "properties": {
-        "toggleRestriction": "default",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        true
-      ],
-      "widgets_values_named": {
-        "Enable Save Image": true
-      },
-      "color": "#28281E",
-      "bgcolor": "#28281E"
-    },
-    {
-      "id": 43,
-      "type": "SaveImage",
-      "pos": [
-        560,
-        -200
-      ],
-      "size": [
-        340,
-        510
-      ],
-      "flags": {},
-      "order": 30,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 84
-        },
-        {
-          "name": "filename_prefix",
-          "type": "STRING",
-          "widget": {
-            "name": "filename_prefix"
-          },
-          "link": 83
-        }
-      ],
-      "outputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "links": [
-            219
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.34.0",
-        "Node name for S&R": "SaveImage",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "ComfyUI"
-      ],
-      "widgets_values_named": {
-        "filename_prefix": "ComfyUI"
-      },
-      "color": "#233",
-      "bgcolor": "#355"
-    },
-    {
       "id": 60,
       "type": "Label (rgthree)",
       "pos": [
@@ -1627,7 +1286,7 @@
       "flags": {
         "allow_interaction": true
       },
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1671,7 +1330,7 @@
       "flags": {
         "allow_interaction": true
       },
-      "order": 9,
+      "order": 8,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1713,7 +1372,7 @@
         110
       ],
       "flags": {},
-      "order": 10,
+      "order": 9,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1755,7 +1414,7 @@
         100
       ],
       "flags": {},
-      "order": 11,
+      "order": 10,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1788,21 +1447,515 @@
       "bgcolor": "#000"
     },
     {
-      "id": 63,
-      "type": "MarkdownNote",
+      "id": 1,
+      "type": "LoadImage",
       "pos": [
-        -2600,
-        -770
+        -1880,
+        -140
       ],
       "size": [
-        680,
-        1200
+        390,
+        560
       ],
       "flags": {},
-      "order": 12,
+      "order": 11,
       "mode": 0,
       "inputs": [],
-      "outputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            38,
+            245
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "LoadImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Lonecats Krea 2 Realism_00018_.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "Lonecats Krea 2 Realism_00018_.png",
+        "upload": "image"
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 16,
+      "type": "PreviewImage",
+      "pos": [
+        -290,
+        -200
+      ],
+      "size": [
+        490,
+        620
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 175
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            84,
+            246
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 3,
+      "type": "LCImageOutpaint",
+      "pos": [
+        -1140,
+        -190
+      ],
+      "size": [
+        300,
+        520
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 57
+        }
+      ],
+      "outputs": [
+        {
+          "name": "control_image",
+          "type": "IMAGE",
+          "links": [
+            8,
+            100,
+            101
+          ]
+        },
+        {
+          "name": "control_mask",
+          "type": "MASK",
+          "links": []
+        },
+        {
+          "name": "mask_image",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_MaskMaker_nodes",
+        "ver": "0b81ff6d04c833fa97466ce5043563cfb0b7c6ff",
+        "Node name for S&R": "LCImageOutpaint",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        true,
+        20.35,
+        0,
+        25.21,
+        31.12,
+        "free",
+        "16"
+      ],
+      "widgets_values_named": {
+        "block": true,
+        "hold_mask": true,
+        "left": 20.35,
+        "top": 0,
+        "right": 25.21,
+        "bottom": 31.12,
+        "aspect": "free",
+        "snap_to": "16"
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 57,
+      "type": "LC Bypasser",
+      "pos": [
+        260,
+        120
+      ],
+      "size": [
+        270,
+        182
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "Final Image",
+          "type": "*",
+          "link": 219
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        },
+        {
+          "name": "Save stitch Image",
+          "type": "*",
+          "link": 268
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        },
+        {
+          "name": "",
+          "type": "*",
+          "link": null
+        },
+        {
+          "name": "enable",
+          "type": "BOOLEAN",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": [
+            220
+          ]
+        }
+      ],
+      "properties": {
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        true,
+        true
+      ],
+      "widgets_values_named": {
+        "Enable Final Image": true,
+        "Enable Save stitch Image": true
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 67,
+      "type": "LCBypassRelay",
+      "pos": [
+        260,
+        160
+      ],
+      "size": [
+        240,
+        100
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_1",
+          "shape": 7,
+          "type": "*",
+          "link": 266
+        },
+        {
+          "name": "any_2",
+          "type": "*",
+          "link": 267
+        },
+        {
+          "name": "any_3",
+          "type": "*",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": [
+            268
+          ]
+        }
+      ],
+      "title": "Save stitch Image",
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "f0846e994125291e35de2a8da1cc040346a3a836",
+        "Node name for S&R": "LCBypassRelay"
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 65,
+      "type": "ImageStitch",
+      "pos": [
+        250,
+        200
+      ],
+      "size": [
+        270,
+        150
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image1",
+          "type": "IMAGE",
+          "link": 245
+        },
+        {
+          "name": "image2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 246
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            247,
+            266
+          ]
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "ImageStitch"
+      },
+      "widgets_values": [
+        "right",
+        true,
+        6,
+        "white"
+      ],
+      "widgets_values_named": {
+        "direction": "right",
+        "match_image_size": true,
+        "spacing_width": 6,
+        "spacing_color": "white"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 66,
+      "type": "SaveImage",
+      "pos": [
+        920,
+        -200
+      ],
+      "size": [
+        440,
+        510
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 247
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            267
+          ]
+        }
+      ],
+      "title": "Stitched Image",
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "ComfyUI"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 43,
+      "type": "SaveImage",
+      "pos": [
+        560,
+        -200
+      ],
+      "size": [
+        340,
+        510
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 84
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 83
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            219
+          ]
+        }
+      ],
+      "title": "Final Image",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.34.0",
+        "Node name for S&R": "SaveImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "ComfyUI"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 58,
+      "type": "LC Bypasser Panel",
+      "pos": [
+        250,
+        -200
+      ],
+      "size": [
+        300,
+        102
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "hub",
+          "type": "*",
+          "link": 220
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -1811,10 +1964,38 @@
         }
       },
       "widgets_values": [
-        "### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n---\n\n## Model links\n\nFor BF16 and NVFP4 variants, see [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC node repos**\n- **Main** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ Read first\n\n**Instructions**\n- Load an image.\n   - You can choose to resize or scale down to save headroom.\n   - With hold_mask on snap_to_image and block on if_empty_mask, the first run snaps the box to the image and stops\n   - Drag the edges of LC Outpaint outward, switch hold_mask to held, then run again\n- **Krea 2 Turbo + Identity Edit LoRA:** the grey canvas goes in as the reference image and the model repaints the grey area to match the scene (8 steps, cfg 1, shift 4)\n- **Prompt:** System Prompt is the only text. Edit it to steer what the new area looks like\n\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n---\n\n## 模型链接\n\nBF16 和 NVFP4 版本请见 [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC 节点仓库**\n- **主页** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ 先看这里\n\n**使用说明**\n- 加载一张图片。\n   - 可以选择缩放或缩小图片，以节省显存余量。\n   - 当 hold_mask 设为 snap_to_image、block 设为 if_empty_mask 时，第一次运行会让边框贴合图片并停止\n   - 向外拖动 LC Outpaint 的边缘，把 hold_mask 切换为 held，然后再运行一次\n- **Krea 2 Turbo + Identity Edit LoRA：** 灰色画布作为参考图输入，模型会按场景重绘灰色区域（8 步，cfg 1，shift 4）\n- **提示词：** System Prompt 是唯一的文字输入，修改它可以引导新区域的样子"
+        true,
+        true
       ],
       "widgets_values_named": {
-        "text": "### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n---\n\n## Model links\n\nFor BF16 and NVFP4 variants, see [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC node repos**\n- **Main** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ Read first\n\n**Instructions**\n- Load an image.\n   - You can choose to resize or scale down to save headroom.\n   - With hold_mask on snap_to_image and block on if_empty_mask, the first run snaps the box to the image and stops\n   - Drag the edges of LC Outpaint outward, switch hold_mask to held, then run again\n- **Krea 2 Turbo + Identity Edit LoRA:** the grey canvas goes in as the reference image and the model repaints the grey area to match the scene (8 steps, cfg 1, shift 4)\n- **Prompt:** System Prompt is the only text. Edit it to steer what the new area looks like\n\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n---\n\n## 模型链接\n\nBF16 和 NVFP4 版本请见 [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC 节点仓库**\n- **主页** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ 先看这里\n\n**使用说明**\n- 加载一张图片。\n   - 可以选择缩放或缩小图片，以节省显存余量。\n   - 当 hold_mask 设为 snap_to_image、block 设为 if_empty_mask 时，第一次运行会让边框贴合图片并停止\n   - 向外拖动 LC Outpaint 的边缘，把 hold_mask 切换为 held，然后再运行一次\n- **Krea 2 Turbo + Identity Edit LoRA：** 灰色画布作为参考图输入，模型会按场景重绘灰色区域（8 步，cfg 1，shift 4）\n- **提示词：** System Prompt 是唯一的文字输入，修改它可以引导新区域的样子"
+        "Enable Final Image": true,
+        "Enable Save stitch Image": true
+      },
+      "color": "#c87a2c",
+      "bgcolor": "#b46618"
+    },
+    {
+      "id": 68,
+      "type": "MarkdownNote",
+      "pos": [
+        -2630,
+        -780
+      ],
+      "size": [
+        710,
+        1210
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n---\n\n## Model links\n\nFor BF16 and NVFP4 variants, see [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC node repos**\n- **Main** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ Read first\n\n**Instructions**\n- Load an image.\n   - You can choose to resize or scale down to save headroom.\n- **LC Outpaint** (with **block** on if_empty_mask)\n   - **snap_to_image**: the first run stops with the box sitting on the image. Drag the edges outward, then run again. It continues from there, and the box snaps back to the image only after the generation finishes, so the next image starts clean\n   - **held**: keeps your box, run after run (good for trying new seeds on the same canvas)\n   - Switching to snap_to_image snaps the box to the image right away\n   - 💡 If a run fails or you cancel it, your edges stay so you can retry\n   - *note:* with **block** on never, nothing stops. The image passes through as is until you pull an edge out\n- **Krea 2 Turbo + Identity Edit LoRA:** the grey canvas goes in as the reference image and the model repaints the grey area to match the scene (8 steps, cfg 1, shift 4)\n- **Prompt:** System Prompt is the only text. Edit it to steer what the new area looks like\n\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n---\n\n## 模型链接\n\nBF16 和 NVFP4 版本请见 [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC 节点仓库**\n- **主页** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ 先看这里\n\n**使用说明**\n- 加载一张图片。\n   - 可以选择缩放或缩小图片，以节省显存余量。\n- **LC Outpaint**（**block** 设为 if_empty_mask）\n   - **snap_to_image**：第一次运行会让边框贴合图片并停止。向外拖动边缘，然后再运行一次。它会从这里继续，并且只有在生成结束之后，边框才会回到图片上，所以下一张图片总是从干净的状态开始\n   - **held**：保留你的边框，每次运行都不变（适合在同一块画布上尝试不同的种子）\n   - 切换到 snap_to_image 时，边框会立刻回到图片上\n   - 💡 如果运行失败或被取消，你拖出的边缘会保留，方便重试\n   - *注：* **block** 设为 never 时不会停止。在你拖出边缘之前，图片会原样通过\n- **Krea 2 Turbo + Identity Edit LoRA：** 灰色画布作为参考图输入，模型会按场景重绘灰色区域（8 步，cfg 1，shift 4）\n- **提示词：** System Prompt 是唯一的文字输入，修改它可以引导新区域的样子\n"
+      ],
+      "widgets_values_named": {
+        "text": "### Follow me on Civitai [HERE](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### This is many hours of work. If you enjoy it, please 👍 like, 💬 comment, and feel free to ⚡ tip 😉\n## [Buy me a ☕](https://ko-fi.com/lonecatone)\n---\n\n## Model links\n\nFor BF16 and NVFP4 variants, see [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC node repos**\n- **Main** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ Read first\n\n**Instructions**\n- Load an image.\n   - You can choose to resize or scale down to save headroom.\n- **LC Outpaint** (with **block** on if_empty_mask)\n   - **snap_to_image**: the first run stops with the box sitting on the image. Drag the edges outward, then run again. It continues from there, and the box snaps back to the image only after the generation finishes, so the next image starts clean\n   - **held**: keeps your box, run after run (good for trying new seeds on the same canvas)\n   - Switching to snap_to_image snaps the box to the image right away\n   - 💡 If a run fails or you cancel it, your edges stay so you can retry\n   - *note:* with **block** on never, nothing stops. The image passes through as is until you pull an edge out\n- **Krea 2 Turbo + Identity Edit LoRA:** the grey canvas goes in as the reference image and the model repaints the grey area to match the scene (8 steps, cfg 1, shift 4)\n- **Prompt:** System Prompt is the only text. Edit it to steer what the new area looks like\n\n---\n\n### 在 Civitai 关注我 [点这里](https://civitai.com/user/lonecatone23)\n### Instagram: [synth.studio.models](https://www.instagram.com/synth.studio.models/)\n### 这是投入了大量时间的作品。如果你喜欢，请 👍 点赞、💬 评论，也欢迎 ⚡ 打赏 😉\n## [请我喝杯 ☕](https://ko-fi.com/lonecatone)\n---\n\n## 模型链接\n\nBF16 和 NVFP4 版本请见 [Comfy-Org/Krea-2](https://huggingface.co/Comfy-Org/Krea-2)\n\n**diffusion_models**\n- [krea2_turbo_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors)\n- [Krea2_turbo_bf16](https://civitai.red/api/download/models/3064584?fileId=2943406)\n- [krea2_raw](https://huggingface.co/krea/Krea-2-Raw/resolve/main/raw.safetensors?download=true)\n- [Krealism](https://civitai.red/models/2786809/krealism?modelVersionId=3139976)\n.\n\n**text_encoder**\n- [qwen3vl_4b_fp8_scaled.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors)\n\n**vae**\n- [qwen_image_vae.safetensors](https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors)\n- [Krea2_real_vae](https://civitai.red/api/download/models/3068442?fileId=2947164)\n\n**loras**\n\n- [krea2_identity_edit_v1_2.safetensors](https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2.safetensors?download=true)\n\n**LC 节点仓库**\n- **主页** [https://github.com/lonecatone23](https://github.com/lonecatone23)\n- [https://github.com/lonecatone23/ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes](https://github.com/lonecatone23/ComfyUI_LC_Vision_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_AV_nodes](https://github.com/lonecatone23/ComfyUI_LC_AV_nodes)\n- [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)\n\n---\n## ✋ 先看这里\n\n**使用说明**\n- 加载一张图片。\n   - 可以选择缩放或缩小图片，以节省显存余量。\n- **LC Outpaint**（**block** 设为 if_empty_mask）\n   - **snap_to_image**：第一次运行会让边框贴合图片并停止。向外拖动边缘，然后再运行一次。它会从这里继续，并且只有在生成结束之后，边框才会回到图片上，所以下一张图片总是从干净的状态开始\n   - **held**：保留你的边框，每次运行都不变（适合在同一块画布上尝试不同的种子）\n   - 切换到 snap_to_image 时，边框会立刻回到图片上\n   - 💡 如果运行失败或被取消，你拖出的边缘会保留，方便重试\n   - *注：* **block** 设为 never 时不会停止。在你拖出边缘之前，图片会原样通过\n- **Krea 2 Turbo + Identity Edit LoRA：** 灰色画布作为参考图输入，模型会按场景重绘灰色区域（8 步，cfg 1，shift 4）\n- **提示词：** System Prompt 是唯一的文字输入，修改它可以引导新区域的样子\n"
       },
       "color": "#222",
       "bgcolor": "#000"
@@ -2044,6 +2225,54 @@
       58,
       0,
       "*"
+    ],
+    [
+      245,
+      1,
+      0,
+      65,
+      0,
+      "IMAGE"
+    ],
+    [
+      246,
+      16,
+      0,
+      65,
+      1,
+      "IMAGE"
+    ],
+    [
+      247,
+      65,
+      0,
+      66,
+      0,
+      "IMAGE"
+    ],
+    [
+      266,
+      65,
+      0,
+      67,
+      0,
+      "IMAGE"
+    ],
+    [
+      267,
+      66,
+      0,
+      67,
+      1,
+      "IMAGE"
+    ],
+    [
+      268,
+      67,
+      0,
+      57,
+      2,
+      "*"
     ]
   ],
   "groups": [
@@ -2089,8 +2318,8 @@
       "bounding": [
         240,
         -270,
-        670,
-        590
+        1130,
+        650
       ],
       "color": "#3f789e",
       "flags": {}
@@ -2149,18 +2378,18 @@
       }
     ],
     "links_added_by_ue": [
-      210,
-      211,
-      212,
-      213,
-      214,
-      215
+      260,
+      261,
+      262,
+      263,
+      264,
+      265
     ],
     "ds": {
-      "scale": 1.586309297171508,
+      "scale": 0.4177248169415732,
       "offset": [
-        3108.759692926118,
-        808.4206475244722
+        4591.737600181829,
+        1564.390674960682
       ]
     },
     "k2cf_state_id": "k2cf_1784799557580_oihrgm8ndu",
