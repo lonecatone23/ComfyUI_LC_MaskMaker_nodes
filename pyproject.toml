@@ -1,6 +1,6 @@
 [project]
 name = "ComfyUI_LC_MaskMaker_nodes"
-version = "0.11.0"
+version = "0.11.1"
 description = "ComfyUI LC MaskMaker Nodes by lonecatone23: on-node Outpaint and Create Mask, background removal, Segment Anything, person masks, mask refine, image blend, auto adjust, depth and normal maps. Models load on demand and are labelled with their licenses. Companion to ComfyUI_LC123_nodes; separate Registry name."
 readme = "README.md"
 requires-python = ">=3.10"

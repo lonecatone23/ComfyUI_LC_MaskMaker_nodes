@@ -12,7 +12,7 @@ import torch
 import torch.nn.functional as F
 
 from . import lc_models
-from .lc_matting import get_device
+from .lc_matting import get_device, no_cudnn_autotune
 
 _cache = {}  # path -> model on cpu; one kept at a time
 
@@ -94,11 +94,12 @@ class LCNormalBAE:
         net.to(dev)
         outs = []
         try:
-            for i in range(image.shape[0]):
-                n = estimate_normals(net, image[i, ..., :3], resolution, dev)
-                if flip_y:
-                    n = torch.stack([n[..., 0], -n[..., 1], n[..., 2]], -1)
-                outs.append(((n + 1.0) * 0.5).clamp(0, 1))
+            with no_cudnn_autotune():
+                for i in range(image.shape[0]):
+                    n = estimate_normals(net, image[i, ..., :3], resolution, dev)
+                    if flip_y:
+                        n = torch.stack([n[..., 0], -n[..., 1], n[..., 2]], -1)
+                    outs.append(((n + 1.0) * 0.5).clamp(0, 1))
         finally:
             net.to("cpu")
         return (torch.stack(outs, 0),)

@@ -12,7 +12,7 @@ import torch
 import torch.nn.functional as F
 
 from . import lc_models
-from .lc_matting import get_device
+from .lc_matting import get_device, no_cudnn_autotune
 
 CONFIGS = {
     "vits": {"features": 64, "out_channels": [48, 96, 192, 384]},
@@ -108,11 +108,12 @@ class LCDepthAnythingV2:
         net.to(dev)
         maps = []
         try:
-            for i in range(image.shape[0]):
-                d = estimate_depth(net, image[i, ..., :3], resolution, dev)
-                lo, hi = d.min(), d.max()
-                d = (d - lo) / (hi - lo).clamp_min(1e-8)
-                maps.append(1.0 - d if invert else d)
+            with no_cudnn_autotune():
+                for i in range(image.shape[0]):
+                    d = estimate_depth(net, image[i, ..., :3], resolution, dev)
+                    lo, hi = d.min(), d.max()
+                    d = (d - lo) / (hi - lo).clamp_min(1e-8)
+                    maps.append(1.0 - d if invert else d)
         finally:
             net.to("cpu")
         depth = torch.stack(maps, 0)  # (B,H,W)

@@ -10,6 +10,8 @@ between them is the unknown zone the matting step decides. A tighter band means 
 tighter mask.
 """
 
+import contextlib
+
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -18,6 +20,18 @@ from .lc_refine_core import blur, fix_gaps, guided_filter, levels, trimap_from
 from .lc_refine_core import grow as grow_mask
 
 METHODS = ["guided_filter", "vitmatte", "none"]
+
+
+@contextlib.contextmanager
+def no_cudnn_autotune():
+    """Run a model with cuDNN autotune off. ComfyUI's --fast turns it on globally, and then every new input
+    size makes cuDNN benchmark each conv: tens of seconds and close to all the VRAM on EfficientNet / DPT nets."""
+    prev = torch.backends.cudnn.benchmark
+    torch.backends.cudnn.benchmark = False
+    try:
+        yield
+    finally:
+        torch.backends.cudnn.benchmark = prev
 
 
 def get_device():

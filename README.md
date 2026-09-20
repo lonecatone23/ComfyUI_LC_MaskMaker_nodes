@@ -5,7 +5,7 @@ Mask, matting, segmentation and image-adjustment nodes for [ComfyUI](https://git
 - **Repo:** [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)
 - **Civitai:** [lonecatone23](https://civitai.com/user/lonecatone23)
 - **Support:** [Buy me a ☕](https://ko-fi.com/lonecatone)
-- **Version:** 0.11.0 · **10 Python nodes**
+- **Version:** 0.11.1 · **10 Python nodes**
 
 > Companion to [ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes). LC123 stays import-free. Anything that needs a model lives here and loads it on demand.
 
