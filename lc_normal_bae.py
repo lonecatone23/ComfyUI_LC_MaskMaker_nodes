@@ -57,6 +57,14 @@ def estimate_normals(model, frame_hwc, resolution, dev):
     return out[0].permute(1, 2, 0).float().cpu()
 
 
+def _native_blur(image, blur_radius, sigma):
+    """ComfyUI's own Blur Image (ImageBlur) node, so the result matches chaining that node after this one."""
+    from comfy_extras.nodes_post_processing import Blur
+
+    out = Blur.execute(image, int(blur_radius), float(sigma))
+    return out.args[0] if hasattr(out, "args") else out[0]
+
+
 class LCNormalBAE:
     @classmethod
     def INPUT_TYPES(cls):
@@ -78,6 +86,20 @@ class LCNormalBAE:
                     "default": False,
                     "tooltip": "Flip the green channel (OpenGL vs DirectX style normal maps).",
                 }),
+                "blur_radius": ("INT", {
+                    "default": 0, "min": 0, "max": 31, "step": 1,
+                    "tooltip": (
+                        "Blur the finished normal map with ComfyUI's Blur Image. The radius is in pixels, the blur kernel is "
+                        "2 x radius + 1 wide. Smooths the fine noise BAE leaves on flat surfaces. 0 = no blur."
+                    ),
+                }),
+                "sigma": ("FLOAT", {
+                    "default": 1.0, "min": 0.1, "max": 10.0, "step": 0.1,
+                    "tooltip": (
+                        "How evenly the blur spreads across its radius (same meaning as in Blur Image). Higher = stronger, "
+                        "closer to a plain box blur. Lower = gentler, weighted toward the center. Only used when blur_radius is above 0."
+                    ),
+                }),
             },
         }
 
@@ -85,9 +107,9 @@ class LCNormalBAE:
     RETURN_NAMES = ("normal_map",)
     FUNCTION = "run"
     CATEGORY = "LC MaskMaker/depth"
-    DESCRIPTION = "BAE surface normal map (RGB = XYZ), the same style ControlNet's normal_bae makes."
+    DESCRIPTION = "BAE surface normal map (RGB = XYZ), the same style ControlNet's normal_bae makes. Optional blur (blur_radius, sigma) uses ComfyUI's Blur Image."
 
-    def run(self, image, model, resolution, flip_y):
+    def run(self, image, model, resolution, flip_y, blur_radius=0, sigma=1.0):
         path = lc_models.resolve_bae(model)
         net = _load(path)
         dev = get_device()
@@ -102,7 +124,10 @@ class LCNormalBAE:
                     outs.append(((n + 1.0) * 0.5).clamp(0, 1))
         finally:
             net.to("cpu")
-        return (torch.stack(outs, 0),)
+        result = torch.stack(outs, 0)
+        if blur_radius > 0:
+            result = _native_blur(result, blur_radius, sigma).clamp(0, 1)
+        return (result,)
 
 
 NODE_CLASS_MAPPINGS = {
