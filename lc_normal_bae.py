@@ -75,7 +75,8 @@ class LCNormalBAE:
                     "tooltip": (
                         "BAE weights (scannet.pt). Trained on ScanNet, whose terms are not commercial-friendly, "
                         "and the weights' Hugging Face card just says 'other'. Verify before commercial use.\n"
-                        "'Download' entries are fetched the first time you run."
+                        "Uses the copy you already have (models/normalbae or comfyui_controlnet_aux), "
+                        "or downloads it the first time you run."
                     ),
                 }),
                 "resolution": ("INT", {
@@ -102,6 +103,11 @@ class LCNormalBAE:
                 }),
             },
         }
+
+    @classmethod
+    def VALIDATE_INPUTS(cls, model):
+        # Workflows saved before 0.12 hold a machine-specific label; any scannet label still runs.
+        return True if "scannet" in str(model).lower() else f"Unknown BAE model: {model}"
 
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("normal_map",)

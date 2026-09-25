@@ -78,7 +78,8 @@ class LCDepthAnythingV2:
                     "tooltip": (
                         "Depth Anything V2 weights. The license is in the label: Small is Apache-2.0, "
                         "Base / Large / Giant are CC-BY-NC-4.0 (non-commercial).\n"
-                        "Entries marked 'Download' are fetched the first time you run."
+                        "Uses the file you already have (models/depthanything or comfyui_controlnet_aux), "
+                        "or downloads it the first time you run."
                     ),
                 }),
                 "resolution": ("INT", {
@@ -91,6 +92,14 @@ class LCDepthAnythingV2:
                 }),
             },
         }
+
+    @classmethod
+    def VALIDATE_INPUTS(cls, model):
+        # Workflows saved before 0.12 hold a machine-specific label (file name + folder). Accept any
+        # label that names a Depth Anything V2 size, so those workflows still run everywhere.
+        if lc_models._encoder_from_choice(model) is None:
+            return f"Unknown Depth Anything model: {model}"
+        return True
 
     RETURN_TYPES = ("IMAGE", "MASK")
     RETURN_NAMES = ("depth", "depth_mask")

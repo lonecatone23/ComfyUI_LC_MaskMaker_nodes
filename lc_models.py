@@ -325,36 +325,56 @@ def _depth_local():
     return found
 
 
+def _depth_label(encoder):
+    """The one label a model gets on every machine, wherever its file lives (or before it is downloaded)."""
+    name, lic = DEPTH_VARIANTS[encoder]
+    return f"Depth Anything V2 {name} ({lic})"
+
+
 def depth_choices():
-    local = _depth_local()
-    have = {os.path.basename(p) for p, _e in local.values()}
-    downloads = [DOWNLOAD_PREFIX + _label_for_depth(f, enc) for f, (_repo, enc) in DEPTH_DOWNLOADS.items() if f not in have]
-    # Apache-2.0 entries first so the default is never a non-commercial model by accident
-    entries = list(local.keys()) + downloads
-    return sorted(entries, key=lambda e: ("Apache-2.0" not in e, entries.index(e)))
+    # Same list everywhere, so a shared workflow never shows a missing model. Giant has no public
+    # download, so it only shows up when you have the file. Apache-2.0 Small comes first.
+    local_encs = {enc for _p, enc in _depth_local().values()}
+    return [_depth_label(e) for e in ("vits", "vitb", "vitl", "vitg") if e != "vitg" or "vitg" in local_encs]
+
+
+def _encoder_from_choice(choice):
+    for enc in DEPTH_VARIANTS:
+        if choice == _depth_label(enc):
+            return enc
+    # labels saved by older versions: file name + location, or a "Download:" entry
+    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
+    return _encoder_from_name(label.split(" (")[0])
 
 
 def resolve_depth(choice):
-    """Return (path, encoder), downloading first if needed."""
+    """Return (path, encoder), downloading first if needed. Accepts current and older labels."""
     local = _depth_local()
-    if choice in local:
+    if choice in local:  # an old label naming one exact local file
         return local[choice]
-    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
-    for f, (repo, enc) in DEPTH_DOWNLOADS.items():
-        if _label_for_depth(f, enc) == label:
-            dest = os.path.join(models_dir("depthanything"), f)
-            if not os.path.isfile(dest):
-                from huggingface_hub import hf_hub_download
+    enc = _encoder_from_choice(choice)
+    if enc is None:
+        raise ValueError(f"[LC MaskMaker] Unknown Depth Anything model: {choice}")
+    # any local file of that size; models/depthanything wins over the controlnet_aux copy
+    for _label, (path, e) in local.items():
+        if e == enc:
+            return path, enc
+    for f, (repo, e) in DEPTH_DOWNLOADS.items():
+        if e != enc:
+            continue
+        dest = os.path.join(models_dir("depthanything"), f)
+        if not os.path.isfile(dest):
+            from huggingface_hub import hf_hub_download
 
-                os.makedirs(os.path.dirname(dest), exist_ok=True)
-                print(f"[LC MaskMaker] downloading {repo}/{f} -> {dest}")
-                tmp_dir = os.path.join(models_dir("depthanything"), ".lc_tmp")
-                tmp = hf_hub_download(repo_id=repo, filename=f, local_dir=tmp_dir)
-                os.replace(tmp, dest)
-                shutil.rmtree(tmp_dir, ignore_errors=True)
-                print(f"[LC MaskMaker] finished {repo}")
-            return dest, enc
-    raise ValueError(f"[LC MaskMaker] Unknown Depth Anything model: {choice}")
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            print(f"[LC MaskMaker] downloading {repo}/{f} -> {dest}")
+            tmp_dir = os.path.join(models_dir("depthanything"), ".lc_tmp")
+            tmp = hf_hub_download(repo_id=repo, filename=f, local_dir=tmp_dir)
+            os.replace(tmp, dest)
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            print(f"[LC MaskMaker] finished {repo}")
+        return dest, enc
+    raise ValueError(f"[LC MaskMaker] {choice} is not on this machine and has no public download.")
 
 
 BAE_FILE = "scannet.pt"
@@ -372,25 +392,23 @@ def _bae_local():
 
 
 def bae_choices():
-    local = _bae_local()
-    if any(not k.endswith("]") for k in local):  # our own copy exists
-        return list(local.keys())
-    return list(local.keys()) + [DOWNLOAD_PREFIX + BAE_LABEL]
+    # One label on every machine, wherever the file lives (or before it is downloaded).
+    return [BAE_LABEL]
 
 
 def resolve_bae(choice):
+    """Accepts the current label and the per-machine labels older versions saved."""
     local = _bae_local()
-    if choice in local:
-        return local[choice]
+    if local:
+        return next(iter(local.values()))  # models/normalbae wins over the controlnet_aux copy
     dest = os.path.join(models_dir("normalbae"), BAE_FILE)
-    if not os.path.isfile(dest):
-        from huggingface_hub import hf_hub_download
+    from huggingface_hub import hf_hub_download
 
-        os.makedirs(os.path.dirname(dest), exist_ok=True)
-        print(f"[LC MaskMaker] downloading lllyasviel/Annotators/{BAE_FILE} -> {dest}")
-        tmp_dir = os.path.join(models_dir("normalbae"), ".lc_tmp")
-        tmp = hf_hub_download(repo_id="lllyasviel/Annotators", filename=BAE_FILE, local_dir=tmp_dir)
-        os.replace(tmp, dest)
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        print("[LC MaskMaker] finished scannet.pt")
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    print(f"[LC MaskMaker] downloading lllyasviel/Annotators/{BAE_FILE} -> {dest}")
+    tmp_dir = os.path.join(models_dir("normalbae"), ".lc_tmp")
+    tmp = hf_hub_download(repo_id="lllyasviel/Annotators", filename=BAE_FILE, local_dir=tmp_dir)
+    os.replace(tmp, dest)
+    shutil.rmtree(tmp_dir, ignore_errors=True)
+    print("[LC MaskMaker] finished scannet.pt")
     return dest
