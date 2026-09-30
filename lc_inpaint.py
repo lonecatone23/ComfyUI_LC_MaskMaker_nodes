@@ -61,7 +61,10 @@ TIP = {
     "cfg": "CFG. 1 for Flux, Krea 2, Anima and other cfg 1 models; around 5 to 7 for SDXL.",
     "sampler_name": "Sampler.",
     "scheduler": "Scheduler.",
-    "positive": "What the inpainted area should look like.",
+    "positive": "The image's prompt. A prompt describing the whole scene can get drawn into every crop at denoise 0.3 "
+                "and up (a whole tiny scene in the face): wire inpaint_positive to prevent that.",
+    "inpaint_positive": "Optional. A prompt for the crops only, e.g. 'close-up of a woman's face, natural skin'. "
+                        "Used instead of positive for the redraw. Recommended whenever positive describes the whole scene.",
     "negative": "Optional. Leave empty for cfg 1 models; wire it for SDXL and other models that use a negative.",
     "pipe": "LC pipe: model, VAE, seed, steps, cfg, sampler and scheduler come from here.",
     "model": "Optional. Wire a model here to use it instead of the pipe's (with LoRAs on it, or a different model).",
@@ -119,6 +122,7 @@ def _optional(neg=True, pos=False):
         out["model"] = ("MODEL", _tip("model"))
         out["vae"] = ("VAE", _tip("vae"))
         out["positive"] = ("CONDITIONING", _tip("positive"))
+    out["inpaint_positive"] = ("CONDITIONING", _tip("inpaint_positive"))
     if neg:
         out["negative"] = ("CONDITIONING", _tip("negative"))
     return out
@@ -251,7 +255,9 @@ def _inpaint_region(frame, region, box, s):
 
 
 def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps, cfg, seed):
-    """kw: the node's own widgets (grow, feather, blend, padding, inpaint_resolution, denoise)."""
+    """kw: the node's own widgets (grow, feather, blend, padding, inpaint_resolution, denoise, inpaint_positive)."""
+    if kw.get("inpaint_positive") is not None:
+        positive = kw["inpaint_positive"]
     if negative is None:
         negative = _zero_out(positive)
     return dict(model=model, vae=vae, positive=positive, negative=negative, sampler_name=sampler_name,
@@ -336,7 +342,7 @@ def _pipe_settings(pipe, kw, name):
     for k in have:
         p[k] = kw[k]
     positive = kw.get("positive") if kw.get("positive") is not None else p["positive"]
-    if positive is None:
+    if positive is None and kw.get("inpaint_positive") is None:
         raise ValueError(f"[{name}] No positive: wire one, or put it in the pipe.")
     negative = kw.get("negative") if kw.get("negative") is not None else p["negative"]
     return _settings(kw, p["model"], p["vae"], positive, negative, p["sampler_name"], p["scheduler"], p["steps"],
