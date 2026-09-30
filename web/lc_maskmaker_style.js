@@ -17,6 +17,8 @@ const WITH_PREVIEW = new Set([
   "LCSplineMask",
   "LCMaskRefine",
   "LCSegmentAnything",
+  "LCSmartInpaint",
+  "LCSmartInpaintPipe",
 ]);
 // Nodes without one: only the width standard applies, height stays natural
 const PLAIN = new Set([

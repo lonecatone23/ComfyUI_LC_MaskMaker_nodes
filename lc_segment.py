@@ -19,14 +19,13 @@ import numpy as np
 import torch
 from nodes import PreviewImage
 
-from . import lc_models
+from . import lc_models, lc_sam3
 from .lc_matting import METHODS, get_device, refine_mask
 from .lc_preview_util import wipe_preview
 
 ENGINES = ["grounding_dino + sam", "sam3"]
 
 _hf_cache = {}    # kind -> (folder, processor, model); one model per kind kept
-_sam3_cache = {}  # path -> (model patcher, clip)
 
 
 def _tokens(prompt):
@@ -93,42 +92,6 @@ def _sam_masks(pil, boxes, folder, dev):
     finally:
         model.to("cpu")
     return masks.any(dim=0)[0].float()
-
-
-# --------------------------------------------------------------------------
-# SAM 3 (ComfyUI core)
-# --------------------------------------------------------------------------
-def _sam3_load(path):
-    if path not in _sam3_cache:
-        import comfy.sd
-        import folder_paths
-
-        out = comfy.sd.load_checkpoint_guess_config(
-            path, output_vae=False, output_clip=True, embedding_directory=folder_paths.get_folder_paths("embeddings")
-        )
-        model, clip = out[0], out[1]
-        if clip is None:
-            raise RuntimeError(f"[LC Segment Anything] {path} does not look like a SAM 3 checkpoint.")
-        _sam3_cache.clear()
-        _sam3_cache[path] = (model, clip)
-    return _sam3_cache[path]
-
-
-def _sam3_mask(image_1hwc, tokens, path, threshold):
-    """Union of the SAM 3 mask for every word. Returns (H,W) float."""
-    try:
-        from comfy_extras.nodes_sam3 import SAM3_Detect
-    except Exception as e:
-        raise RuntimeError("[LC Segment Anything] This ComfyUI has no built-in SAM 3 support. Update ComfyUI.") from e
-    model, clip = _sam3_load(path)
-    h, w = image_1hwc.shape[1:3]
-    union = torch.zeros(h, w)
-    for tok in tokens:
-        cond = clip.encode_from_tokens_scheduled(clip.tokenize(tok))
-        res = SAM3_Detect.execute(model, image_1hwc[..., :3], conditioning=cond, threshold=float(threshold),
-                                  refine_iterations=2, individual_masks=False)
-        union = torch.maximum(union, res.args[0][0].float().cpu())
-    return union
 
 
 # --------------------------------------------------------------------------
@@ -232,7 +195,7 @@ class LCSegmentAnything(PreviewImage):
         for i in range(b):
             frame = image[i:i + 1]
             if engine == "sam3":
-                raw = _sam3_mask(frame, tokens, sam3_path, sam3_threshold)
+                raw = lc_sam3.union(frame, tokens, sam3_path, sam3_threshold)
             else:
                 pil = Image.fromarray((frame[0, ..., :3].clamp(0, 1).cpu().numpy() * 255).round().astype(np.uint8))
                 boxes = _dino_boxes(pil, tokens, dino_folder, threshold, max_objects, dev)

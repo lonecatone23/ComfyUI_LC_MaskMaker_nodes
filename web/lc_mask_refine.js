@@ -4,6 +4,7 @@
  * of the pointer with the before image on the right; move away and it shows the full after image.
  *
  * The node sends up to four small images in message.lc_refine: source, before mask, after mask, trimap.
+ * The inpaint nodes send message.lc_inpaint instead: before (areas outlined) and after, plus a one-line note.
  * preview_view: "cutout" puts the subject on a checkerboard, "mask" shows black/white,
  * "trimap" shows the trimap as the before side.
  */
@@ -13,7 +14,10 @@ import { api } from "../../scripts/api.js";
 import { lcApplyLaunchColor } from "./lc_color.js";
 import { LC_W as DEFAULT_W, LC_MIN_W as MIN_W, LC_PAD as PAD, lcPreviewHeight, lcLaunchFit } from "./lc_standards.js";
 
-const NODE_CLASSES = new Set(["LCMaskRefine", "LCSegmentAnything"]);
+const NODE_CLASSES = new Set([
+  "LCMaskRefine", "LCSegmentAnything",
+  "LCSmartInpaint", "LCSmartInpaintPipe",
+]);
 // Multiline text widgets that must stay a fixed height (otherwise they grow to fill the node)
 const FIXED_HEIGHT = { prompt: 64 };
 
@@ -203,22 +207,47 @@ class LCMaskPreview {
     } catch (_) {}
   }
 
+  async _loadPair(metas, note) {
+    if (!metas || metas.length < 2) {
+      this.views = note ? { note } : null;
+      app.canvas?.setDirty?.(true, true);
+      return;
+    }
+    try {
+      const [before, after] = await Promise.all(metas.slice(0, 2).map((m) => loadImg(imageUrl(m))));
+      this.views = { w: before.naturalWidth, h: before.naturalHeight, imgBefore: before, imgAfter: after, note };
+      app.canvas?.setDirty?.(true, true);
+    } catch (_) {}
+  }
+
   // Keep the preview info on the node so undo / reload can bring the images back
   _restoreFromProps() {
-    const metas = this.node.properties?.lc_refine_meta;
-    if (metas?.length) this._load(metas);
+    const p = this.node.properties || {};
+    if (p.lc_inpaint_meta?.length || p.lc_inpaint_note) this._loadPair(p.lc_inpaint_meta, p.lc_inpaint_note);
+    else if (p.lc_refine_meta?.length) this._load(p.lc_refine_meta);
   }
 
   onExecuted(message) {
+    if (!this.node.properties) this.node.properties = {};
+    if (message?.lc_inpaint_note) {
+      const note = message.lc_inpaint_note[0] || "";
+      this.node.properties.lc_inpaint_meta = message.lc_inpaint || [];
+      this.node.properties.lc_inpaint_note = note;
+      this._loadPair(message.lc_inpaint, note);
+      return;
+    }
     const metas = message?.lc_refine;
     if (!metas?.length) return;
-    if (!this.node.properties) this.node.properties = {};
     this.node.properties.lc_refine_meta = metas;
     this._load(metas);
   }
 
   _paintSide(ctx, which, r, view) {
     const v = this.views;
+    if (v.imgBefore) {
+      ctx.drawImage(which === "before" ? v.imgBefore : v.imgAfter, r.x, r.y, r.w, r.h);
+      return;
+    }
     if (view === "trimap" && which === "before" && v.trimap) {
       ctx.drawImage(v.trimap, r.x, r.y, r.w, r.h);
     } else if (view === "mask") {
@@ -236,11 +265,23 @@ class LCMaskPreview {
     const v = this.views;
     if (!v) return;
     const node = this.node;
-    const top = widgetsBottom(node) + PAD;
+    let top = widgetsBottom(node) + PAD;
     const x = PAD;
     const w = Math.max(1, node.size[0] - PAD * 2);
-    const h = Math.max(1, node.size[1] - top - PAD);
+    let h = Math.max(1, node.size[1] - top - PAD);
     if (h < 16) return;
+    if (v.note !== undefined) {
+      ctx.save();
+      ctx.font = "12px sans-serif";
+      ctx.fillStyle = /^Nothing|empty/.test(v.note) ? "#f0b35a" : "#9fd8c8";
+      ctx.textBaseline = "top";
+      ctx.fillText(v.note, x, top, w);
+      ctx.restore();
+      if (!v.imgBefore) return;
+      top += 18;
+      h -= 18;
+      if (h < 16) return;
+    }
 
     // fit the image inside the box (letterbox)
     const s = Math.min(w / v.w, h / v.h);
