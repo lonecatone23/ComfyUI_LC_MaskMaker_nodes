@@ -11,6 +11,10 @@ background. Two engines:
               class includes torso and neck skin. Needs the `mediapipe` package (not installed
               by this pack).
 
+Skin mask: mediapipe with face + body is face skin plus body skin. remove_features then cuts out the eyes, brows,
+lips and teeth with SAM 3 (the model LC Segment Anything and LC Smart Inpaint already use), which leaves skin only,
+ready for LC Skin Beauty, LC Skin Upscale or LC Sharpen Pro.
+
 The raw mask can then be refined with the same guided filter / VITMatte trimap as LC Mask Refine.
 No preview on the node: use LC Mask Refine after it if you want the before/after wipe.
 """
@@ -38,6 +42,27 @@ SEGFORMER_PARTS = {
 MEDIAPIPE_PARTS = {"background": 0, "hair": 1, "body": 2, "face": 3, "clothes": 4, "accessories": 5}
 
 _seg_cache = {}  # folder -> (processor, model)
+
+# Facial features cut out by remove_features. Tested: "nostrils" swallows the whole nose, so it is left out.
+FEATURE_WORDS = ["eyes", "eyebrows", "lips", "teeth"]
+FEATURE_THRESHOLD = 0.45
+
+
+def _features(frame_1hwc):
+    """Eyes, brows, lips and teeth as a soft (H,W) mask, grown a little so no lash or lip edge is left behind."""
+    from . import lc_sam3
+
+    choices = lc_models.sam3_choices()
+    path = lc_models.resolve_sam3(choices[0])
+    hard = lc_sam3.union(frame_1hwc[..., :3].cpu().float(), FEATURE_WORDS, path, FEATURE_THRESHOLD)
+    if not bool(hard.any()):
+        return hard
+    m = F.max_pool2d(hard[None, None], 5, stride=1, padding=2)  # grow about 2 px
+    k = torch.tensor([1.0, 4.0, 6.0, 4.0, 1.0])
+    k = (k / k.sum())
+    m = F.conv2d(F.pad(m, (2, 2, 0, 0), mode="replicate"), k.view(1, 1, 1, 5))
+    m = F.conv2d(F.pad(m, (0, 0, 2, 2), mode="replicate"), k.view(1, 1, 5, 1))
+    return m[0, 0].clamp(0, 1)
 
 
 def _segformer_prob(pil, folder, parts, dev):
@@ -155,6 +180,12 @@ class LCPersonMask:
                     "default": 2.0, "min": 0.25, "max": 16.0, "step": 0.25,
                     "tooltip": "vitmatte only. Larger images are matted at this size, then scaled back.",
                 }),
+                "remove_features": ("BOOLEAN", {
+                    "default": False, "label_on": "enabled", "label_off": "disabled",
+                    "tooltip": "Cut the eyes, eyebrows, lips and teeth out of the face, using SAM 3 (the model LC Segment "
+                               "Anything and LC Smart Inpaint use). With engine mediapipe and face + body on, this is a "
+                               "skin-only mask for LC Skin Beauty, LC Skin Upscale or LC Sharpen Pro. Only runs when face is on.",
+                }),
             },
         }
 
@@ -164,12 +195,13 @@ class LCPersonMask:
     CATEGORY = "LC MaskMaker/mask"
     DESCRIPTION = (
         "Select parts of a person: face, hair, body, clothes, accessories, background. "
-        "Segformer or MediaPipe, with optional guided filter / VITMatte refine."
+        "Segformer or MediaPipe, with optional guided filter / VITMatte refine. "
+        "Skin only: mediapipe, face + body, remove_features on (cuts eyes, brows, lips and teeth with SAM 3)."
     )
 
     def segment(self, image, engine, segformer_model, face, hair, body, clothes, accessories, background,
                 confidence, refine, vitmatte_model, edge_erode, edge_dilate, black_point, white_point,
-                max_megapixels):
+                max_megapixels, remove_features=False):
         from PIL import Image
 
         parts = [n for n, on in (("face", face), ("hair", hair), ("body", body), ("clothes", clothes),
@@ -200,9 +232,15 @@ class LCPersonMask:
             m = raw.to(dev).unsqueeze(0).unsqueeze(0)
             out, _tri = refine_mask(img, m, refine, folder, 0.0, 0.0, 0.75, edge_erode, edge_dilate, 0.001, 0.5,
                                    black_point, white_point, 0.0, max_megapixels, dev)
+            final = out[0, 0].cpu()
+            if remove_features and face and bool(raw.any()):
+                # after the edge refine, so the matting can not grow back over an eye or a lip
+                feat = _features(frame)
+                final = final * (1.0 - feat)
+                raw = raw * (feat < 0.5).float()
             raws.append(raw)
-            masks.append(out[0, 0].cpu())
-            cutouts.append(torch.cat([frame[0, ..., :3].cpu().float(), out[0, 0].cpu().unsqueeze(-1)], dim=-1))
+            masks.append(final)
+            cutouts.append(torch.cat([frame[0, ..., :3].cpu().float(), final.unsqueeze(-1)], dim=-1))
 
         return (torch.stack(cutouts, 0), torch.stack(masks, 0), torch.stack(raws, 0))
 

@@ -29,7 +29,7 @@ def _load(path):
     args = types.SimpleNamespace(mode="client", architecture="BN", pretrained="scannet",
                                  sampling_ratio=0.4, importance_ratio=0.7)
     model = NNET(args)
-    ckpt = torch.load(path, map_location="cpu", weights_only=False)["model"]
+    ckpt = torch.load(path, map_location="cpu", weights_only=True)["model"]  # tensors only: no pickled code runs
     model.load_state_dict({(k[len("module."):] if k.startswith("module.") else k): v for k, v in ckpt.items()})
     model.eval()
     _cache.clear()

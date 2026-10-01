@@ -35,6 +35,13 @@ except ImportError:  # pragma: no cover
 
 PIPE_TYPE = "LC_PIPE"
 SNAP = 32  # crop sizes are multiples of this, safe for 8x and 16x VAEs with a 2x2 patch
+SEAM_CAP = 0.08  # the seam colour fix never shifts a channel by more than this
+
+
+def _ring(feather):
+    """How far the repainted area reaches past the pasted area (px). The model redraws that ring too, so the paste
+    edge lands on pixels it already made consistent, and the ring's known colours measure any colour drift."""
+    return max(8, int(round(float(feather) * 1.5)))
 OUTLINE = (0.25, 0.9, 1.0)
 
 DESC_SMART = (
@@ -54,11 +61,13 @@ TIP = {
     "feather": "Softness of the mask edge in pixels, so the redrawn area blends into the rest. 0 = hard edge.",
     "blend": "How much of the redraw is pasted in. 1 = all of it, 0.5 = half redraw, half original. Lower tames a redraw that went too far.",
     "padding": "Pixels of the surrounding image included with each crop, so the model sees the context.",
-    "inpaint_resolution": "Each crop is scaled so its long side is this size before it is redrawn. Higher = more detail, slower.",
+    "inpaint_resolution": "Each crop is redrawn at about this many pixels squared (1024 = 1 megapixel), whatever its shape. "
+                          "Higher = more detail, slower.",
     "denoise": "How much is redrawn. Low keeps the shape and fixes details, high redraws from scratch.",
     "seed": "Seed for the redraw.",
     "steps": "Sampling steps.",
-    "cfg": "CFG. 1 for Flux, Krea 2, Anima and other cfg 1 models; around 5 to 7 for SDXL.",
+    "cfg": "CFG. 1 for Flux, Krea 2, Anima and other cfg 1 models; around 5 to 7 for SDXL. Never goes below 1: "
+           "a lower value (from a pipe or a wired input) is raised to 1, because below 1 the redraw comes out speckled.",
     "sampler_name": "Sampler.",
     "scheduler": "Scheduler.",
     "positive": "The image's prompt. A prompt describing the whole scene can get drawn into every crop at denoise 0.3 "
@@ -102,7 +111,7 @@ def _sampler_inputs():
         "sampler_name": (comfy.samplers.KSampler.SAMPLERS, _tip("sampler_name")),
         "scheduler": (comfy.samplers.KSampler.SCHEDULERS, _tip("scheduler")),
         "steps": ("INT", _tip("steps", default=20, min=1, max=150)),
-        "cfg": ("FLOAT", _tip("cfg", default=1.0, min=0.0, max=30.0, step=0.1, round=0.01)),
+        "cfg": ("FLOAT", _tip("cfg", default=1.0, min=1.0, max=30.0, step=0.1, round=0.01)),
         "denoise": ("FLOAT", _tip("denoise", default=0.3, min=0.0, max=1.0, step=0.01)),
         "seed": ("INT", _tip("seed", default=0, min=0, max=0xFFFFFFFFFFFFFFFF, control_after_generate=True)),
     }
@@ -190,7 +199,7 @@ def _clean(mask_hw):
 def _regions(masks, grow_px, feather, padding, w, h):
     """Grow every object, merge objects that overlap each other, then add the padding.
     Returns [(mask (H,W), crop box)]. Crops of separate objects may overlap: they are done one after another."""
-    edge = int(math.ceil(feather * 2))
+    edge = int(math.ceil(feather * 2)) + _ring(feather)
     items = []
     for m in masks:
         g = grow(m.float().unsqueeze(0).unsqueeze(0), grow_px)[0, 0]
@@ -210,11 +219,14 @@ def _regions(masks, grow_px, feather, padding, w, h):
                     break
             if merged:
                 break
+    # tested: a crop reaching out half the object's size made the face a smaller part of the redraw, and at 4x
+    # upscales that left blotches. Padding alone keeps the object large in the crop.
     return [(m, _expand(b, int(padding), w, h)) for m, b in items]
 
 
 def _target(cw, ch, res):
-    s = res / float(max(cw, ch))
+    # sized by area (res x res pixels), not by the long side: a wide crop keeps as much detail as a square one
+    s = math.sqrt(float(res) * float(res) / float(max(1, cw * ch)))
     tw = max(SNAP, int(round(cw * s / SNAP)) * SNAP)
     th = max(SNAP, int(round(ch * s / SNAP)) * SNAP)
     return tw, th
@@ -224,11 +236,15 @@ def _inpaint_region(frame, region, box, s):
     """frame (1,H,W,3); region (H,W). Returns (frame with the region redrawn, soft blend mask (H,W))."""
     x1, y1, x2, y2 = box
     cw, ch = x2 - x1, y2 - y1
-    soft = blur(region[y1:y2, x1:x2].unsqueeze(0).unsqueeze(0), s["feather"])[0, 0].clamp(0, 1)
+    rc = region[y1:y2, x1:x2].unsqueeze(0).unsqueeze(0)
+    soft = blur(rc, s["feather"])[0, 0].clamp(0, 1)  # what gets pasted back
+    # what gets redrawn: a ring wider than the paste, so the seam sits on pixels the model already blended
+    repaint = blur(grow(rc, _ring(s["feather"])), max(1.0, s["feather"] * 0.5))[0, 0].clamp(0, 1)
+    repaint = torch.maximum(repaint, soft)
     crop = frame[:, y1:y2, x1:x2, :3]
     tw, th = _target(cw, ch, s["res"])
     up = comfy.utils.common_upscale(crop.movedim(-1, 1), tw, th, "lanczos", "disabled").movedim(1, -1).clamp(0, 1)
-    noise_mask = F.interpolate(soft[None, None], size=(th, tw), mode="bilinear", align_corners=False)[0]  # (1,th,tw)
+    noise_mask = F.interpolate(repaint[None, None], size=(th, tw), mode="bilinear", align_corners=False)[0]  # (1,th,tw)
 
     model, vae = s["model"], s["vae"]
     latent = vae.encode(up)
@@ -245,6 +261,7 @@ def _inpaint_region(frame, region, box, s):
         patch = patch.reshape(-1, *patch.shape[-3:])
     patch = patch[:1, ..., :3].float().cpu()
     down = comfy.utils.common_upscale(patch.movedim(-1, 1), cw, ch, "lanczos", "disabled").movedim(1, -1).clamp(0, 1)
+    down = _seam_colour(down, crop, soft, repaint)
 
     out = frame.clone()
     a = (soft * s["blend"])[None, ..., None]
@@ -254,6 +271,27 @@ def _inpaint_region(frame, region, box, s):
     return out, full
 
 
+def _seam_colour(down, crop, alpha, repaint):
+    """Shift the redraw's colour to match the original along the seam. In the ring that was redrawn but is not pasted
+    back, the true colour is known, so (original - redraw) there is the colour drift. It is spread as a smooth field,
+    capped, and added to the redraw. down / crop: (1,H,W,3); alpha / repaint: (H,W)."""
+    w = (repaint * (1.0 - alpha)).clamp(0, 1)
+    if float(w.sum()) < 50.0:
+        return down
+    h, wd = w.shape
+    diff = (crop - down)[0].permute(2, 0, 1)  # (3,H,W)
+    k = max(1, min(h, wd) // 64)  # work small: the field is smooth anyway
+    small = lambda t: F.interpolate(t[None], size=(max(1, h // k), max(1, wd // k)), mode="area")[0]
+    ws, ds = small(w[None]), small(diff * w[None])
+    sigma = max(2.0, max(ws.shape[-2:]) / 6.0)
+    num = blur(ds[:, None], sigma)[:, 0]
+    den = blur(ws[:, None], sigma)[:, 0]
+    glob = (diff * w[None]).sum((1, 2)) / w.sum()  # fallback far from the ring
+    field = torch.where(den > 1e-3, num / den.clamp(min=1e-3), glob.view(3, 1, 1))
+    field = F.interpolate(field[None], size=(h, wd), mode="bilinear", align_corners=False)[0].clamp(-SEAM_CAP, SEAM_CAP)
+    return (down + field.permute(1, 2, 0)[None]).clamp(0, 1)
+
+
 def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps, cfg, seed):
     """kw: the node's own widgets (grow, feather, blend, padding, inpaint_resolution, denoise, inpaint_positive)."""
     if kw.get("inpaint_positive") is not None:
@@ -261,7 +299,7 @@ def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps
     if negative is None:
         negative = _zero_out(positive)
     return dict(model=model, vae=vae, positive=positive, negative=negative, sampler_name=sampler_name,
-                scheduler=scheduler, steps=int(steps), cfg=float(cfg), denoise=float(kw["denoise"]), seed=int(seed),
+                scheduler=scheduler, steps=int(steps), cfg=max(1.0, float(cfg)), denoise=float(kw["denoise"]), seed=int(seed),
                 grow=float(kw["grow"]), feather=float(kw["feather"]), padding=int(kw["padding"]),
                 res=int(kw["inpaint_resolution"]), blend=float(kw["blend"]))
 
