@@ -14,6 +14,7 @@ const BGCOLOR = "#324b4b";
 // Nodes with a preview or a canvas (they size themselves)
 const WITH_PREVIEW = new Set([
   "LCImageOutpaint",
+  "LCImageRotatePad",
   "LCSplineMask",
   "LCMaskRefine",
   "LCSegmentAnything",

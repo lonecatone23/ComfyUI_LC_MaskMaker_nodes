@@ -43,6 +43,7 @@ def _load(module_name: str) -> None:
 
 
 _load("lc_image_outpaint")
+_load("lc_rotate_pad")
 _load("lc_spline_mask")
 _load("lc_mask_refine")
 _load("lc_rembg")
