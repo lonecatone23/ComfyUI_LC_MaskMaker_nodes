@@ -1,5 +1,5 @@
 """
-SAM 3 through ComfyUI's own SAM 3 support, shared by LC Segment Anything and LC Smart Inpaint.
+SAM 3 through ComfyUI's own SAM 3 support, shared by LC Segment Anything and LC Smart Detailer.
 
 Two fixes over calling ComfyUI directly:
   - The original Meta checkpoints (sam3.pt / sam3.safetensors) carry a 512-wide text projection that

@@ -6,8 +6,9 @@
 - `LCRemBG`: LC Remove Background ✂️
 - `LCImageBlendAdvance`: LC Image Blend Advance 🎚️
 - `LCSegmentAnything`: LC Segment Anything 🎯
-- `LCSmartInpaint`: LC Smart Inpaint 🩹
-- `LCSmartInpaintPipe`: LC Smart Inpaint (pipe) 🩹
+- `LCSmartInpaint`: LC Smart Detailer 🩹
+- `LCSmartInpaintPipe`: LC Smart Detailer (pipe) 🩹
+- `LCKrea2AnyPaint`: LC Krea2 AnyPaint 🩹
 - `LCPersonMask`: LC Person Mask 🧍
 - `LCAutoAdjust`: LC Auto Adjust 🔆
 - `LCDepthAnythingV2`: LC Depth Anything V2 🌊

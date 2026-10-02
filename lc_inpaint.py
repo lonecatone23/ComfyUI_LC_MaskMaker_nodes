@@ -1,7 +1,8 @@
 """
-LC Smart Inpaint (+ pipe version)
----------------------------------
-Finds things by name with SAM 3 ("hands, face") and redraws them at full detail:
+LC Smart Detailer (+ pipe version)
+----------------------------------
+(node ID LCSmartInpaint / LCSmartInpaintPipe, kept so saved workflows still load)
+A SEGS / Impact FaceDetailer replacement: finds things by name with SAM 3 ("hands, face") and redraws them at full detail:
 
   every object gets its own crop, with some context around it, scaled up to inpaint_resolution,
   sampled with a noise mask, scaled back down and blended in.
@@ -52,7 +53,7 @@ DESC_SMART = (
 )
 
 TIP = {
-    "prompt": "What to inpaint, as simple words separated by commas: hands, face.\n"
+    "prompt": "What to detail, as simple words separated by commas: hands, face.\n"
               "Every match is found (both hands, every face). Add :N to cap it, e.g. face:1.",
     "sam3_model": "SAM 3 model that does the finding. Pick the SAM 3.1 download, or use your own sam3.pt / sam3.safetensors in models/sam3.",
     "threshold": "How sure SAM 3 has to be. Lower finds more (and more wrong things), higher is pickier. 0.5 is a good start.\n"
@@ -398,7 +399,7 @@ def _direct_settings(kw):
 class _Base(PreviewImage):
     RETURN_TYPES = ("IMAGE", "MASK")
     RETURN_NAMES = ("image", "mask")
-    CATEGORY = "LC MaskMaker/inpaint"
+    CATEGORY = "LC MaskMaker/detailer"
     OUTPUT_NODE = True
     FUNCTION = "run"
 
@@ -409,7 +410,7 @@ class _Base(PreviewImage):
         prompt = kw["prompt"]
         words = _words(prompt)
         if not words:
-            raise ValueError("[LC Smart Inpaint] The prompt is empty. Type what to inpaint, e.g. hands.")
+            raise ValueError("[LC Smart Detailer] The prompt is empty. Type what to detail, e.g. hands.")
         path = lc_models.resolve_sam3(kw["sam3_model"])
         masks = [[_clean(m) for m in lc_sam3.objects(image[i:i + 1], words, path, kw["threshold"])]
                  for i in range(image.shape[0])]
@@ -451,7 +452,7 @@ class LCSmartInpaintPipe(_Base):
         }
 
     def run(self, pipe, image, **kw):
-        s = _pipe_settings(pipe, kw, "LC Smart Inpaint (pipe)")
+        s = _pipe_settings(pipe, kw, "LC Smart Detailer (pipe)")
         out, mask, note = self._smart(image, kw, s)
         return {"ui": _preview(self, image, out, mask, note), "result": (pipe, out, mask)}
 
@@ -462,6 +463,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "LCSmartInpaint": "LC Smart Inpaint 🩹",
-    "LCSmartInpaintPipe": "LC Smart Inpaint (pipe) 🩹",
+    "LCSmartInpaint": "LC Smart Detailer 🩹",
+    "LCSmartInpaintPipe": "LC Smart Detailer (pipe) 🩹",
 }

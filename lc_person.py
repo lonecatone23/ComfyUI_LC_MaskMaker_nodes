@@ -12,7 +12,7 @@ background. Two engines:
               by this pack).
 
 Skin mask: mediapipe with face + body is face skin plus body skin. remove_features then cuts out the eyes, brows,
-lips and teeth with SAM 3 (the model LC Segment Anything and LC Smart Inpaint already use), which leaves skin only,
+lips and teeth with SAM 3 (the model LC Segment Anything and LC Smart Detailer already use), which leaves skin only,
 ready for LC Skin Beauty, LC Skin Upscale or LC Sharpen Pro.
 
 The raw mask can then be refined with the same guided filter / VITMatte trimap as LC Mask Refine.
@@ -183,7 +183,7 @@ class LCPersonMask:
                 "remove_features": ("BOOLEAN", {
                     "default": False, "label_on": "enabled", "label_off": "disabled",
                     "tooltip": "Cut the eyes, eyebrows, lips and teeth out of the face, using SAM 3 (the model LC Segment "
-                               "Anything and LC Smart Inpaint use). With engine mediapipe and face + body on, this is a "
+                               "Anything and LC Smart Detailer use). With engine mediapipe and face + body on, this is a "
                                "skin-only mask for LC Skin Beauty, LC Skin Upscale or LC Sharpen Pro. Only runs when face is on.",
                 }),
             },
