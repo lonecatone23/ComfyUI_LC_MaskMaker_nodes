@@ -13,7 +13,6 @@ https://ko-fi.com/lonecatone
 import os as _os
 
 _PACK_DIR = _os.path.dirname(_os.path.abspath(__file__))
-print(f"[LC MaskMaker] loading from {_PACK_DIR}")
 _nested = _os.path.join(_PACK_DIR, "ComfyUI_LC_MaskMaker_nodes", "__init__.py")
 if _os.path.isfile(_nested):
     print(
@@ -22,6 +21,7 @@ if _os.path.isfile(_nested):
     )
 
 NODE_CLASS_MAPPINGS = {}
+_FAILED = []  # modules that did not load (shown in full, and counted on the banner line)
 NODE_DISPLAY_NAME_MAPPINGS = {}
 
 
@@ -36,8 +36,8 @@ def _load(module_name: str) -> None:
         disp = getattr(mod, "NODE_DISPLAY_NAME_MAPPINGS", None) or {}
         NODE_CLASS_MAPPINGS.update(maps)
         NODE_DISPLAY_NAME_MAPPINGS.update(disp)
-        print(f"[LC MaskMaker] + {module_name}: {list(maps.keys())}")
     except Exception as e:
+        _FAILED.append(module_name)
         print(f"[LC MaskMaker] ! failed to load {module_name}: {e}")
         traceback.print_exc()
 
@@ -60,4 +60,9 @@ WEB_DIRECTORY = "./web"
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
 
-print(f"[LC MaskMaker] total {len(NODE_CLASS_MAPPINGS)} nodes: {sorted(NODE_CLASS_MAPPINGS.keys())}")
+try:  # the Lonecat banner (first LC pack to load) or this pack's one line under it
+    from .lc_banner import pack_version as _pv, show as _banner
+
+    _banner("LC MaskMaker", _pv(_PACK_DIR), len(NODE_CLASS_MAPPINGS), len(_FAILED))
+except Exception as _banner_e:
+    print(f"[LC MaskMaker] {len(NODE_CLASS_MAPPINGS)} nodes ({_banner_e})")

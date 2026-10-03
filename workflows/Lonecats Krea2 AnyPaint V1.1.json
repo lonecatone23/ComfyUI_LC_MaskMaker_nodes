@@ -1,8 +1,8 @@
 {
   "id": "c26eb475-ff33-4722-8e9c-1a511b0fdf46",
   "revision": 0,
-  "last_node_id": 38,
-  "last_link_id": 52,
+  "last_node_id": 53,
+  "last_link_id": 78,
   "nodes": [
     {
       "id": 1,
@@ -13,7 +13,7 @@
       ],
       "size": [
         330,
-        198
+        462
       ],
       "flags": {},
       "order": 0,
@@ -25,7 +25,8 @@
           "type": "MODEL",
           "links": [
             2,
-            10
+            10,
+            56
           ]
         },
         {
@@ -33,7 +34,8 @@
           "type": "CLIP",
           "links": [
             3,
-            11
+            11,
+            57
           ]
         },
         {
@@ -41,7 +43,8 @@
           "type": "VAE",
           "links": [
             4,
-            12
+            12,
+            58
           ]
         },
         {
@@ -114,7 +117,8 @@
           "type": "INT",
           "links": [
             6,
-            14
+            14,
+            62
           ]
         }
       ],
@@ -161,7 +165,7 @@
       ],
       "flags": {},
       "order": 2,
-      "mode": 0,
+      "mode": 4,
       "inputs": [],
       "outputs": [
         {
@@ -169,7 +173,8 @@
           "type": "IMAGE",
           "links": [
             33,
-            36
+            36,
+            72
           ]
         },
         {
@@ -213,7 +218,7 @@
       ],
       "flags": {},
       "order": 3,
-      "mode": 0,
+      "mode": 4,
       "inputs": [],
       "outputs": [
         {
@@ -236,10 +241,10 @@
         }
       },
       "widgets_values": [
-        "kitchen with empty countertop"
+        "kitchen with bread on countertop"
       ],
       "widgets_values_named": {
-        "positive": "kitchen with empty countertop"
+        "positive": "kitchen with bread on countertop"
       },
       "color": "#326432",
       "bgcolor": "#326432"
@@ -256,8 +261,8 @@
         850
       ],
       "flags": {},
-      "order": 17,
-      "mode": 0,
+      "order": 23,
+      "mode": 4,
       "inputs": [
         {
           "name": "model",
@@ -387,8 +392,8 @@
         460
       ],
       "flags": {},
-      "order": 19,
-      "mode": 0,
+      "order": 27,
+      "mode": 4,
       "inputs": [
         {
           "name": "images",
@@ -406,7 +411,9 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "links": null
+          "links": [
+            73
+          ]
         },
         {
           "name": "saved_as",
@@ -468,7 +475,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            31
+            31,
+            71
           ]
         },
         {
@@ -555,7 +563,7 @@
         850
       ],
       "flags": {},
-      "order": 18,
+      "order": 24,
       "mode": 4,
       "inputs": [
         {
@@ -686,7 +694,7 @@
         460
       ],
       "flags": {},
-      "order": 21,
+      "order": 29,
       "mode": 4,
       "inputs": [
         {
@@ -705,7 +713,9 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "links": null
+          "links": [
+            70
+          ]
         },
         {
           "name": "saved_as",
@@ -798,11 +808,11 @@
       "type": "LCNote",
       "pos": [
         0,
-        950
+        980
       ],
       "size": [
         330,
-        410
+        550
       ],
       "flags": {},
       "order": 7,
@@ -815,7 +825,7 @@
           "source": "en",
           "texts": {
             "en": {
-              "text": "### ✋ How to use\n\n**Inpaint 🩹**\n- Load Image\n- Run once so the picture shows on **LC Create Mask**, then paint over what you want changed \n   - set pencil or point mode. \n   - block on empty mask prevents it from processing until a mask is drawn\n- Write the prompt for the **whole** finished picture.\n   - 💡instead of *\"remove her dress\"*, write **\"Blonde woman standing naked in the park\"**\n\n\n**Outpaint ➕**\n- Load your picture in **Image to extend**.\n- Drag the edges out on **LC Outpaint** (or type left / right / top / bottom).\n- Write the prompt for the **whole** wider picture, including what fills the new sides.\n- 💡instead of *\"show her legs\"* when extending the image downward, write **\"pink haired woman sitting on a couch wearing a pink sweater and white lace panties\"**  \n\n**Settings worth touching**\n- **boundary_px:** 32 is the trained value. Raise it if a seam ever shows.\n- **padding (inpaint):** more = the model sees more of the scene around the mask.\n- **vlm_reference:** leave on.\n"
+              "text": "### ✋ How to use\n\n**Inpaint 🖌️**\n- Load Image\n- Run once so the picture shows on **LC Create Mask**, then paint over what you want changed \n   - set pencil or point mode. \n   - block on empty mask prevents it from processing until a mask is drawn\n- Write the prompt for the **whole** finished picture.\n   - 💡instead of *\"remove her dress\"*, write **\"Blonde woman standing naked in the park\"**\n\n\n**Outpaint 🌄**\n- Load Image\n- Drag the edges out on **LC Outpaint** (or type left / right / top / bottom).\n- Write the prompt for the **whole** wider picture, including what fills the new sides.\n- 💡instead of *\"show her legs\"* when extending the image downward, write **\"pink haired woman sitting on a couch wearing a pink sweater and white lace panties\"**  \n\n\n**Rotate**\n- drag and rotate the image\n- you can set the aspect ratio or freehand it. \n- 💡 Same prompt rules apply\n\n---\n\n**Settings worth touching**\n- **boundary_px:** 32 is the trained value. Raise it if a seam ever shows.\n- **padding (inpaint):** more = the model sees more of the scene around the mask.\n- **vlm_reference:** leave on.\n"
             }
           },
           "titles": {
@@ -830,11 +840,11 @@
       },
       "widgets_values": [
         "English ✏️",
-        "### ✋ How to use\n\n**Inpaint 🩹**\n- Load Image\n- Run once so the picture shows on **LC Create Mask**, then paint over what you want changed \n   - set pencil or point mode. \n   - block on empty mask prevents it from processing until a mask is drawn\n- Write the prompt for the **whole** finished picture.\n   - 💡instead of *\"remove her dress\"*, write **\"Blonde woman standing naked in the park\"**\n\n\n**Outpaint ➕**\n- Load your picture in **Image to extend**.\n- Drag the edges out on **LC Outpaint** (or type left / right / top / bottom).\n- Write the prompt for the **whole** wider picture, including what fills the new sides.\n- 💡instead of *\"show her legs\"* when extending the image downward, write **\"pink haired woman sitting on a couch wearing a pink sweater and white lace panties\"**  \n\n**Settings worth touching**\n- **boundary_px:** 32 is the trained value. Raise it if a seam ever shows.\n- **padding (inpaint):** more = the model sees more of the scene around the mask.\n- **vlm_reference:** leave on.\n"
+        "### ✋ How to use\n\n**Inpaint 🖌️**\n- Load Image\n- Run once so the picture shows on **LC Create Mask**, then paint over what you want changed \n   - set pencil or point mode. \n   - block on empty mask prevents it from processing until a mask is drawn\n- Write the prompt for the **whole** finished picture.\n   - 💡instead of *\"remove her dress\"*, write **\"Blonde woman standing naked in the park\"**\n\n\n**Outpaint 🌄**\n- Load Image\n- Drag the edges out on **LC Outpaint** (or type left / right / top / bottom).\n- Write the prompt for the **whole** wider picture, including what fills the new sides.\n- 💡instead of *\"show her legs\"* when extending the image downward, write **\"pink haired woman sitting on a couch wearing a pink sweater and white lace panties\"**  \n\n\n**Rotate**\n- drag and rotate the image\n- you can set the aspect ratio or freehand it. \n- 💡 Same prompt rules apply\n\n---\n\n**Settings worth touching**\n- **boundary_px:** 32 is the trained value. Raise it if a seam ever shows.\n- **padding (inpaint):** more = the model sees more of the scene around the mask.\n- **vlm_reference:** leave on.\n"
       ],
       "widgets_values_named": {
         "language": "English ✏️",
-        "text": "### ✋ How to use\n\n**Inpaint 🩹**\n- Load Image\n- Run once so the picture shows on **LC Create Mask**, then paint over what you want changed \n   - set pencil or point mode. \n   - block on empty mask prevents it from processing until a mask is drawn\n- Write the prompt for the **whole** finished picture.\n   - 💡instead of *\"remove her dress\"*, write **\"Blonde woman standing naked in the park\"**\n\n\n**Outpaint ➕**\n- Load your picture in **Image to extend**.\n- Drag the edges out on **LC Outpaint** (or type left / right / top / bottom).\n- Write the prompt for the **whole** wider picture, including what fills the new sides.\n- 💡instead of *\"show her legs\"* when extending the image downward, write **\"pink haired woman sitting on a couch wearing a pink sweater and white lace panties\"**  \n\n**Settings worth touching**\n- **boundary_px:** 32 is the trained value. Raise it if a seam ever shows.\n- **padding (inpaint):** more = the model sees more of the scene around the mask.\n- **vlm_reference:** leave on.\n"
+        "text": "### ✋ How to use\n\n**Inpaint 🖌️**\n- Load Image\n- Run once so the picture shows on **LC Create Mask**, then paint over what you want changed \n   - set pencil or point mode. \n   - block on empty mask prevents it from processing until a mask is drawn\n- Write the prompt for the **whole** finished picture.\n   - 💡instead of *\"remove her dress\"*, write **\"Blonde woman standing naked in the park\"**\n\n\n**Outpaint 🌄**\n- Load Image\n- Drag the edges out on **LC Outpaint** (or type left / right / top / bottom).\n- Write the prompt for the **whole** wider picture, including what fills the new sides.\n- 💡instead of *\"show her legs\"* when extending the image downward, write **\"pink haired woman sitting on a couch wearing a pink sweater and white lace panties\"**  \n\n\n**Rotate**\n- drag and rotate the image\n- you can set the aspect ratio or freehand it. \n- 💡 Same prompt rules apply\n\n---\n\n**Settings worth touching**\n- **boundary_px:** 32 is the trained value. Raise it if a seam ever shows.\n- **padding (inpaint):** more = the model sees more of the scene around the mask.\n- **vlm_reference:** leave on.\n"
       },
       "color": "#2E3A46",
       "bgcolor": "#2E3A46"
@@ -848,7 +858,7 @@
       ],
       "size": [
         330,
-        120
+        150
       ],
       "flags": {},
       "order": 8,
@@ -861,6 +871,11 @@
         },
         {
           "name": "Outpaint 🌄",
+          "type": "BOOLEAN",
+          "link": null
+        },
+        {
+          "name": "Outpaint & Rotate 🔁",
           "type": "BOOLEAN",
           "link": null
         }
@@ -896,6 +911,10 @@
             "originId": null
           },
           "id:5": {
+            "value": false,
+            "originId": null
+          },
+          "id:6": {
             "value": true,
             "originId": null
           }
@@ -907,15 +926,17 @@
         }
       },
       "widgets_values": [
-        true,
-        false
+        false,
+        false,
+        true
       ],
       "widgets_values_named": {
-        "Enable 1": true,
-        "Enable 2": false
+        "Enable 1": false,
+        "Enable 2": false,
+        "Enable 3": true
       },
-      "color": "#28281E",
-      "bgcolor": "#28281E"
+      "color": "#ffc31e",
+      "bgcolor": "#ebaf0a"
     },
     {
       "id": 19,
@@ -929,7 +950,7 @@
         570
       ],
       "flags": {},
-      "order": 16,
+      "order": 20,
       "mode": 4,
       "inputs": [
         {
@@ -983,20 +1004,20 @@
       "widgets_values": [
         true,
         false,
+        35.19,
         0,
         0,
-        0,
-        0,
+        54.5,
         "free",
         "8"
       ],
       "widgets_values_named": {
         "block": true,
         "hold_mask": false,
-        "left": 0,
+        "left": 35.19,
         "top": 0,
         "right": 0,
-        "bottom": 0,
+        "bottom": 54.5,
         "aspect": "free",
         "snap_to": "8"
       },
@@ -1015,8 +1036,8 @@
         630
       ],
       "flags": {},
-      "order": 15,
-      "mode": 0,
+      "order": 19,
+      "mode": 4,
       "inputs": [
         {
           "name": "image",
@@ -1091,8 +1112,8 @@
       "flags": {
         "pinned": false
       },
-      "order": 20,
-      "mode": 0,
+      "order": 28,
+      "mode": 4,
       "inputs": [
         {
           "label": "before",
@@ -1144,7 +1165,7 @@
       "flags": {
         "pinned": false
       },
-      "order": 22,
+      "order": 30,
       "mode": 4,
       "inputs": [
         {
@@ -1472,6 +1493,1004 @@
       },
       "color": "#fff0",
       "bgcolor": "#fff0"
+    },
+    {
+      "id": 39,
+      "type": "LCImageRotatePad",
+      "pos": [
+        810,
+        2060
+      ],
+      "size": [
+        300,
+        600
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 64
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            65
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            66
+          ]
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_MaskMaker_nodes",
+        "ver": "f9b4a838c6178619a5e359db4e719f9f982601e6",
+        "Node name for S&R": "LCImageRotatePad",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        -24.9,
+        "expand",
+        "gray",
+        -21.04,
+        -4.78,
+        -21.28,
+        5.86,
+        "free",
+        "16",
+        true
+      ],
+      "widgets_values_named": {
+        "keep_frame": true,
+        "angle": -24.9,
+        "fit": "expand",
+        "fill": "gray",
+        "left": -21.04,
+        "top": -4.78,
+        "right": -21.28,
+        "bottom": 5.86,
+        "aspect": "free",
+        "snap_to": "16",
+        "block": true
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 40,
+      "type": "LCSaveImage",
+      "pos": [
+        1750,
+        2060
+      ],
+      "size": [
+        280,
+        460
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 53
+        },
+        {
+          "name": "metadata",
+          "shape": 7,
+          "type": "LC_SAVE_META",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            67
+          ]
+        },
+        {
+          "name": "saved_as",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "Save",
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCSaveImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "LC123",
+        "",
+        "png",
+        95,
+        true,
+        true,
+        true,
+        ""
+      ],
+      "widgets_values_named": {
+        "filename": "LC123",
+        "path": "",
+        "format": "png",
+        "quality": 95,
+        "embed_workflow": true,
+        "embed_civitai": true,
+        "hash_resources": true,
+        "filename_prefix": ""
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 41,
+      "type": "LCBatchImageComparer",
+      "pos": [
+        1440,
+        2060
+      ],
+      "size": [
+        300,
+        400
+      ],
+      "flags": {
+        "pinned": false
+      },
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "image_b",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCBatchImageComparer",
+        "comparer_mode": "Slide",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 42,
+      "type": "LCKrea2AnyPaint",
+      "pos": [
+        1130,
+        2060
+      ],
+      "size": [
+        300,
+        850
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 56
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 57
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 58
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 65
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 66
+        },
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 61
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 62
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            53,
+            55
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": []
+        }
+      ],
+      "title": "LC Krea2 AnyPaint 🩹 (outpaint)",
+      "properties": {
+        "cnr_id": "ComfyUI_LC_MaskMaker_nodes",
+        "ver": "0109cc3cc82f4393aa5a05a9c7c764cc54e26078",
+        "Node name for S&R": "LCKrea2AnyPaint",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_inpaint_meta": [
+          {
+            "filename": "lc_inpaint_temp_jijrf_00005_.png",
+            "subfolder": "",
+            "type": "temp"
+          },
+          {
+            "filename": "lc_inpaint_temp_jijrf_00006_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ],
+        "lc_inpaint_note": "painted 1 of 1 image"
+      },
+      "widgets_values": [
+        "",
+        "Krea 2\\Utilities\\krea2_anypaint_rank32.safetensors",
+        1,
+        0,
+        "randomize",
+        8,
+        "euler",
+        "simple",
+        false,
+        128,
+        1024,
+        32,
+        true,
+        "keep original"
+      ],
+      "widgets_values_named": {
+        "prompt": "",
+        "lora": "Krea 2\\Utilities\\krea2_anypaint_rank32.safetensors",
+        "lora_strength": 1,
+        "seed": 0,
+        "control_after_generate": "randomize",
+        "steps": 8,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "crop_to_mask": false,
+        "padding": 128,
+        "inpaint_resolution": 1024,
+        "boundary_px": 32,
+        "vlm_reference": true,
+        "composite": "keep original"
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 44,
+      "type": "LoadImage",
+      "pos": [
+        510,
+        2060
+      ],
+      "size": [
+        290,
+        320
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            64,
+            69
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": []
+        }
+      ],
+      "title": "Image to extend",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.37.0",
+        "Node name for S&R": "LoadImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "20172959cd41ee889edc0b6ba1765c9d.jpg",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "20172959cd41ee889edc0b6ba1765c9d.jpg",
+        "upload": "image"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 45,
+      "type": "LCPositive",
+      "pos": [
+        410,
+        2430
+      ],
+      "size": [
+        390,
+        200
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "STRING",
+          "links": [
+            61
+          ]
+        }
+      ],
+      "title": "Prompt (whole picture)",
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCPositive",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "brunette taking a selfie with grey striped sweatpants on"
+      ],
+      "widgets_values_named": {
+        "positive": "brunette taking a selfie with grey striped sweatpants on"
+      },
+      "color": "#326432",
+      "bgcolor": "#326432"
+    },
+    {
+      "id": 46,
+      "type": "LCTextOverlay",
+      "pos": [
+        2230,
+        2060
+      ],
+      "size": [
+        300,
+        640
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 75
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            76
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCTextOverlay",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_overlay_text": "Before\n",
+        "lc_preview_meta": [
+          {
+            "filename": "lc_before_temp_jddbj_00001_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ]
+      },
+      "widgets_values": [
+        "Before\n",
+        "Arial",
+        100,
+        255,
+        255,
+        255,
+        50,
+        92,
+        "center"
+      ],
+      "widgets_values_named": {
+        "text": "Before\n",
+        "font": "Arial",
+        "font_size": 100,
+        "color_r": 255,
+        "color_g": 255,
+        "color_b": 255,
+        "x_percent": 50,
+        "y_percent": 92,
+        "alignment": "center"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 47,
+      "type": "LCTextOverlay",
+      "pos": [
+        2540,
+        2060
+      ],
+      "size": [
+        300,
+        640
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 74
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            77
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCTextOverlay",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_overlay_text": "After\n",
+        "lc_preview_meta": [
+          {
+            "filename": "lc_before_temp_ayxtr_00003_.png",
+            "subfolder": "",
+            "type": "temp"
+          }
+        ]
+      },
+      "widgets_values": [
+        "After\n",
+        "Arial",
+        125,
+        255,
+        255,
+        255,
+        47.9,
+        88.5,
+        "center"
+      ],
+      "widgets_values_named": {
+        "text": "After\n",
+        "font": "Arial",
+        "font_size": 125,
+        "color_r": 255,
+        "color_g": 255,
+        "color_b": 255,
+        "x_percent": 47.9,
+        "y_percent": 88.5,
+        "alignment": "center"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 48,
+      "type": "LCAnySwitch",
+      "pos": [
+        2080,
+        2060
+      ],
+      "size": [
+        330,
+        140
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "IMAGE",
+          "name": "any_01",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 72
+        },
+        {
+          "label": "IMAGE",
+          "name": "any_02",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 71
+        },
+        {
+          "label": "IMAGE",
+          "name": "any_03",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 69
+        }
+      ],
+      "outputs": [
+        {
+          "label": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            75
+          ]
+        }
+      ],
+      "title": "Before",
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCAnySwitch",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {
+            "any_01": true,
+            "any_02": true,
+            "any_03": true,
+            "any_04": true,
+            "any_05": true,
+            "any_06": true,
+            "any_07": true,
+            "any_08": true,
+            "any_09": true,
+            "any_10": true,
+            "any_11": true,
+            "any_12": true,
+            "any_13": true,
+            "any_14": true,
+            "any_15": true,
+            "any_16": true,
+            "any_17": true,
+            "any_18": true,
+            "any_19": true,
+            "any_20": true
+          },
+          "send_to_any": 0,
+          "apply_to_unrepeated": 0,
+          "version": "7.8"
+        },
+        "lc_w": 330,
+        "lc_h": 140
+      },
+      "widgets_values": [
+        3
+      ],
+      "widgets_values_named": {
+        "inputcount": 3
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 49,
+      "type": "LCAnySwitch",
+      "pos": [
+        2080,
+        2100
+      ],
+      "size": [
+        330,
+        140
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "IMAGE",
+          "name": "any_01",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 73
+        },
+        {
+          "label": "IMAGE",
+          "name": "any_02",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 70
+        },
+        {
+          "label": "IMAGE",
+          "name": "any_03",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 67
+        }
+      ],
+      "outputs": [
+        {
+          "label": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            74
+          ]
+        }
+      ],
+      "title": "After",
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCAnySwitch",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {
+            "any_01": true,
+            "any_02": true,
+            "any_03": true,
+            "any_04": true,
+            "any_05": true,
+            "any_06": true,
+            "any_07": true,
+            "any_08": true,
+            "any_09": true,
+            "any_10": true,
+            "any_11": true,
+            "any_12": true,
+            "any_13": true,
+            "any_14": true,
+            "any_15": true,
+            "any_16": true,
+            "any_17": true,
+            "any_18": true,
+            "any_19": true,
+            "any_20": true
+          },
+          "send_to_any": 0,
+          "apply_to_unrepeated": 0,
+          "version": "7.8"
+        },
+        "lc_w": 330,
+        "lc_h": 140
+      },
+      "widgets_values": [
+        3
+      ],
+      "widgets_values_named": {
+        "inputcount": 3
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 50,
+      "type": "ImageStitch",
+      "pos": [
+        2080,
+        2140
+      ],
+      "size": [
+        270,
+        150
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image1",
+          "type": "IMAGE",
+          "link": 76
+        },
+        {
+          "name": "image2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 77
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            78
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.37.0",
+        "Node name for S&R": "ImageStitch",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "right",
+        true,
+        8,
+        "white"
+      ],
+      "widgets_values_named": {
+        "direction": "right",
+        "match_image_size": true,
+        "spacing_width": 8,
+        "spacing_color": "white"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 51,
+      "type": "SaveImage",
+      "pos": [
+        2850,
+        2060
+      ],
+      "size": [
+        570,
+        350
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 78
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.37.0",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "anypaint\\test"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "anypaint\\test"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 52,
+      "type": "LC Groups Bypasser",
+      "pos": [
+        2080,
+        1870
+      ],
+      "size": [
+        300,
+        90
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "Stitch",
+          "type": "BOOLEAN",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "title": "Stitch",
+      "properties": {
+        "matchTitle": "stitch",
+        "matchColors": "",
+        "sort": "position",
+        "toggleRestriction": "default",
+        "lcBindings": {
+          "id:5": {
+            "value": true,
+            "originId": null
+          },
+          "id:4": {
+            "value": true,
+            "originId": null
+          },
+          "id:6": {
+            "value": true,
+            "originId": null
+          },
+          "id:7": {
+            "value": true,
+            "originId": null
+          }
+        },
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        true
+      ],
+      "widgets_values_named": {
+        "Enable 1": true
+      },
+      "color": "#dc6946",
+      "bgcolor": "#c85532"
+    },
+    {
+      "id": 53,
+      "type": "LCLabel",
+      "pos": [
+        1590,
+        -150
+      ],
+      "size": [
+        144,
+        107
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "text": "V1.1",
+        "font": "Cinzel Decorative",
+        "size": 86,
+        "bold": true,
+        "italic": false,
+        "color": "#ff3232",
+        "align": "center",
+        "outline": false,
+        "outlineColor": "#000000",
+        "outlineWidth": 4,
+        "shadow": false,
+        "shadowBlur": 10,
+        "bg": false,
+        "bgColor": "#324B4B",
+        "radius": 12,
+        "padding": 8,
+        "angle": 0,
+        "width": 0,
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "45c0fd983d47677b1febbad80d1496a0dc0ebbb4",
+        "Node name for S&R": "LCLabel",
+        "_w": 144,
+        "_h": 107,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
     }
   ],
   "links": [
@@ -1650,6 +2669,174 @@
       22,
       0,
       "IMAGE"
+    ],
+    [
+      53,
+      42,
+      0,
+      40,
+      0,
+      "IMAGE"
+    ],
+    [
+      55,
+      42,
+      0,
+      41,
+      1,
+      "IMAGE"
+    ],
+    [
+      56,
+      1,
+      0,
+      42,
+      0,
+      "MODEL"
+    ],
+    [
+      57,
+      1,
+      1,
+      42,
+      1,
+      "CLIP"
+    ],
+    [
+      58,
+      1,
+      2,
+      42,
+      2,
+      "VAE"
+    ],
+    [
+      61,
+      45,
+      0,
+      42,
+      5,
+      "STRING"
+    ],
+    [
+      62,
+      2,
+      0,
+      42,
+      6,
+      "INT"
+    ],
+    [
+      64,
+      44,
+      0,
+      39,
+      0,
+      "IMAGE"
+    ],
+    [
+      65,
+      39,
+      0,
+      42,
+      3,
+      "IMAGE"
+    ],
+    [
+      66,
+      39,
+      1,
+      42,
+      4,
+      "MASK"
+    ],
+    [
+      67,
+      40,
+      0,
+      49,
+      2,
+      "IMAGE"
+    ],
+    [
+      69,
+      44,
+      0,
+      48,
+      2,
+      "IMAGE"
+    ],
+    [
+      70,
+      14,
+      0,
+      49,
+      1,
+      "IMAGE"
+    ],
+    [
+      71,
+      9,
+      0,
+      48,
+      1,
+      "IMAGE"
+    ],
+    [
+      72,
+      3,
+      0,
+      48,
+      0,
+      "IMAGE"
+    ],
+    [
+      73,
+      8,
+      0,
+      49,
+      0,
+      "IMAGE"
+    ],
+    [
+      74,
+      49,
+      0,
+      47,
+      0,
+      "IMAGE"
+    ],
+    [
+      75,
+      48,
+      0,
+      46,
+      0,
+      "IMAGE"
+    ],
+    [
+      76,
+      46,
+      0,
+      50,
+      0,
+      "IMAGE"
+    ],
+    [
+      77,
+      47,
+      0,
+      50,
+      1,
+      "IMAGE"
+    ],
+    [
+      78,
+      50,
+      0,
+      51,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [
@@ -1676,6 +2863,30 @@
       ],
       "color": "#3f789e",
       "flags": {}
+    },
+    {
+      "id": 6,
+      "title": "Outpaint & Rotate 🔁",
+      "bounding": [
+        400,
+        1990,
+        1640,
+        940
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 7,
+      "title": "Stitch",
+      "bounding": [
+        2070,
+        1990,
+        1370,
+        719
+      ],
+      "color": "#A88",
+      "flags": {}
     }
   ],
   "config": {},
@@ -1683,10 +2894,10 @@
     "ue_links": [],
     "so_workflow_key": "09723ba1-ab0d-4cd9-9677-752cc51b2437",
     "ds": {
-      "scale": 0.32185390428211885,
+      "scale": 0.16600246545589797,
       "offset": [
-        1175.741352946282,
-        482.5194242984812
+        3374.2165757783723,
+        899.8024923122182
       ]
     },
     "lc_guides": [

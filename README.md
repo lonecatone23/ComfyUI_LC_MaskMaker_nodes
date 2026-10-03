@@ -5,7 +5,7 @@ Mask, matting, segmentation and image-adjustment nodes for [ComfyUI](https://git
 - **Repo:** [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)
 - **Civitai:** [lonecatone23](https://civitai.com/user/lonecatone23)
 - **Support:** [Buy me a ☕](https://ko-fi.com/lonecatone)
-- **Version:** 0.13.2 · **12 Python nodes**
+- **Version:** 0.15.1 · **14 Python nodes**
 
 > Companion to [ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes). LC123 stays import-free. Anything that needs a model lives here and loads it on demand.
 
@@ -38,7 +38,7 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 | Workflow | What it does |
 |---|---|
 | [`workflows/LC Maskmaker nodes.json`](workflows/LC%20Maskmaker%20nodes.json) | Every node in the pack wired to one image, each with its own preview, so you can compare them side by side. Also uses **LC Image Desaturate** and **LC Skin Beauty** from LC123. Bilingual (English / Chinese) note on the canvas. |
-| [`workflows/Lonecats Krea2 AnyPaint V1.0.json`](workflows/Lonecats%20Krea2%20AnyPaint%20V1.0.json) | Inpaint and outpaint with Krea 2 Turbo and **LC Krea2 AnyPaint**. Paint the mask on **LC Create Mask** or drag the edges out on **LC Outpaint**, and switch between the two groups with the Groups Bypasser. Needs LC123 and the AnyPaint LoRA. |
+| [`workflows/Lonecats Krea2 AnyPaint V1.1.json`](workflows/Lonecats%20Krea2%20AnyPaint%20V1.1.json) | Inpaint and outpaint with Krea 2 Turbo and **LC Krea2 AnyPaint**. Paint the mask on **LC Create Mask**, drag the edges out on **LC Outpaint**, or turn and pad the picture with **LC Image Rotate + Pad**, and switch between the groups with the Groups Bypasser. Needs LC123 and the AnyPaint LoRA. |
 
 ---
 
