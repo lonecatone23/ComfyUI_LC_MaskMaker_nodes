@@ -119,7 +119,7 @@ class LCSplineMask(PreviewImage):
         }
 
     RETURN_TYPES = ("IMAGE", "MASK")
-    RETURN_NAMES = ("image", "mask")
+    RETURN_NAMES = ("control_image", "control_mask")
     FUNCTION = "make"
     CATEGORY = "LC MaskMaker/mask"
     OUTPUT_NODE = True

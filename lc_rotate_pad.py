@@ -120,7 +120,7 @@ class LCImageRotatePad(PreviewImage):
         }
 
     RETURN_TYPES = ("IMAGE", "MASK", "INT", "INT")
-    RETURN_NAMES = ("image", "mask", "width", "height")
+    RETURN_NAMES = ("control_image", "control_mask", "width", "height")
     OUTPUT_TOOLTIPS = (
         "The turned, cropped and padded picture.",
         "White where the model paints: the padding and the corners a turn opens up.",
