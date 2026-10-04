@@ -15,6 +15,10 @@ runtime.
                measured in the outer border is corrected (LC Smart Detailer's seam fix).
   crop       : a small mask is done in its own crop, scaled up to inpaint_resolution (more detail, faster).
 
+LC Z-Image AnyPaint: the same crop, keep, border and composite for Z-Image (Turbo / Base), painted by Alibaba's
+Z-Image Fun ControlNet Union 2.1 in inpaint mode (models/model_patches, through ComfyUI core's ZImageFunControlnet
+patch) instead of the Krea 2 LoRA and reference.
+
 The reference path runs in this node's own model wrapper, so it works even when another pack replaces Krea 2's
 forward (ComfyUI-RedNodeStudio does, which made the first version copy the flat fill). LoRAs and attention / speed-up
 options still apply. Method after yijunwang2's reference pipeline (Krea 2 Community License); the reference forward
@@ -51,6 +55,7 @@ REF_EDGE = 384
 TOKEN = 16  # Krea 2: 8x VAE, 2x2 patch
 VLM_PREFIX = "Picture 1: <|vision_start|><|image_pad|><|vision_end|>"
 _LORA_CACHE = {}
+_PATCH_CACHE = {}
 
 TIP = {
     "prompt": "Describe the WHOLE finished picture, not just the change: \"a woman in a red coat on a snowy street\". "
@@ -71,12 +76,34 @@ TIP = {
     "vlm_reference": "Show the reference to the text encoder too. On = the reference recipe.",
     "composite": "keep original = only the painted area (soft edge, colour fixed) is pasted back: everything else is "
                  "exactly your picture. raw = the model's whole redraw of the crop.",
+    "control": "Alibaba's Z-Image Fun ControlNet Union 2.1 (models/model_patches), used in inpaint mode. The 8steps one is "
+               "made for Z-Image Turbo.",
+    "control_strength": "How strongly the ControlNet holds the painting to your picture. 1 = as trained.",
 }
 
 
 def _tip(k, **kw):
     kw["tooltip"] = TIP[k]
     return kw
+
+
+def _patch_choices():
+    patches = folder_paths.get_filename_list("model_patches") if "model_patches" in folder_paths.folder_names_and_paths else []
+    union = sorted((p for p in patches if "z-image" in p.lower() and "union" in p.lower()), key=lambda p: ("8step" not in p.lower(), p))
+    rest = [p for p in patches if p not in union]
+    if not union and not rest:
+        return ["(no model patches found)"], "(no model patches found)"
+    return union + rest, (union or rest)[0]
+
+
+def _zimage_patch(name):
+    hit = _PATCH_CACHE.get(name)
+    if hit is None:
+        from comfy_extras.nodes_model_patch import ModelPatchLoader
+
+        _PATCH_CACHE.clear()
+        hit = _PATCH_CACHE[name] = ModelPatchLoader().load_model_patch(name)[0]
+    return hit
 
 
 def _lora_choices():
@@ -278,11 +305,20 @@ def _paint(frame, gen_full, s):
     up = _resize(crop, tw, th)
     gen = (F.interpolate(gen_c[None, None].float(), size=(th, tw), mode="nearest")[0, 0] > 0.5).float()
 
-    ref = _reference(up, gen)
-    pos = _encode(s["clip"], s["vae"], s["prompt"], ref, s["vlm"])
-    neg = _zero_out(pos)
+    vae = s["vae"]
+    if s.get("zimage"):
+        from comfy_extras.nodes_model_patch import ZImageFunControlnet
 
-    model, vae = s["model"], s["vae"]
+        pos = s["clip"].encode_from_tokens_scheduled(s["clip"].tokenize(s["prompt"]))
+        neg = _zero_out(pos)
+        # inpaint mode: the union model gets your picture with the painted area greyed out, plus the mask
+        model = ZImageFunControlnet().diffsynth_controlnet(s["model"], s["patch"], vae, image=None, strength=s["strength"],
+                                                           inpaint_image=up, mask=gen[None])[0]
+    else:
+        ref = _reference(up, gen)
+        pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
+        neg = _zero_out(pos)
+        model = s["model"]
     latent = vae.encode(up)
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     lh, lw = latent.shape[-2], latent.shape[-1]
@@ -361,14 +397,24 @@ class LCKrea2AnyPaint(_Base):
     CATEGORY = "LC MaskMaker/inpaint"
     OUTPUT_NODE = True
 
+    NAME = "LC Krea2 AnyPaint"
+
     def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, seed, steps, sampler_name, scheduler,
               crop_to_mask, padding, inpaint_resolution, boundary_px, vlm_reference, composite):
-        if not (prompt or "").strip():
-            raise ValueError("[LC Krea2 AnyPaint] Describe the whole finished picture in the prompt.")
+        self._check(prompt, steps)
         s = dict(model=_patched_model(model, lora, lora_strength), clip=clip, vae=vae, prompt=prompt.strip(),
                  seed=int(seed), steps=int(steps), sampler_name=sampler_name, scheduler=scheduler, crop=bool(crop_to_mask),
                  padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px), vlm=bool(vlm_reference),
                  composite=composite)
+        return self._run(image, mask, s)
+
+    def _check(self, prompt, steps):
+        if not (prompt or "").strip():
+            raise ValueError(f"[{self.NAME}] Describe the whole finished picture in the prompt.")
+        if int(steps) < 1:
+            raise ValueError(f"[{self.NAME}] steps is 0: check what is wired into steps (detailer_steps?).")
+
+    def _run(self, image, mask, s):
         b, h, w, _ = image.shape
         m = mask
         if m.ndim == 2:
@@ -393,5 +439,47 @@ class LCKrea2AnyPaint(_Base):
         return {"ui": _preview(self, image, out, outmask, note), "result": (out, outmask)}
 
 
-NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint}
-NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹"}
+class LCZImageAnyPaint(LCKrea2AnyPaint):
+    NAME = "LC Z-Image AnyPaint"
+    DESCRIPTION = (
+        "Inpaint and outpaint for Z-Image (Turbo / Base) with Alibaba's Z-Image Fun ControlNet Union 2.1 in inpaint "
+        "mode: the kept pixels put back after every step and a border the model blends. Your picture outside the mask "
+        "comes back unchanged. Describe the whole finished picture in the prompt.\n"
+        "Outpaint: wire LC Outpaint's or Rotate + Pad's control_image and control_mask in."
+    )
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
+        patches, default = _patch_choices()
+        req = {}
+        for k, v in base.items():
+            if k == "lora":
+                req["control"] = (patches, _tip("control", default=default))
+            elif k == "lora_strength":
+                req["control_strength"] = ("FLOAT", _tip("control_strength", default=1.0, min=0.0, max=2.0, step=0.05))
+            elif k == "vlm_reference":
+                continue  # Krea 2 only
+            elif k == "model":
+                req[k] = ("MODEL", {"tooltip": "Z-Image (Turbo / Base). The ControlNet patch is added for this node only."})
+            elif k == "clip":
+                req[k] = ("CLIP", {"tooltip": "Z-Image's text encoder (Qwen3 4B, CLIP type lumina2)."})
+            else:
+                req[k] = v
+        return {"required": req}
+
+    def paint(self, model, clip, vae, image, mask, prompt, control, control_strength, seed, steps, sampler_name, scheduler,
+              crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
+        self._check(prompt, steps)
+        if not control or control.startswith("(no "):
+            raise ValueError("[LC Z-Image AnyPaint] Put Alibaba's Z-Image Fun ControlNet Union 2.1 in models/model_patches "
+                             "and pick it in control.")
+        s = dict(model=model.clone(), zimage=True, patch=_zimage_patch(control), strength=float(control_strength), clip=clip,
+                 vae=vae, prompt=prompt.strip(), seed=int(seed), steps=int(steps), sampler_name=sampler_name,
+                 scheduler=scheduler, crop=bool(crop_to_mask), padding=int(padding), res=int(inpaint_resolution),
+                 boundary=int(boundary_px), vlm=False, composite=composite)
+        return self._run(image, mask, s)
+
+
+NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint}
+NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹"}

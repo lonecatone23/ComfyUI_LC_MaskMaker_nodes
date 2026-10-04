@@ -16,7 +16,7 @@ import { LC_W as DEFAULT_W, LC_MIN_W as MIN_W, LC_PAD as PAD, lcPreviewHeight, l
 
 const NODE_CLASSES = new Set([
   "LCMaskRefine", "LCSegmentAnything",
-  "LCSmartInpaint", "LCSmartInpaintPipe", "LCKrea2AnyPaint",
+  "LCSmartInpaint", "LCSmartInpaintPipe", "LCKrea2AnyPaint", "LCZImageAnyPaint",
 ]);
 // Multiline text widgets that must stay a fixed height (otherwise they grow to fill the node)
 const FIXED_HEIGHT = { prompt: 64 };

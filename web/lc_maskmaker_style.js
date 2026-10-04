@@ -21,6 +21,7 @@ const WITH_PREVIEW = new Set([
   "LCSmartInpaint",
   "LCSmartInpaintPipe",
   "LCKrea2AnyPaint",
+  "LCZImageAnyPaint",
 ]);
 // Nodes without one: only the width standard applies, height stays natural
 const PLAIN = new Set([

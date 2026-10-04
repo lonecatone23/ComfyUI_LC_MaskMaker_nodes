@@ -10,6 +10,7 @@
 - `LCSmartInpaint`: LC Smart Detailer 🩹
 - `LCSmartInpaintPipe`: LC Smart Detailer (pipe) 🩹
 - `LCKrea2AnyPaint`: LC Krea2 AnyPaint 🩹
+- `LCZImageAnyPaint`: LC Z-Image AnyPaint 🩹
 - `LCPersonMask`: LC Person Mask 🧍
 - `LCAutoAdjust`: LC Auto Adjust 🔆
 - `LCDepthAnythingV2`: LC Depth Anything V2 🌊
