@@ -19,6 +19,10 @@ LC Z-Image AnyPaint: the same crop, keep, border and composite for Z-Image (Turb
 Z-Image Fun ControlNet Union 2.1 in inpaint mode (models/model_patches, through ComfyUI core's ZImageFunControlnet
 patch) instead of the Krea 2 LoRA and reference.
 
+LC SDXL AnyPaint: the same again for any SDXL checkpoint, painted by xinsir's ControlNet Union ProMax in repaint mode
+(models/controlnet, core ComfyUI), optionally with lllyasviel's Fooocus inpaint patch through Acly's comfyui-inpaint-nodes
+(called at run time, not bundled). The keep runs per latent pixel (SDXL has no 2x2 patches) and cfg / negative are real.
+
 The reference path runs in this node's own model wrapper, so it works even when another pack replaces Krea 2's
 forward (ComfyUI-RedNodeStudio does, which made the first version copy the flat fill). LoRAs and attention / speed-up
 options still apply. Method after yijunwang2's reference pipeline (Krea 2 Community License); the reference forward
@@ -79,6 +83,16 @@ TIP = {
     "control": "Alibaba's Z-Image Fun ControlNet Union 2.1 (models/model_patches), used in inpaint mode. The 8steps one is "
                "made for Z-Image Turbo.",
     "control_strength": "How strongly the ControlNet holds the painting to your picture. 1 = as trained.",
+    "sdxl_control": "xinsir's ControlNet Union SDXL ProMax (models/controlnet), used in repaint mode: it holds edges, light and "
+                    "perspective to your picture. off = Fooocus inpaint only.",
+    "sdxl_strength": "How strongly the ControlNet holds the painting to your picture. Lower = more freedom inside the mask.",
+    "fooocus_inpaint": "Optional. lllyasviel's Fooocus inpaint patch (models/inpaint, with fooocus_inpaint_head.pth next to it). "
+                       "Blends best and matches the colours around it, but rebuilds what was there more than it adds new "
+                       "things. Good for outpaint and fills. With the ControlNet on too, drop control_strength to about 0.5 "
+                       "(Pony / Illustrious turn to noise at 1). Needs Acly's comfyui-inpaint-nodes.",
+    "negative": "What you don't want. SDXL uses a real negative prompt.",
+    "cfg": "SDXL cfg. 4 - 6 for most checkpoints.",
+    "sdxl_steps": "25 - 30 for a normal SDXL checkpoint, fewer for Lightning / DMD ones (then cfg 1 - 2).",
 }
 
 
@@ -103,6 +117,62 @@ def _zimage_patch(name):
 
         _PATCH_CACHE.clear()
         hit = _PATCH_CACHE[name] = ModelPatchLoader().load_model_patch(name)[0]
+    return hit
+
+
+OFF = "off"
+
+
+def _sdxl_control_choices():
+    cns = folder_paths.get_filename_list("controlnet")
+    hits = sorted((c for c in cns if "union" in c.lower() and "xl" in c.lower()), key=lambda c: ("promax" not in c.lower(), c))
+    return [OFF] + hits + [c for c in cns if c not in hits], (hits[0] if hits else OFF)
+
+
+def _fooocus_choices():
+    files = folder_paths.get_filename_list("inpaint") if "inpaint" in folder_paths.folder_names_and_paths else []
+    hits = sorted((f for f in files if f.lower().endswith(".patch")), key=lambda f: ("v26" not in f.lower(), f))
+    return [OFF] + hits, OFF  # off by default: together with the ControlNet at full strength it overcooks Pony / Illustrious
+
+
+def _sdxl_control(name):
+    key = ("cn", name)
+    hit = _PATCH_CACHE.get(key)
+    if hit is None:
+        import nodes
+        from comfy_extras.nodes_controlnet import SetUnionControlNetType
+
+        cn = nodes.ControlNetLoader().load_controlnet(name)[0]
+        hit = SetUnionControlNetType.execute(cn, "repaint").args[0]  # xinsir ProMax: type 7 = repaint
+        _PATCH_CACHE[key] = hit
+    return hit
+
+
+def _node(cid, label):
+    import nodes
+
+    cls = nodes.NODE_CLASS_MAPPINGS.get(cid)
+    if cls is None:
+        raise ValueError(f"[LC SDXL AnyPaint] {label} needs Acly's comfyui-inpaint-nodes (ComfyUI Manager: "
+                         "\"ComfyUI Inpaint Nodes\"), or set fooocus_inpaint to off.")
+    return cls
+
+
+def _out(r):
+    return r.args if hasattr(r, "args") else r
+
+
+def _fooocus_patch(patch):
+    key = ("fooocus", patch)
+    hit = _PATCH_CACHE.get(key)
+    if hit is None:
+        files = folder_paths.get_filename_list("inpaint")
+        heads = [f for f in files if "inpaint_head" in f.lower()]
+        if not heads:
+            raise ValueError("[LC SDXL AnyPaint] fooocus_inpaint_head.pth is missing from models/inpaint (it comes with "
+                             "the patch: huggingface.co/lllyasviel/fooocus_inpaint).")
+        hit = _out(_node("INPAINT_LoadFooocusInpaint", "fooocus_inpaint").execute(heads[0], patch))[0]
+        _PATCH_CACHE[key] = hit
     return hit
 
 
@@ -253,9 +323,28 @@ def _reference(known, gen):
     return _resize(ref, rw, rh)
 
 
-def _keep_tokens(gen, boundary_px, lh, lw):
+def _telea_fill(img, hole):
+    """img (1,H,W,3), hole (H,W) 1 = painted. The picture around the hole extended into it (OpenCV Telea at low
+    resolution, scaled back up and softened)."""
+    import cv2
+
+    H, W = hole.shape
+    sc = min(1.0, 320.0 / max(H, W))
+    w, h = max(8, int(W * sc)), max(8, int(H * sc))
+    small = (_resize(img, w, h, "bilinear")[0].numpy() * 255).astype("uint8")
+    m = (F.interpolate(hole[None, None].float(), size=(h, w), mode="bilinear")[0, 0] > 0.01).numpy().astype("uint8")
+    filled = cv2.inpaint(small, m, 5, cv2.INPAINT_TELEA)
+    f = torch.from_numpy(filled).float()[None] / 255.0
+    f = _resize(f, W, H, "bilinear")
+    f = blur(f.movedim(-1, 1), max(2.0, 6.0 / sc * 0.5)).movedim(1, -1)
+    g = hole.float()[None, ..., None]
+    return (img * (1 - g) + f * g).clamp(0, 1)
+
+
+def _keep_tokens(gen, boundary_px, lh, lw, p=2):
     """Pixel mask of what is painted -> latent-size noise mask (1 = generate) on the exact token grid: a token is
-    kept only if all its pixels are outside the painted area grown by the border (square dilation)."""
+    kept only if all its pixels are outside the painted area grown by the border (square dilation). p = latent
+    pixels per token (2 for the DiT models, 1 for SDXL's UNet)."""
     r = int(boundary_px)
     g = gen[None, None].float()
     if r > 0:
@@ -263,7 +352,6 @@ def _keep_tokens(gen, boundary_px, lh, lw):
     keep = 1.0 - g.clamp(0, 1)
     keep = F.interpolate(keep, size=(lh, lw), mode="nearest")
     keep = (keep > 0.5).float()
-    p = 2
     hb, wb = lh // p, lw // p
     kb = keep[..., : hb * p, : wb * p].reshape(1, 1, hb, p, wb, p).amin(dim=(3, 5))
     kt = kb.repeat_interleave(p, 2).repeat_interleave(p, 3)
@@ -306,7 +394,28 @@ def _paint(frame, gen_full, s):
     gen = (F.interpolate(gen_c[None, None].float(), size=(th, tw), mode="nearest")[0, 0] > 0.5).float()
 
     vae = s["vae"]
-    if s.get("zimage"):
+    p = 2
+    if s.get("sdxl"):
+        p = 1
+        clip = s["clip"]
+        pos = clip.encode_from_tokens_scheduled(clip.tokenize(s["prompt"]))
+        neg = clip.encode_from_tokens_scheduled(clip.tokenize(s["negative"]))
+        model = s["model"]
+        if s["fooocus"] is not None:
+            # the area that may change (painted area + border) is greyed and handed to the Fooocus inpaint head
+            r = int(s["boundary"])
+            grown = F.max_pool2d(gen[None, None], 2 * r + 1, stride=1, padding=r) if r > 0 else gen[None, None]
+            g = grown[0, 0, ..., None]
+            feed = {"samples": vae.encode(up * (1.0 - g) + 0.5 * g), "noise_mask": grown}
+            model = _out(_node("INPAINT_ApplyFooocusInpaint", "fooocus_inpaint").execute(model, s["fooocus"], feed))[0]
+        if s["control"] is not None:
+            import nodes
+
+            # ProMax repaint: your picture with the painted area black
+            hint = up * (1.0 - gen[None, ..., None])
+            pos, neg = nodes.ControlNetApplyAdvanced().apply_controlnet(pos, neg, s["control"], hint, s["strength"], 0.0, 1.0,
+                                                                        vae=vae)
+    elif s.get("zimage"):
         from comfy_extras.nodes_model_patch import ZImageFunControlnet
 
         pos = s["clip"].encode_from_tokens_scheduled(s["clip"].tokenize(s["prompt"]))
@@ -319,14 +428,16 @@ def _paint(frame, gen_full, s):
         pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
         neg = _zero_out(pos)
         model = s["model"]
-    latent = vae.encode(up)
+    # SDXL keeps the starting picture's broad colours even at full denoise: the painted area starts from the
+    # surrounding picture extended into it, whatever fill the canvas came with
+    latent = vae.encode(_telea_fill(up, gen) if s.get("sdxl") else up)
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     lh, lw = latent.shape[-2], latent.shape[-1]
-    noise_mask = _keep_tokens(gen, s["boundary"], lh, lw)
+    noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
     noise = comfy.sample.prepare_noise(latent, s["seed"])
     callback = latent_preview.prepare_callback(model, s["steps"])
     samples = comfy.sample.sample(
-        model, noise, s["steps"], 1.0, s["sampler_name"], s["scheduler"], pos, neg, latent,
+        model, noise, s["steps"], s.get("cfg", 1.0), s["sampler_name"], s["scheduler"], pos, neg, latent,
         denoise=1.0, noise_mask=noise_mask, callback=callback, disable_pbar=not comfy.utils.PROGRESS_BAR_ENABLED,
         seed=s["seed"],
     )
@@ -408,9 +519,11 @@ class LCKrea2AnyPaint(_Base):
                  composite=composite)
         return self._run(image, mask, s)
 
+    EMPTY_PROMPT = "Describe the whole finished picture in the prompt."
+
     def _check(self, prompt, steps):
         if not (prompt or "").strip():
-            raise ValueError(f"[{self.NAME}] Describe the whole finished picture in the prompt.")
+            raise ValueError(f"[{self.NAME}] The prompt is empty (check what is wired into prompt). {self.EMPTY_PROMPT}")
         if int(steps) < 1:
             raise ValueError(f"[{self.NAME}] steps is 0: check what is wired into steps (detailer_steps?).")
 
@@ -481,5 +594,75 @@ class LCZImageAnyPaint(LCKrea2AnyPaint):
         return self._run(image, mask, s)
 
 
-NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint}
-NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹"}
+class LCSDXLAnyPaint(LCKrea2AnyPaint):
+    NAME = "LC SDXL AnyPaint"
+
+    def _check(self, prompt, steps):
+        # an empty prompt is fine here: the ControlNet fills from the picture around the mask
+        if int(steps) < 1:
+            raise ValueError(f"[{self.NAME}] steps is 0: check what is wired into steps (detailer_steps?).")
+    DESCRIPTION = (
+        "Inpaint and outpaint for any SDXL checkpoint (SDXL, Pony, Illustrious, your finetunes), painted by xinsir's "
+        "ControlNet Union ProMax in repaint mode, optionally with Fooocus's inpaint patch. The kept pixels are put back "
+        "after every step and a border is blended. Your picture outside the mask comes back unchanged. No LoRA needed. "
+        "Describe what goes in the mask in a short prompt.\n"
+        "Outpaint: wire LC Outpaint's or Rotate + Pad's control_image and control_mask in."
+    )
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
+        cns, cn_default = _sdxl_control_choices()
+        patches, patch_default = _fooocus_choices()
+        req = {}
+        for k, v in base.items():
+            if k == "lora":
+                req["negative"] = ("STRING", _tip("negative", default="", multiline=True))
+                req["control"] = (cns, _tip("sdxl_control", default=cn_default))
+            elif k == "lora_strength":
+                req["control_strength"] = ("FLOAT", _tip("sdxl_strength", default=1.0, min=0.0, max=2.0, step=0.05))
+                req["fooocus_inpaint"] = (patches, _tip("fooocus_inpaint", default=patch_default))
+            elif k == "steps":
+                req[k] = ("INT", _tip("sdxl_steps", default=25, min=1, max=100))
+                req["cfg"] = ("FLOAT", _tip("cfg", default=5.0, min=0.0, max=30.0, step=0.1, round=0.01))
+            elif k == "sampler_name":
+                req[k] = (comfy.samplers.KSampler.SAMPLERS, {"default": "dpmpp_2m"})
+            elif k == "scheduler":
+                req[k] = (comfy.samplers.KSampler.SCHEDULERS, {"default": "karras"})
+            elif k == "vlm_reference":
+                continue  # Krea 2 only
+            elif k == "model":
+                req[k] = ("MODEL", {"tooltip": "Any SDXL checkpoint. The inpaint patch is added for this node only."})
+            elif k == "clip":
+                req[k] = ("CLIP", {"tooltip": "The checkpoint's CLIP."})
+            elif k == "prompt":
+                req[k] = ("STRING", {"default": "", "multiline": True,
+                                     "tooltip": "Describe what goes in the mask, short: \"a red bucket full of fish on the "
+                                                "pier\". To remove something, describe what should be there instead (\"empty "
+                                                "wooden planks\"). Empty works too: it fills from the picture around the mask."})
+            else:
+                req[k] = v
+        return {"required": req}
+
+    def paint(self, model, clip, vae, image, mask, prompt, negative, fooocus_inpaint, control, control_strength, seed, steps,
+              cfg, sampler_name, scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
+        self._check(prompt, steps)
+        if model.model.latent_format.latent_channels != 4:
+            raise ValueError("[LC SDXL AnyPaint] This is for SDXL checkpoints (4-channel latent). Use LC Krea2 AnyPaint or "
+                             "LC Z-Image AnyPaint for those models.")
+        foo = None if fooocus_inpaint in (OFF, "", None) else _fooocus_patch(fooocus_inpaint)
+        cn = None if control in (OFF, "", None) or control_strength <= 0 else _sdxl_control(control)
+        if foo is None and cn is None:
+            raise ValueError("[LC SDXL AnyPaint] Turn on fooocus_inpaint, control, or both: with both off it is a plain "
+                             "masked redraw that ignores your picture.")
+        s = dict(model=model.clone(), sdxl=True, fooocus=foo, control=cn, strength=float(control_strength), clip=clip,
+                 vae=vae, prompt=prompt.strip(), negative=(negative or "").strip(), seed=int(seed), steps=int(steps),
+                 cfg=float(cfg), sampler_name=sampler_name, scheduler=scheduler, crop=bool(crop_to_mask),
+                 padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px), vlm=False,
+                 composite=composite)
+        return self._run(image, mask, s)
+
+
+NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint, "LCSDXLAnyPaint": LCSDXLAnyPaint}
+NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹",
+                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹"}
