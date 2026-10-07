@@ -26,7 +26,7 @@ import comfy.utils
 import latent_preview
 from nodes import PreviewImage
 
-from . import lc_models, lc_sam3
+from . import lc_models, lc_pipe_keys, lc_sam3
 from .lc_refine_core import blur, grow
 
 try:
@@ -60,15 +60,16 @@ TIP = {
                  "Colors are only a hint: 'red dress' can still pick a green dress. Things that are not there are not found.",
     "grow": "Pixels to grow (positive) or shrink (negative) the mask before inpainting. Growing a little covers the edges.",
     "feather": "Softness of the mask edge in pixels, so the redrawn area blends into the rest. 0 = hard edge.",
-    "blend": "How much of the redraw is pasted in. 1 = all of it, 0.5 = half redraw, half original. Lower tames a redraw that went too far.",
+    "blend": "How much of the redraw is pasted in: 1 = all of it. Below 1 the old and new pixels are mixed, and features "
+             "the redraw moved a little (lashes, eyelids) can show twice. For a lighter redraw, lower denoise instead.",
     "padding": "Pixels of the surrounding image included with each crop, so the model sees the context.",
     "inpaint_resolution": "Each crop is redrawn at about this many pixels squared (1024 = 1 megapixel), whatever its shape. "
                           "Higher = more detail, slower.",
     "denoise": "How much is redrawn. Low keeps the shape and fixes details, high redraws from scratch.",
     "seed": "Seed for the redraw.",
     "steps": "Sampling steps.",
-    "cfg": "CFG. 1 for Flux, Krea 2, Anima and other cfg 1 models; around 5 to 7 for SDXL. Never goes below 1: "
-           "a lower value (from a pipe or a wired input) is raised to 1, because below 1 the redraw comes out speckled.",
+    "cfg": "CFG for the redraw. 1 works for Krea 2, Flux, Z-Image, Anima and, at detailer denoise (up to about 0.4), "
+           "SDXL too (tested: SDXL looked the same at cfg 1 to 7). Never goes below 1: below 1 the redraw comes out speckled.",
     "sampler_name": "Sampler.",
     "scheduler": "Scheduler.",
     "positive": "The image's prompt. A prompt describing the whole scene can get drawn into every crop at denoise 0.3 "
@@ -79,6 +80,12 @@ TIP = {
     "pipe": "LC pipe: model, VAE, seed, steps, cfg, sampler and scheduler come from here.",
     "model": "Optional. Wire a model here to use it instead of the pipe's (with LoRAs on it, or a different model).",
     "vae": "Optional. Wire a VAE here to use it instead of the pipe's.",
+    "pipe_cfg": "CFG for the redraw. 1 works for Krea 2, Flux, Z-Image and, at detailer denoise (up to about 0.4), SDXL too "
+                "(tested: SDXL looked the same at cfg 1 to 7). Used instead of the pipe's cfg_1, which is usually the main "
+                "sampler's.",
+    "tone_match": "On: the redraw gets the original's brightness, contrast and colour back where it is pasted, keeping the "
+                  "new detail. A light redraw comes back a little flat and dull without it. Turn off when the redraw is "
+                  "meant to change colours (a new shirt colour, a different object).",
 }
 
 
@@ -135,6 +142,9 @@ def _optional(neg=True, pos=False):
     out["inpaint_positive"] = ("CONDITIONING", _tip("inpaint_positive"))
     if neg:
         out["negative"] = ("CONDITIONING", _tip("negative"))
+    out["tone_match"] = ("BOOLEAN", _tip("tone_match", default=True))  # last: saved workflows keep their widget order
+    if pos:  # pipe version only, after tone_match for the same reason
+        out["cfg"] = ("FLOAT", _tip("pipe_cfg", default=1.0, min=1.0, max=30.0, step=0.1, round=0.01))
     return out
 
 
@@ -262,6 +272,8 @@ def _inpaint_region(frame, region, box, s):
         patch = patch.reshape(-1, *patch.shape[-3:])
     patch = patch[:1, ..., :3].float().cpu()
     down = comfy.utils.common_upscale(patch.movedim(-1, 1), cw, ch, "lanczos", "disabled").movedim(1, -1).clamp(0, 1)
+    if s.get("tone_match", True):
+        down = _match_tones(down, crop, soft)
     down = _seam_colour(down, crop, soft, repaint)
 
     out = frame.clone()
@@ -293,6 +305,31 @@ def _seam_colour(down, crop, alpha, repaint):
     return (down + field.permute(1, 2, 0)[None]).clamp(0, 1)
 
 
+def _lowfreq(img, size=32):
+    """The broad colour of (1,H,W,3): shrunk to about 32 px, softened, scaled back up."""
+    h, w = img.shape[1], img.shape[2]
+    t = img.movedim(-1, 1)
+    sh, sw = max(2, round(size * h / max(h, w))), max(2, round(size * w / max(h, w)))
+    t = blur(F.interpolate(t, size=(sh, sw), mode="area"), 1.5)
+    return F.interpolate(t, size=(h, w), mode="bilinear", align_corners=False).movedim(1, -1)
+
+
+def _match_tones(down, crop, weight):
+    """Give the redraw the original's tones where it is pasted: brightness, contrast and colour per channel, then the
+    original's broad colour. A light redraw (and the VAE round trip, and the resize) comes back flatter and duller;
+    the new fine detail stays. down / crop: (1,H,W,3); weight: (H,W)."""
+    w = weight.clamp(0, 1)[None, ..., None]
+    ws = float(w.sum())
+    if ws < 50.0:
+        return down
+    mean = lambda t: (t * w).sum((0, 1, 2)) / ws
+    md, mo = mean(down), mean(crop)
+    sd = ((((down - md) ** 2) * w).sum((0, 1, 2)) / ws).sqrt().clamp(min=1e-4)
+    so = ((((crop - mo) ** 2) * w).sum((0, 1, 2)) / ws).sqrt()
+    x = (down - md) * (so / sd).clamp(0.8, 1.25) + mo
+    return (x - _lowfreq(x) + _lowfreq(crop)).clamp(0, 1)
+
+
 def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps, cfg, seed):
     """kw: the node's own widgets (grow, feather, blend, padding, inpaint_resolution, denoise, inpaint_positive)."""
     if kw.get("inpaint_positive") is not None:
@@ -302,7 +339,7 @@ def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps
     return dict(model=model, vae=vae, positive=positive, negative=negative, sampler_name=sampler_name,
                 scheduler=scheduler, steps=int(steps), cfg=max(1.0, float(cfg)), denoise=float(kw["denoise"]), seed=int(seed),
                 grow=float(kw["grow"]), feather=float(kw["feather"]), padding=int(kw["padding"]),
-                res=int(kw["inpaint_resolution"]), blend=float(kw["blend"]))
+                res=int(kw["inpaint_resolution"]), blend=float(kw["blend"]), tone_match=kw.get("tone_match") is not False)
 
 
 def _run(image, masks_per_frame, s):
@@ -369,7 +406,7 @@ def _from_pipe(pipe, name, have=()):
         "sampler_name": get("sampler_name"), "scheduler": get("scheduler"),
         "positive": get("positive"), "negative": get("negative"),
     }
-    missing = [k for k in ("model", "vae", "seed", "steps", "cfg", "sampler_name", "scheduler") if vals[k] is None and k not in have]
+    missing = [k for k in ("model", "vae", "seed", "steps", "sampler_name", "scheduler") if vals[k] is None and k not in have]
     if missing:
         raise ValueError(f"[{name}] The pipe has no {', '.join(missing)}. Add it with LC Pipe In / LC Pipe Edit.")
     return vals
@@ -384,8 +421,9 @@ def _pipe_settings(pipe, kw, name):
     if positive is None and kw.get("inpaint_positive") is None:
         raise ValueError(f"[{name}] No positive: wire one, or put it in the pipe.")
     negative = kw.get("negative") if kw.get("negative") is not None else p["negative"]
+    cfg = kw.get("cfg") if kw.get("cfg") is not None else 1.0  # the detailer's own cfg, not the main sampler's cfg_1
     return _settings(kw, p["model"], p["vae"], positive, negative, p["sampler_name"], p["scheduler"], p["steps"],
-                     p["cfg"], p["seed"])
+                     cfg, p["seed"])
 
 
 def _direct_settings(kw):
@@ -406,16 +444,37 @@ class _Base(PreviewImage):
     def __init__(self):
         super().__init__()
 
-    def _smart(self, image, kw, s):
+    def _smart(self, image, kw, s, hits=None):
+        """hits: SAM 3 results already found for this image (from the pipe), keyed by word / model / threshold.
+        Returns (image, mask, note, hits with this node's finds added)."""
         prompt = kw["prompt"]
         words = _words(prompt)
         if not words:
             raise ValueError("[LC Smart Detailer] The prompt is empty. Type what to detail, e.g. hands.")
         path = lc_models.resolve_sam3(kw["sam3_model"])
-        masks = [[_clean(m) for m in lc_sam3.objects(image[i:i + 1], words, path, kw["threshold"])]
-                 for i in range(image.shape[0])]
+        hits = dict(hits or {})
+        # the finding is kept on the node too: changing denoise, steps, feather, etc. redraws without searching again
+        img_key = lc_pipe_keys.tag(image)
+        if getattr(self, "_found", (None,))[0] != img_key:
+            self._found = (img_key, {})
+        reused = 0
+        masks = [[] for _ in range(image.shape[0])]
+        for word in words:
+            key = f"{word}|{path}|{float(kw['threshold']):.3f}"
+            per_frame = hits.get(key) or self._found[1].get(key)
+            if per_frame is None:
+                per_frame = [[_clean(m) for m in lc_sam3.objects(image[i:i + 1], [word], path, kw["threshold"])]
+                             for i in range(image.shape[0])]
+            else:
+                reused += 1
+            hits[key] = per_frame
+            self._found[1][key] = per_frame
+            for i in range(image.shape[0]):
+                masks[i].extend(per_frame[i])
+        if reused:
+            print(f"[LC Smart Detailer] Reused what was already found for {reused} of {len(words)} word(s): no new search.")
         out, mask, done = _run(image, masks, s)
-        return out, mask, _note(done, prompt.strip())
+        return out, mask, _note(done, prompt.strip()), hits
 
 class LCSmartInpaint(_Base):
     DESCRIPTION = DESC_SMART
@@ -432,7 +491,7 @@ class LCSmartInpaint(_Base):
 
     def run(self, image, **kw):
         s = _direct_settings(kw)
-        out, mask, note = self._smart(image, kw, s)
+        out, mask, note, _ = self._smart(image, kw, s)
         return {"ui": _preview(self, image, out, mask, note), "result": (out, mask)}
 
 
@@ -445,16 +504,27 @@ class LCSmartInpaintPipe(_Base):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "pipe": (PIPE_TYPE, {"tooltip": TIP["pipe"]}), "image": ("IMAGE",),
+                "pipe": (PIPE_TYPE, {"tooltip": TIP["pipe"]}),
                 **_find_inputs(), **_mask_inputs(), **_denoise_input(),
             },
-            "optional": _optional(pos=True),
+            "optional": {
+                "image": ("IMAGE", {"tooltip": "Optional. Empty = the pipe's image. Wire one when a node without a pipe "
+                                               "changed the picture in between."}),
+                **_optional(pos=True),
+            },
         }
 
-    def run(self, pipe, image, **kw):
-        s = _pipe_settings(pipe, kw, "LC Smart Detailer (pipe)")
-        out, mask, note = self._smart(image, kw, s)
-        return {"ui": _preview(self, image, out, mask, note), "result": (pipe, out, mask)}
+    def run(self, pipe, image=None, **kw):
+        name = "LC Smart Detailer (pipe)"
+        image = lc_pipe_keys.pipe_image(pipe, image)
+        if image is None:
+            raise ValueError(f"[{name}] No image: wire one, or put it in the pipe (LC Pipe In / Aspect Ratio pipe).")
+        s = _pipe_settings(pipe, kw, name)
+        out, mask, note, hits = self._smart(image, kw, s, lc_pipe_keys.found_hits(pipe, image))
+        # what goes on down the pipe: the result as the pipe's image, every area redrawn so far, what was found
+        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(pipe, image), mask)
+        out_pipe = lc_pipe_keys.updated(pipe, out, protect=protect, hits=hits)
+        return {"ui": _preview(self, image, out, mask, note), "result": (out_pipe, out, mask)}
 
 
 NODE_CLASS_MAPPINGS = {

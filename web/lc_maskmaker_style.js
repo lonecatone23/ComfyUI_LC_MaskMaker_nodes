@@ -32,6 +32,7 @@ const PLAIN = new Set([
   "LCDepthAnythingV2",
   "LCNormalBAE",
   "LCImageBlendAdvance",
+  "LCFaceCrop",
 ]);
 
 app.registerExtension({

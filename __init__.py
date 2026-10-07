@@ -55,6 +55,7 @@ _load("lc_image_blend")
 _load("lc_auto_adjust")
 _load("lc_depth_anything")
 _load("lc_normal_bae")
+_load("lc_face_crop")
 
 WEB_DIRECTORY = "./web"
 
