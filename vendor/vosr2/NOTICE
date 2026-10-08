@@ -1,0 +1,8 @@
+This folder contains code from ComfyUI-VOSR2 (https://github.com/ylchen333/ComfyUI-VOSR2, v0.4.2,
+commit 6a21810b3f4f1a0ffc477c55330db0ac03c671f0), licensed under the Apache License 2.0 (see LICENSE-Apache-2.0.txt in this folder),
+which itself ports VOSR / VOSR 2.0 by Rongyuan Wu et al. (https://github.com/cswry/VOSR, Apache-2.0).
+
+Model weights are downloaded at run time from https://huggingface.co/CSWRY/VOSR (Apache-2.0), including
+DINOv2 (Meta, facebookresearch/dinov2) and the Qwen-Image VAE. They are not part of this repository.
+
+Changes made by LC MaskMaker are marked with a "LC change:" comment in the file they touch.

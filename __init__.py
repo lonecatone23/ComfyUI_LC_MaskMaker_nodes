@@ -56,6 +56,7 @@ _load("lc_auto_adjust")
 _load("lc_depth_anything")
 _load("lc_normal_bae")
 _load("lc_face_crop")
+_load("lc_vosr_upscale")
 
 WEB_DIRECTORY = "./web"
 

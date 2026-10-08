@@ -6,6 +6,7 @@ and imports adjusted. Weights are never included; see "Models and licensing" in 
 | Folder | What | Origin | License |
 |---|---|---|---|
 | `vendor/depth_anything_v2/` | Depth Anything V2 network (DPT head) and DINOv2 backbone layers | [DepthAnything/Depth-Anything-V2](https://github.com/DepthAnything/Depth-Anything-V2), [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2), via [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux) | Apache-2.0 (`LICENSE-Apache-2.0.txt`) |
+| `vendor/vosr2/` | VOSR 2.0 one-step upscaler (LightningDiT, Qwen-Image 2D VAE, DINOv2-L) and its tiled inference | [cswry/VOSR](https://github.com/cswry/VOSR) by Rongyuan Wu et al., via [ylchen333/ComfyUI-VOSR2](https://github.com/ylchen333/ComfyUI-VOSR2) v0.4.2 (see `NOTICE`) | Apache-2.0 (`LICENSE-Apache-2.0.txt`) |
 | `vendor/normalbae/` | NormalBAE surface normal network | [baegwangbin/surface_normal_uncertainty](https://github.com/baegwangbin/surface_normal_uncertainty), via [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux) | MIT (`LICENSE`) |
 
 The code licenses do not cover the pretrained weights. Depth Anything V2 Base / Large / Giant weights are

@@ -98,7 +98,7 @@ def _tip(name, **kw):
 # --------------------------------------------------------------------------
 def _find_inputs():
     return {
-        "prompt": ("STRING", _tip("prompt", default="hands", multiline=True)),
+        "prompt": ("STRING", _tip("prompt", default="Face", multiline=True)),
         "sam3_model": (lc_models.sam3_choices(), _tip("sam3_model")),
         "threshold": ("FLOAT", _tip("threshold", default=0.5, min=0.05, max=0.95, step=0.01)),
     }

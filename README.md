@@ -5,7 +5,7 @@ Mask, matting, segmentation and image-adjustment nodes for [ComfyUI](https://git
 - **Repo:** [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)
 - **Civitai:** [lonecatone23](https://civitai.com/user/lonecatone23)
 - **Support:** [Buy me a ☕](https://ko-fi.com/lonecatone)
-- **Version:** 0.18.1 · **17 Python nodes**
+- **Version:** 0.19.0 · **19 Python nodes**
 
 > Companion to [ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes). LC123 stays import-free. Anything that needs a model lives here and loads it on demand.
 
@@ -25,7 +25,8 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 | **LC Remove Background ✂️** | Cut the subject out with a BiRefNet model. Outputs **cutout** (RGBA), **mask**, and **on_background** (subject on a solid color). Optional **refine** (guided_filter or vitmatte) with the same trimap controls (**edge_erode** / **edge_dilate**), plus **grow**, **black_point** / **white_point**, and **feather**. No preview on the node (add LC Mask Refine after it if you want one). Uses ComfyUI's built-in background-removal loader, so no extra dependency. 💡 Raise **black_point** to clear faint haze, use **vitmatte** for hair. |
 | **LC Image Blend Advance 🎚️** | Place a layer on a background and blend it. **x_percent** / **y_percent** (0.01 steps), **scale**, **aspect_ratio**, **rotate**, **mirror**, and 29 blend modes, with **opacity** in 0.1 steps and an optional **layer_mask** (multiplied with the layer's own alpha). **background_image** is optional: leave it off and the layer goes on a transparent canvas the size of the layer (RGBA out, like LayerStyle's V3). **transform_method**: lanczos, bicubic, bilinear, nearest. Outputs **image** and **mask** (where the layer landed). Pure torch, no extra dependency.|
 | **LC Segment Anything 🎯** | Select things by describing them: type **hair, eyes, bikini** and each word is found and combined. **engine**: **grounding_dino + sam** (GroundingDINO finds boxes, SAM makes masks) or **sam3** (SAM 3 does both, using ComfyUI's built-in SAM 3 support). Then the same refine as Mask Refine (**refine**, **edge_erode** / **edge_dilate**, **black_point** / **white_point**) and a before/after wipe on the node. Outputs **cutout** (RGBA), **mask**, **raw_mask**. 💡 For sam3, **sam3_threshold** 0.5 is a good start; near 0.3 it invents matches for words that are not in the image. Every match is found (both hands, every face), and your own `sam3.pt` / `sam3.safetensors` work as well as the SAM 3.1 download. |
-| **LC Smart Detailer 🩹** | Replaces the SEGS / Impact FaceDetailer chain with one node. Finds what you type (**hands, face, eyes**) with SAM 3 and redraws it at full detail. Each hand or face gets its own crop, scaled to about **inpaint_resolution** squared pixels, redrawn, then blended back in. The redraw reaches a little past the pasted area and its colour is matched to the original along the seam, so the edge does not show. **tone_match** (on): the redraw gets the original's brightness, contrast and colour back where it is pasted, keeping the new detail (a light redraw otherwise comes back flat and dull); turn it off when the redraw is meant to change colours. Changing denoise, steps or feather redraws without searching again. **grow** / **feather** shape the mask, **padding** is the context around each crop, **blend** mixes the original back in (1 = all redraw). Works with 4-D and 5-D latents (SDXL, Flux, Krea 2, Anima, Qwen, etc.). Leave **negative** empty for cfg 1 models, wire it for SDXL. Nothing found? The image passes through untouched and the node says so. Before/after wipe on the node with the found areas outlined. **LC Smart Detailer (pipe) 🩹** takes the image, model, VAE and sampler settings from the LC pipe; wire an **image**, **model** or **vae** into it to use that one instead (a node without a pipe changed the picture, a model with LoRAs on it, or a different model). It puts its result back in the pipe's image and leaves two things for the nodes after it: every area the detailers redrew (merged, so face + hands + eyes add up), which **LC Tiled Upscale (pipe)** keeps, and what SAM 3 found, so the same word is never searched twice. Both are tied to the picture they were made for and ignored if it changed in between. 💡 Faces: denoise 0.3, blend 0.8. **cfg** defaults to 1 on both versions (the pipe version no longer takes the main sampler's cfg_1, which made redraws drastic). 1 works for Krea 2, Flux, Z-Image and, at detailer denoise up to about 0.4, SDXL too (tested cfg 1 to 7: the same result). It never goes below 1: below 1 the redraw comes out speckled. 💡 If your positive describes the whole scene, wire a short prompt for the area into **inpaint_positive** (e.g. "close-up of a woman's face, natural skin"). Otherwise, at denoise 0.3 and up, the scene can get drawn into every crop. |
+| **LC Smart Detailer 🩹** | Replaces the SEGS / Impact FaceDetailer chain with one node. Finds what you type (**hands, face, eyes**) with SAM 3 and redraws it at full detail. Each hand or face gets its own crop, scaled to about **inpaint_resolution** squared pixels, redrawn, then blended back in. The redraw reaches a little past the pasted area and its colour is matched to the original along the seam, so the edge does not show. **tone_match** (on): the redraw gets the original's brightness, contrast and colour back where it is pasted, keeping the new detail (a light redraw otherwise comes back flat and dull); turn it off when the redraw is meant to change colours. Changing denoise, steps or feather redraws without searching again. **grow** / **feather** shape the mask, **padding** is the context around each crop, **blend** mixes the original back in (1 = all redraw). Works with 4-D and 5-D latents (SDXL, Flux, Krea 2, Anima, Qwen, etc.). Leave **negative** empty for cfg 1 models, wire it for SDXL. Nothing found? The image passes through untouched and the node says so. Before/after wipe on the node with the found areas outlined. **LC Smart Detailer (pipe) 🩹** takes the image, model, VAE and sampler settings from the LC pipe; wire an **image**, **model** or **vae** into it to use that one instead (a node without a pipe changed the picture, a model with LoRAs on it, or a different model). It puts its result back in the pipe's image and leaves two things for the nodes after it: every area the detailers redrew (merged, so face + hands + eyes add up), which **LC VOSR2 Upscale (pipe)** carries to the new size (its **protected** output), and what SAM 3 found, so the same word is never searched twice. Both are tied to the picture they were made for and ignored if it changed in between. 💡 Faces: denoise 0.3, blend 0.8. **cfg** defaults to 1 on both versions (the pipe version no longer takes the main sampler's cfg_1, which made redraws drastic). 1 works for Krea 2, Flux, Z-Image and, at detailer denoise up to about 0.4, SDXL too (tested cfg 1 to 7: the same result). It never goes below 1: below 1 the redraw comes out speckled. 💡 If your positive describes the whole scene, wire a short prompt for the area into **inpaint_positive** (e.g. "close-up of a woman's face, natural skin"). Otherwise, at denoise 0.3 and up, the scene can get drawn into every crop. |
+| **LC VOSR2 Upscale 🧩** | Upscale that keeps the detailers' work. VOSR 2.0 (one step, built in, no other pack needed) sharpens and adds fine detail to the picture it is given instead of redrawing it with your model, so faces and hands come through as the detailers left them, with no new skin blotches. Run it **after** the detailers: render → **LC Smart Detailer** → **LC VOSR2 Upscale**. **upscale_by** 1.5x, 2x, 3x or 4x in one pass, 6x (3x + 2x) and 8x (4x + 2x) in two (one big pass breaks the skin up into patches), **color_alignment** wavelet keeps the colours, **tile_size** 512 (what it was trained at), **vae_tile_size** lower = less VRAM. **LC VOSR2 Upscale (pipe) 🧩** takes the picture from the LC pipe (what the detailers left in it) and puts the result back, one wire after **LC Smart Detailer (pipe)**. Its **protected** output is the detailers' areas at the new size: wire it into LC Skin Texture / LC Skin Upscale **protect_mask** so they do not add skin detail on top of the detailers' work (the plain version takes LC Smart Detailer's **mask** as **protect_mask** and gives the same output). 2x of a 1 MP picture: about 5 s and under 7 GB on an RTX 5090. Weights download on first run (about 6.5 GB). |
 | **LC Krea2 AnyPaint 🩹** | Krea 2 inpaint and outpaint with yijunwang2's **AnyPaint LoRA** ([Here](https://huggingface.co/yijunwang2/krea2-anypaint), put it in your loras folder), run the way it was trained. Everything outside the mask comes back exactly as it was. The model sees a small copy of the whole picture while it paints, so the new part matches the light and the scene, and a thin border around the mask is redrawn so the seam disappears. **prompt**: describe the whole finished picture, not just the change. **crop_to_mask** on for inpaint (the area is redrawn in its own crop at **inpaint_resolution**), off for outpaint. **composite**: **keep original** pastes back only the painted area, **raw** is the whole redraw. Use Krea 2 Turbo, 8 steps, euler / simple, cfg 1. 💡 "Remove the car" leaves a flat blob: describe what should be there instead. |
 | **LC Z-Image AnyPaint 🩹** | The same inpaint and outpaint for **Z-Image** (Turbo / Base): the same crop, keep, border and seam fix, painted by Alibaba's **Z-Image Fun ControlNet Union 2.1** in inpaint mode ([Here](https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union-2.1), put it in models/model_patches; the 8steps one is for Turbo). The only difference from the Krea 2 node is the top two widgets: **control** (the union patch) and **control_strength**. Describe the whole finished picture in the prompt. |
 | **LC SDXL AnyPaint 🩹** | The same inpaint and outpaint for any **SDXL** checkpoint (SDXL, Pony, Illustrious, your finetunes), no LoRA needed. Painted by xinsir's **ControlNet Union SDXL ProMax** in repaint mode ([Here](https://huggingface.co/xinsir/controlnet-union-sdxl-1.0), put the promax file in models/controlnet). **prompt**: describe what goes in the mask, short ("a red bucket full of fish on the pier"). To remove something, describe what should be there instead, or leave it empty and it fills from the picture around the mask (outpaint still wants the scene described). SDXL uses a real **negative** and **cfg** (25 steps, cfg 5, dpmpp_2m / karras). **fooocus_inpaint** (optional, off by default): lllyasviel's Fooocus inpaint patch ([Here](https://huggingface.co/lllyasviel/fooocus_inpaint), models/inpaint, needs Acly's **ComfyUI Inpaint Nodes**) blends best on outpaints and fills but rebuilds what was there more than it adds. ⚠️ With both on, drop **control_strength** to about 0.5: Pony and Illustrious turn to noise at 1. ⚠️ **Outpaint: control_strength about 0.2.** At 1 the straight edge of the old picture reads as a real edge, and SDXL paints a window frame, fence or line along it. Inpaint stays at 1 (the mask is surrounded by your picture, so it holds the light and edges through the hole). 💡 A boolean and two floats into **control_strength** switches it with your inpaint / outpaint toggle. |
@@ -33,6 +34,61 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 | **LC Auto Adjust 🔆** | One-click auto levels. **mode**: **RGB** (each channel on its own, also removes color casts), **lum + sat**, **luminance**, **saturation**, or **mono**. Then **red** / **green** / **blue** balance, **brightness**, **contrast**, **saturation** trims, and **strength** to blend back toward the original. All in 0.1 steps. An optional **mask** limits both where the levels are measured and where the result is applied (an alpha channel works as the mask when none is connected). Pure torch, no extra dependency. |
 | **LC Depth Anything V2 🌊** | Depth map from one image, normalized 0-1 per image, **bright = near** unless **invert** is on. Reads the original Depth Anything V2 weights, so a copy you already have in `models/depthanything` works (it also finds the ones in comfyui_controlnet_aux). Outputs **depth** (3-channel image) and **depth_mask**. **resolution** in steps of 14. Matches comfyui_controlnet_aux's Depth Anything V2 (correlation 1.000). Model code is vendored, no extra package. The **model** list reads the same on every machine (Small / Base / Large), so shared workflows never show a missing model; older saved workflows still load. |
 | **LC Normal Map (BAE) 🗺️** | Surface normal map (RGB = XYZ) with the BAE network, the same style ControlNet's normal_bae makes. **resolution**, **flip_y** for OpenGL vs DirectX, and optional **blur_radius** / **sigma** (ComfyUI's own Blur Image, so it matches chaining that node after this one; radius 0 = off). Matches comfyui_controlnet_aux's BAE (correlation 0.9999). The **model** entry reads the same on every machine, and older saved workflows still run. Needs the `timm` package (the installer adds it if missing). 💡 Both maps are what LC Lighting Control in LC123 wants as its **depth_map** and **normal_map**. |
+
+---
+
+## LC VOSR2 Upscale🧩
+
+**What is it?**
+
+- An upscaler built for *speed* and low VRAM, with the highest quality possible.
+- It uses a dedicated upscale model (VOSR 2.0) that sharpens and adds fine detail without redrawing the picture.
+- 💡Hook it up after my detailers with the pipe version. It passes along what the detailers already fixed, so LC Skin Upscale and LC Skin Texture don't turn skin pores into freckles or craters.
+
+![render, detailers, LC VOSR2 Upscale](assets/readme/vosr_pipeline.jpg)
+
+**Render → LC Smart Detailer (pipe) → LC VOSR2 Upscale (pipe).** One wire.
+
+![plain resize vs LC VOSR2 Upscale](assets/readme/vosr_vs_resize.jpg)
+
+**Things to notice:**
+- **Skin:** clean and smooth, with the lashes and brows sharp. No painted-on grain.
+- **Fabric:** real herringbone and cable knit instead of mush.
+- **Small faces:** the old photo's faces come back as faces.
+
+---
+
+### Speed and size chart*
+
+| upscale_by | Output size | Time | GPU memory |
+|---|---|---|---|
+| 1.5x | 1596 x 2028 | 2.8 s | 4.7 GB |
+| 2x | 2128 x 2704 | 4.4 s | 4.8 GB |
+| 3x | 3192 x 4056 | 8.6 s | 5.1 GB |
+| 4x | 4256 x 5408 | 16 s | 5.7 GB |
+| 6x (3x + 2x) | 6384 x 8112 | 46 s | 8.4 GB |
+| 8x (4x + 2x) | 8512 x 10816 | 75 s | 12.0 GB |
+
+*All tests based on a 1064x1352 render on an RTX 5090, warm.
+
+**⏱️ Time will vary by card, but the output size will not. About 5 GB covers 1.5x - 3x, so it can almost run on a 🥔**
+
+- 6x and 8x run two passes on purpose. One big pass breaks the skin up into patches.
+
+---
+
+**Settings ⚙️**
+
+- **upscale_by:** 1.5x - 4x run in one pass, 6x and 8x in two. 2x is the sweet spot, 1.5x is a third faster.
+- **color_alignment:** wavelet.
+- **tile_size:** 512, what it was trained at. Leave it.
+- **vae_tile_size:** lower = less VRAM, a little slower.
+- **seed:** only changes the finest grain.
+- **protected:** the detailers' areas at the new size. Wire it into **protect_mask** on LC Skin Upscale and LC Skin Texture so they do not add skin detail twice.
+
+![protected mask, skin nodes without and with it](assets/readme/vosr_protect.jpg)
+
+- ✋ **The first run downloads the weights (about 6.5 GB) into `models/vosr2`.** This takes a few minutes.
 
 ---
 
@@ -59,6 +115,7 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 - **MediaPipe selfie multiclass** (LC Person Mask): Google's `selfie_multiclass_256x256.tflite`, saved under `models/mediapipe`. Check its model card for terms. The `mediapipe` Python package is not installed by this pack.
 - **Depth Anything V2** (LC Depth Anything V2): **Small is Apache-2.0**, **Base / Large / Giant are CC-BY-NC-4.0 (non-commercial)**. Saved under `models/depthanything`. Small is listed first so it is the default.
 - **BAE normals** (LC Normal Map): `scannet.pt` from lllyasviel/Annotators, saved under `models/normalbae`. ⚠️ Trained on ScanNet and the Hugging Face card only says *other*. Treat as **not cleared for commercial use** until you have checked.
+- **VOSR 2.0** (LC VOSR2 Upscale): from [CSWRY/VOSR](https://huggingface.co/CSWRY/VOSR), Apache-2.0, including its DINOv2-L encoder (Meta) and Qwen-Image VAE. Saved under `models/vosr2/VOSR2` (if you already use the ComfyUI-VOSR2 pack, the same files are used).
 - ⚠️ Some models are **non-commercial**. The label tells you. Checking the license before commercial use is on you.
 
 ---

@@ -33,6 +33,8 @@ const PLAIN = new Set([
   "LCNormalBAE",
   "LCImageBlendAdvance",
   "LCFaceCrop",
+  "LCVOSRUpscale",
+  "LCVOSRUpscalePipe",
 ]);
 
 app.registerExtension({

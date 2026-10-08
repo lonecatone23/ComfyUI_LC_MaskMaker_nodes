@@ -2,7 +2,7 @@
 What LC nodes leave in the LC_PIPE for the nodes after them (on top of the usual settings):
 
   image       the working image (an LC_PIPE slot already): pipe nodes put their result back in it
-  lc_protect  {"mask": (B,H,W), "tag": tag}: every area a detailer redrew, merged; LC Tiled Upscale keeps it
+  lc_protect  {"mask": (B,H,W), "tag": tag}: every area a detailer redrew, merged; LC VOSR2 Upscale (pipe) resizes it to the new picture
   lc_found    {"tag": tag, "hits": {key: masks per frame}}: what SAM 3 found, so the same word is not searched twice
 
 Every entry carries the tag of the image it belongs to (size + a pixel checksum). A reader checks the tag against its

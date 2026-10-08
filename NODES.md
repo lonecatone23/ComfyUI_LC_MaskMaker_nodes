@@ -10,6 +10,8 @@
 - `LCSegmentAnything`: LC Segment Anything 🎯
 - `LCSmartInpaint`: LC Smart Detailer 🩹
 - `LCSmartInpaintPipe`: LC Smart Detailer (pipe) 🩹
+- `LCVOSRUpscale`: LC VOSR2 Upscale 🧩
+- `LCVOSRUpscalePipe`: LC VOSR2 Upscale (pipe) 🧩
 - `LCKrea2AnyPaint`: LC Krea2 AnyPaint 🩹
 - `LCZImageAnyPaint`: LC Z-Image AnyPaint 🩹
 - `LCSDXLAnyPaint`: LC SDXL AnyPaint 🩹
