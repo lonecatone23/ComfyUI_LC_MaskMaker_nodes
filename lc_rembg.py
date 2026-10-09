@@ -101,6 +101,11 @@ class LCRemBG:
             },
         }
 
+    @classmethod
+    def VALIDATE_INPUTS(cls, model=None, vitmatte_model=None):
+        # a '⬇ Download' entry saved on another machine is still valid here once the model is installed
+        return lc_models.validate_models(model=("bgremoval", model), vitmatte_model=("vitmatte", vitmatte_model))
+
     RETURN_TYPES = ("IMAGE", "MASK", "IMAGE")
     RETURN_NAMES = ("cutout", "mask", "on_background")
     FUNCTION = "remove"

@@ -163,6 +163,11 @@ class LCSegmentAnything(PreviewImage):
             },
         }
 
+    @classmethod
+    def VALIDATE_INPUTS(cls, dino_model=None, sam_model=None, sam3_model=None, vitmatte_model=None):
+        # a '⬇ Download' entry saved on another machine is still valid here once the model is installed
+        return lc_models.validate_models(dino_model=("grounding-dino", dino_model), sam_model=("sam", sam_model), sam3_model=("sam3", sam3_model), vitmatte_model=("vitmatte", vitmatte_model))
+
     RETURN_TYPES = ("IMAGE", "MASK", "MASK")
     RETURN_NAMES = ("cutout", "mask", "raw_mask")
     FUNCTION = "segment"

@@ -117,6 +117,11 @@ class LCMaskRefine(PreviewImage):
             },
         }
 
+    @classmethod
+    def VALIDATE_INPUTS(cls, vitmatte_model=None):
+        # a '⬇ Download' entry saved on another machine is still valid here once the model is installed
+        return lc_models.validate_models(vitmatte_model=("vitmatte", vitmatte_model))
+
     RETURN_TYPES = ("IMAGE", "MASK", "MASK")
     RETURN_NAMES = ("cutout", "mask", "trimap")
     FUNCTION = "refine"

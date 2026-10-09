@@ -194,6 +194,34 @@ def resolve_hf(kind, choice):
     return download_hf(repo, target)
 
 
+def known_model(kind, value):
+    """True when a saved combo value still means a model: anything in today's list, or a '⬇ Download' entry for a
+    model this machine already has. Download entries leave the list once the file is installed, so a workflow saved
+    on a machine without the model would otherwise fail validation on one that has it."""
+    if not isinstance(value, str):
+        return True
+    if kind == "sam3":
+        choices, labels = sam3_choices(), {SAM3_DOWNLOAD_LABEL}
+    elif kind == "vitmatte":
+        choices, labels = vitmatte_choices(), set(VITMATTE_DOWNLOADS)
+    elif kind == "bgremoval":
+        choices, labels = bgremoval_choices(), set(BGREM_DOWNLOADS)
+    else:
+        choices, labels = hf_choices(kind), set(HF_DOWNLOADS[kind])
+    if value in choices:
+        return True
+    label = value[len(DOWNLOAD_PREFIX):] if value.startswith(DOWNLOAD_PREFIX) else value
+    return label in labels
+
+
+def validate_models(**inputs):
+    """VALIDATE_INPUTS helper: inputs = {name: (kind, value)}. Returns True or the first error message."""
+    for name, (kind, value) in inputs.items():
+        if value is not None and not known_model(kind, value):
+            return f"{name}: unknown model '{value}'"
+    return True
+
+
 SAM3_DOWNLOAD_FILE = "sam3.1_multiplex_fp16.safetensors"
 SAM3_DOWNLOAD_LABEL = f"{SAM3_DOWNLOAD_FILE} (SAM 3.1, SAM License, hosted by Comfy-Org)"
 

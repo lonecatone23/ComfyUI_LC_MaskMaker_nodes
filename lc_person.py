@@ -189,6 +189,11 @@ class LCPersonMask:
             },
         }
 
+    @classmethod
+    def VALIDATE_INPUTS(cls, segformer_model=None, vitmatte_model=None):
+        # a '⬇ Download' entry saved on another machine is still valid here once the model is installed
+        return lc_models.validate_models(segformer_model=("segformer_b2_clothes", segformer_model), vitmatte_model=("vitmatte", vitmatte_model))
+
     RETURN_TYPES = ("IMAGE", "MASK", "MASK")
     RETURN_NAMES = ("cutout", "mask", "raw_mask")
     FUNCTION = "segment"

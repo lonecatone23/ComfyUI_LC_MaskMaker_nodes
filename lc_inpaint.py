@@ -435,6 +435,11 @@ def _direct_settings(kw):
 # nodes
 # --------------------------------------------------------------------------
 class _Base(PreviewImage):
+    @classmethod
+    def VALIDATE_INPUTS(cls, sam3_model=None):
+        # a '⬇ Download' entry saved on another machine is still valid here once the model is installed
+        return lc_models.validate_models(sam3_model=("sam3", sam3_model))
+
     RETURN_TYPES = ("IMAGE", "MASK")
     RETURN_NAMES = ("image", "mask")
     CATEGORY = "LC MaskMaker/detailer"
