@@ -20,6 +20,7 @@ The ``model`` combo value is re-joined against ``_VOSR2_ROOT`` via
 import gc
 import json
 import logging
+import os
 import re
 from pathlib import Path
 
@@ -183,19 +184,57 @@ def ensure_vosr2_files(model_name: str) -> None:
             "section."
         ) from exc
 
-    if dit_missing:
-        logging.info("[VOSR2] downloading DiT bundle from %s ...", HF_REPO_ID)
-        for f in _DIT_HF_FILES:
-            hf_hub_download(HF_REPO_ID, f, local_dir=str(_VOSR2_ROOT))
-    if vae_missing:
-        logging.info("[VOSR2] downloading Qwen-Image 2D VAE from %s ...", HF_REPO_ID)
-        vae_dir.mkdir(parents=True, exist_ok=True)
-        for f in _VAE_HF_FILES:
-            hf_hub_download(HF_REPO_ID, f, local_dir=str(bundle))
-    if vision_missing:
-        logging.info("[VOSR2] downloading + converting DINOv2-L encoder from %s ...", HF_REPO_ID)
-        src = hf_hub_download(HF_REPO_ID, _DINOV2_HF_FILE)
-        _convert_dinov2_pth_to_safetensors(Path(src), bundle / _VISION_FILENAME)
+    # LC change: a manually downloaded DINOv2 .pth dropped into the bundle folder is converted in place
+    manual_pth = bundle / Path(_DINOV2_HF_FILE).name
+    if vision_missing and manual_pth.is_file():
+        _convert_dinov2_pth_to_safetensors(manual_pth, bundle / _VISION_FILENAME)
+        vision_missing = False
+        if not (dit_missing or vae_missing):
+            return
+
+    try:
+        if dit_missing:
+            logging.info("[VOSR2] downloading DiT bundle from %s ...", HF_REPO_ID)
+            for f in _DIT_HF_FILES:
+                hf_hub_download(HF_REPO_ID, f, local_dir=str(_VOSR2_ROOT))
+        if vae_missing:
+            logging.info("[VOSR2] downloading Qwen-Image 2D VAE from %s ...", HF_REPO_ID)
+            vae_dir.mkdir(parents=True, exist_ok=True)
+            for f in _VAE_HF_FILES:
+                hf_hub_download(HF_REPO_ID, f, local_dir=str(bundle))
+        if vision_missing:
+            logging.info("[VOSR2] downloading + converting DINOv2-L encoder from %s ...", HF_REPO_ID)
+            src = hf_hub_download(HF_REPO_ID, _DINOV2_HF_FILE)
+            _convert_dinov2_pth_to_safetensors(Path(src), bundle / _VISION_FILENAME)
+    except Exception as exc:  # LC change: explain a failed download instead of a raw huggingface_hub error
+        if isinstance(exc, VOSR2LoadError):
+            raise
+        raise VOSR2LoadError(_download_help(bundle, exc)) from exc
+
+
+def _download_help(bundle: Path, exc: Exception) -> str:
+    """What to do when the first-run download cannot reach Hugging Face."""
+    offline = os.environ.get("HF_HUB_OFFLINE", "").strip().lower() in ("1", "true", "yes", "on")
+    base = f"https://huggingface.co/{HF_REPO_ID}/resolve/main/"
+    lines = [
+        f"LC VOSR2 Upscale could not download its model files from huggingface.co ({type(exc).__name__}).",
+    ]
+    if offline:
+        lines.append("Hugging Face offline mode is on (HF_HUB_OFFLINE is set). Remove it from your launcher or .bat, "
+                     "or download the files by hand (below).")
+    else:
+        lines.append("Check your internet connection, VPN, firewall or antivirus. Where huggingface.co is blocked, "
+                     "set HF_ENDPOINT=https://hf-mirror.com before starting ComfyUI.")
+    lines += [
+        "Or download these files by hand and place them like this:",
+        f"  {base}VOSR2/args.json  ->  {bundle / 'args.json'}",
+        f"  {base}VOSR2/checkpoints/ema_model.safetensors  ->  {bundle / 'checkpoints' / 'ema_model.safetensors'}",
+        f"  {base}{_VAE_SUBDIR}/config.json  ->  {bundle / _VAE_SUBDIR / 'config.json'}",
+        f"  {base}{_VAE_SUBDIR}/diffusion_pytorch_model.safetensors  ->  "
+        f"{bundle / _VAE_SUBDIR / 'diffusion_pytorch_model.safetensors'}",
+        f"  {base}{_DINOV2_HF_FILE}  ->  {bundle / Path(_DINOV2_HF_FILE).name}  (converted on the next run)",
+    ]
+    return "\n".join(lines)
 
 
 def _load_args_json(bundle_dir: Path) -> dict:

@@ -5,7 +5,7 @@ Mask, matting, segmentation and image-adjustment nodes for [ComfyUI](https://git
 - **Repo:** [https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes](https://github.com/lonecatone23/ComfyUI_LC_MaskMaker_nodes)
 - **Civitai:** [lonecatone23](https://civitai.com/user/lonecatone23)
 - **Support:** [Buy me a ☕](https://ko-fi.com/lonecatone)
-- **Version:** 0.19.1 · **19 Python nodes**
+- **Version:** 0.19.2 · **19 Python nodes**
 
 > Companion to [ComfyUI_LC123_nodes](https://github.com/lonecatone23/ComfyUI_LC123_nodes). LC123 stays import-free. Anything that needs a model lives here and loads it on demand.
 
@@ -89,6 +89,7 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 ![protected mask, skin nodes without and with it](assets/readme/vosr_protect.jpg)
 
 - ✋ **The first run downloads the weights (about 6.5 GB) into `models/vosr2`.** This takes a few minutes.
+    - Download failing (offline mode, firewall, or huggingface.co blocked)? The node's error lists every file with its link and the exact folder to put it in (all from [huggingface.co/CSWRY/VOSR](https://huggingface.co/CSWRY/VOSR), into `models/vosr2/VOSR2`). Where huggingface.co is blocked, set `HF_ENDPOINT=https://hf-mirror.com` before starting ComfyUI.
 
 ---
 
