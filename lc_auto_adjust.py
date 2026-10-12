@@ -10,6 +10,7 @@ levels are measured and where the result is applied. Pure torch, no extra depend
 import torch
 
 from .lc_matting import get_device
+from .lc_temporal import is_clip, segments, smooth
 
 MODES = ["RGB", "lum + sat", "mono", "luminance", "saturation"]
 
@@ -63,21 +64,40 @@ def _lab_to_rgb(lab):
 
 
 # ---- auto level ------------------------------------------------------------------
-def _stretch(ch, sel, lo_frac=0.0005):
-    """Stretch a 0-1 channel so the used range fills 0-1.
+class _Levels:
+    """Every number auto_adjust measures on a frame (stretch ranges, the contrast pivot), in order. Pass one records
+    them; a video clip then replays them steadied over nearby frames, so its levels do not pump."""
 
-    The used range comes from a 256-bin histogram of the selected pixels: the lowest and highest
-    bins holding more than 0.05% of them.
-    """
+    def __init__(self, replay=None):
+        self.replay = replay
+        self.values = []
+
+    def take(self, measure):
+        if self.replay is not None:
+            v = self.replay[len(self.values)]
+        else:
+            v = measure()
+        self.values.append(v)
+        return v
+
+
+def _range(ch, sel, lo_frac=0.0005):
+    """The used range of a 0-1 channel: the lowest and highest bins of a 256-bin histogram of the selected pixels
+    holding more than 0.05% of them. NaN when there is nothing to stretch."""
     vals = (ch[sel] * 255.0).round().clamp(0, 255)
     if vals.numel() == 0:
-        return ch
+        return (float("nan"), float("nan"))
     hist = torch.histc(vals.float(), bins=256, min=0, max=255)
     ok = torch.nonzero(hist > hist.sum() * lo_frac).flatten()
     if ok.numel() == 0:
-        return ch
-    lo, hi = float(ok.min()) / 255.0, float(ok.max()) / 255.0
-    if hi - lo < 1e-6:
+        return (float("nan"), float("nan"))
+    return (float(ok.min()) / 255.0, float(ok.max()) / 255.0)
+
+
+def _stretch(ch, sel, lv=None):
+    """Stretch a 0-1 channel so the used range fills 0-1."""
+    lo, hi = lv.take(lambda: _range(ch, sel)) if lv is not None else _range(ch, sel)
+    if lo != lo or hi - lo < 1e-6:  # NaN or flat
         return ch
     return ((ch - lo) / (hi - lo)).clamp(0, 1)
 
@@ -90,27 +110,28 @@ def _offset(v):
     return v / 100.0 + 1.0 if v < 0 else v / 50.0 + 1.0
 
 
-def auto_adjust(img, sel, soft, mode, strength, brightness, contrast, saturation, red, green, blue):
-    """img (H,W,3) 0-1, sel (H,W) bool used for the histogram, soft (H,W,1) apply mask 0-1."""
+def auto_adjust(img, sel, soft, mode, strength, brightness, contrast, saturation, red, green, blue, lv=None):
+    """img (H,W,3) 0-1, sel (H,W) bool used for the histogram, soft (H,W,1) apply mask 0-1.
+    lv: a _Levels that records (or replays) what this frame measures."""
     if mode == "RGB":
-        out = torch.stack([_stretch(img[..., c], sel) for c in range(3)], -1)
+        out = torch.stack([_stretch(img[..., c], sel, lv) for c in range(3)], -1)
     elif mode == "lum + sat":
         hsv = _rgb_to_hsv(img)
-        hsv = torch.cat([hsv[..., :1], _stretch(hsv[..., 1], sel).unsqueeze(-1), hsv[..., 2:]], -1)
+        hsv = torch.cat([hsv[..., :1], _stretch(hsv[..., 1], sel, lv).unsqueeze(-1), hsv[..., 2:]], -1)
         lab = _rgb_to_lab(_hsv_to_rgb(hsv))
-        lab = torch.cat([(_stretch(lab[..., 0] / 100.0, sel) * 100.0).unsqueeze(-1), lab[..., 1:]], -1)
+        lab = torch.cat([(_stretch(lab[..., 0] / 100.0, sel, lv) * 100.0).unsqueeze(-1), lab[..., 1:]], -1)
         out = _lab_to_rgb(lab)
     elif mode == "luminance":
         lab = _rgb_to_lab(img)
-        lab = torch.cat([(_stretch(lab[..., 0] / 100.0, sel) * 100.0).unsqueeze(-1), lab[..., 1:]], -1)
+        lab = torch.cat([(_stretch(lab[..., 0] / 100.0, sel, lv) * 100.0).unsqueeze(-1), lab[..., 1:]], -1)
         out = _lab_to_rgb(lab)
     elif mode == "saturation":
         hsv = _rgb_to_hsv(img)
-        hsv = torch.cat([hsv[..., :1], _stretch(hsv[..., 1], sel).unsqueeze(-1), hsv[..., 2:]], -1)
+        hsv = torch.cat([hsv[..., :1], _stretch(hsv[..., 1], sel, lv).unsqueeze(-1), hsv[..., 2:]], -1)
         out = _hsv_to_rgb(hsv)
     else:  # mono
         gray = (0.299 * img[..., 0] + 0.587 * img[..., 1] + 0.114 * img[..., 2])
-        out = _stretch(gray, sel).unsqueeze(-1).expand(-1, -1, 3)
+        out = _stretch(gray, sel, lv).unsqueeze(-1).expand(-1, -1, 3)
 
     if mode != "mono":
         for c, bal in enumerate((red, green, blue)):
@@ -121,7 +142,8 @@ def auto_adjust(img, sel, soft, mode, strength, brightness, contrast, saturation
     if brightness:
         out = (out * _offset(brightness)).clamp(0, 1)
     if contrast:
-        mean = (0.299 * out[..., 0] + 0.587 * out[..., 1] + 0.114 * out[..., 2]).mean()
+        pivot = (0.299 * out[..., 0] + 0.587 * out[..., 1] + 0.114 * out[..., 2])
+        mean = lv.take(lambda: float(pivot.mean())) if lv is not None else pivot.mean()
         out = (mean + _offset(contrast) * (out - mean)).clamp(0, 1)
     if saturation:
         gray = (0.299 * out[..., 0:1] + 0.587 * out[..., 1:2] + 0.114 * out[..., 2:3])
@@ -197,25 +219,51 @@ class LCAutoAdjust:
         if mask is not None:
             m_in = mask.unsqueeze(0) if mask.dim() == 2 else mask
 
+        # a video clip: measure every frame's levels first, steady them over nearby frames, then apply, so the clip
+        # does not pump. Separate images and single images go straight through as before.
+        seg = segments(image)
+        replays = [None] * b
+        if is_clip(seg):
+            recs = [self._frame(image, i, m_in, dev, mode, strength, brightness, contrast, saturation, red, green, blue,
+                                _Levels())[1] for i in range(b)]
+            if len({len(r) for r in recs}) == 1 and recs[0]:
+                flat = [[x for v in r for x in (v if isinstance(v, tuple) else (v,))] for r in recs]
+                cols = list(zip(*flat))
+                steady = [smooth(list(col), seg) if all(x == x for x in col) else list(col) for col in cols]
+                for i in range(b):
+                    vals, k = [], 0
+                    for v in recs[i]:
+                        n = len(v) if isinstance(v, tuple) else 1
+                        got = tuple(steady[k + j][i] for j in range(n))
+                        vals.append(got if isinstance(v, tuple) else got[0])
+                        k += n
+                    replays[i] = vals
         outs = []
         for i in range(b):
-            frame = image[i].to(dev).float()
-            rgb = frame[..., :3]
-            if m_in is not None:
-                m = m_in[min(i, m_in.shape[0] - 1)].to(dev).float()
-                if m.shape != (h, w):
-                    m = torch.nn.functional.interpolate(m[None, None], size=(h, w), mode="bilinear", align_corners=False)[0, 0]
-            elif c == 4:
-                m = frame[..., 3]
-            else:
-                m = torch.ones(h, w, device=dev)
-            m = m.clamp(0, 1)
-            res = auto_adjust(rgb, m > 0.5, m.unsqueeze(-1), mode, float(strength), float(brightness),
-                              float(contrast), float(saturation), float(red), float(green), float(blue))
-            if c == 4:
-                res = torch.cat([res, frame[..., 3:4]], -1)
-            outs.append(res.clamp(0, 1).cpu())
+            res = self._frame(image, i, m_in, dev, mode, strength, brightness, contrast, saturation, red, green, blue,
+                              _Levels(replays[i]) if replays[i] is not None else None)[0]
+            outs.append(res)
         return (torch.stack(outs, 0),)
+
+    @staticmethod
+    def _frame(image, i, m_in, dev, mode, strength, brightness, contrast, saturation, red, green, blue, lv):
+        b, h, w, c = image.shape
+        frame = image[i].to(dev).float()
+        rgb = frame[..., :3]
+        if m_in is not None:
+            m = m_in[min(i, m_in.shape[0] - 1)].to(dev).float()
+            if m.shape != (h, w):
+                m = torch.nn.functional.interpolate(m[None, None], size=(h, w), mode="bilinear", align_corners=False)[0, 0]
+        elif c == 4:
+            m = frame[..., 3]
+        else:
+            m = torch.ones(h, w, device=dev)
+        m = m.clamp(0, 1)
+        res = auto_adjust(rgb, m > 0.5, m.unsqueeze(-1), mode, float(strength), float(brightness),
+                          float(contrast), float(saturation), float(red), float(green), float(blue), lv)
+        if c == 4:
+            res = torch.cat([res, frame[..., 3:4]], -1)
+        return res.clamp(0, 1).cpu(), (lv.values if lv is not None else [])
 
 
 NODE_CLASS_MAPPINGS = {

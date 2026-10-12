@@ -44,6 +44,7 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 - An upscaler built for *speed* and low VRAM, with the highest quality possible.
 - It uses a dedicated upscale model (VOSR 2.0) that sharpens and adds fine detail without redrawing the picture.
 - 💡Hook it up after my detailers with the pipe version. It passes along what the detailers already fixed, so LC Skin Upscale and LC Skin Texture don't turn skin pores into freckles or craters.
+- 💡 **Video:** feed the clip in as one batch. Every frame gets the same fine grain, so the detail doesn't boil. LC Auto Adjust, LC Depth Anything V2 and LC Person Mask also notice a clip and steady themselves across frames (separate images and hard cuts are left alone).
 
 ![render, detailers, LC VOSR2 Upscale](assets/readme/vosr_pipeline.jpg)
 

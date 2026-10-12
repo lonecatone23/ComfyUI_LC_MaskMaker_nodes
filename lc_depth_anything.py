@@ -13,6 +13,7 @@ import torch.nn.functional as F
 
 from . import lc_models
 from .lc_matting import get_device, no_cudnn_autotune
+from .lc_temporal import segments, smooth
 
 CONFIGS = {
     "vits": {"features": 64, "out_channels": [48, 96, 192, 384]},
@@ -115,16 +116,21 @@ class LCDepthAnythingV2:
         net = _load(path, encoder)
         dev = get_device()
         net.to(dev)
-        maps = []
+        raw = []
         try:
             with no_cudnn_autotune():
                 for i in range(image.shape[0]):
-                    d = estimate_depth(net, image[i, ..., :3], resolution, dev)
-                    lo, hi = d.min(), d.max()
-                    d = (d - lo) / (hi - lo).clamp_min(1e-8)
-                    maps.append(1.0 - d if invert else d)
+                    raw.append(estimate_depth(net, image[i, ..., :3], resolution, dev))
         finally:
             net.to("cpu")
+        # each map is stretched to 0-1 by its own range; a video clip shares that range over nearby frames, so the
+        # whole map does not jump when something walks into the frame
+        rng = smooth(torch.tensor([[float(d.min()), float(d.max())] for d in raw], dtype=torch.float64),
+                     segments(image))
+        maps = []
+        for d, (lo, hi) in zip(raw, rng.tolist()):
+            d = ((d - lo) / max(hi - lo, 1e-8)).clamp(0, 1)
+            maps.append(1.0 - d if invert else d)
         depth = torch.stack(maps, 0)  # (B,H,W)
         return (depth.unsqueeze(-1).repeat(1, 1, 1, 3), depth)
 

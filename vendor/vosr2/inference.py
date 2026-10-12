@@ -50,7 +50,9 @@ def _generate_noise(shape, seed: int, device, dtype) -> torch.Tensor:
 
 
 def _generate_noise_batch(shape_per_item, seed: int, batch_size: int, device, dtype) -> torch.Tensor:
-    return torch.stack([_generate_noise(shape_per_item, seed + i, device, dtype) for i in range(batch_size)], dim=0)
+    # LC: every item gets the same noise. On a video the fine grain then stays put from frame to frame instead of
+    # boiling; for separate images a different grain pattern per item makes no difference.
+    return _generate_noise(shape_per_item, seed, device, dtype).unsqueeze(0).expand(batch_size, *shape_per_item).clone()
 
 
 def _tile_params(tile_size: int, tile_overlap: int, lh: int, lw: int):
@@ -207,7 +209,7 @@ def run_vosr2(
         # size, matching the per-item VRAM bound above.
         aligned_items = []
         for i in range(b):
-            item_pm1 = _run_tiled_single(model, resized01[i:i + 1], seed + i, tile_size, tile_overlap, vae_tile_size, vae_tile_overlap, pbar=pbar).cpu()
+            item_pm1 = _run_tiled_single(model, resized01[i:i + 1], seed, tile_size, tile_overlap, vae_tile_size, vae_tile_overlap, pbar=pbar).cpu()
             item01 = (item_pm1.clamp(-1.0, 1.0) + 1.0) / 2.0
             aligned_items.append(apply_color_alignment(item01, resized01[i:i + 1].cpu(), color_alignment))
         aligned01 = torch.cat(aligned_items, dim=0)

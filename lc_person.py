@@ -25,6 +25,7 @@ import torch.nn.functional as F
 
 from . import lc_models
 from .lc_matting import METHODS, get_device, refine_mask
+from .lc_temporal import is_clip, segments, smooth_masks
 
 ENGINES = ["segformer", "mediapipe"]
 WORK_MAX = 1536
@@ -222,16 +223,25 @@ class LCPersonMask:
             folder_seg = lc_models.resolve_hf("segformer_b2_clothes", segformer_model) if parts else None
         folder = lc_models.resolve_vitmatte(vitmatte_model) if refine == "vitmatte" else None
 
+        first = []
+        for i in range(b):
+            rgb8 = (image[i, ..., :3].clamp(0, 1).cpu().numpy() * 255).round().astype(np.uint8)
+            if not parts:
+                first.append(torch.zeros(h, w))
+            elif engine == "mediapipe":
+                first.append((_mediapipe_prob(rgb8, model_path, parts) > confidence).float())
+            else:
+                first.append((_segformer_prob(Image.fromarray(rgb8), folder_seg, parts, dev) > confidence).float())
+        # a video clip: a pixel that flips in and out of the selection from frame to frame (while the picture there
+        # barely changes) is settled by its neighbours, so the edges do not shimmer. Separate images are left as is.
+        seg = segments(image)
+        if is_clip(seg):
+            first = list((smooth_masks(torch.stack(first), image, seg) > 0.5).float())
+
         raws, masks, cutouts = [], [], []
         for i in range(b):
             frame = image[i:i + 1]
-            rgb8 = (frame[0, ..., :3].clamp(0, 1).cpu().numpy() * 255).round().astype(np.uint8)
-            if not parts:
-                raw = torch.zeros(h, w)
-            elif engine == "mediapipe":
-                raw = (_mediapipe_prob(rgb8, model_path, parts) > confidence).float()
-            else:
-                raw = (_segformer_prob(Image.fromarray(rgb8), folder_seg, parts, dev) > confidence).float()
+            raw = first[i].cpu()
 
             img = frame[0, ..., :3].permute(2, 0, 1).unsqueeze(0).to(dev).float()
             m = raw.to(dev).unsqueeze(0).unsqueeze(0)
