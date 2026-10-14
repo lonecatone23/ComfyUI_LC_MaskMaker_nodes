@@ -12,6 +12,7 @@ Objects whose crops overlap are done together in one crop. Works with 4-D and 5-
 models that run at cfg 1 expect.
 """
 
+import copy
 import math
 import re
 
@@ -83,6 +84,10 @@ TIP = {
     "pipe_cfg": "CFG for the redraw. 1 works for Krea 2, Flux, Z-Image and, at detailer denoise (up to about 0.4), SDXL too "
                 "(tested: SDXL looked the same at cfg 1 to 7). Used instead of the pipe's cfg_1, which is usually the main "
                 "sampler's.",
+    "flat_shift": "On: the redraw ignores the model's shift (ModelSamplingAuraFlow / Flux shift), so denoise means what it "
+                  "says: 0.3 redraws 30%. With shift 4 on the model, denoise 0.3 really redraws about 63% (new face "
+                  "structure, rough skin). Replaces a separate shift-1 node in front of the detailer. Only flow models "
+                  "(Krea 2, Z-Image, Flux, Klein, Qwen, Anima, Chroma) have a shift; SDXL is not changed.",
     "tone_match": "On: the redraw gets the original's brightness, contrast and colour back where it is pasted, keeping the "
                   "new detail. A light redraw comes back a little flat and dull without it. Turn off when the redraw is "
                   "meant to change colours (a new shirt colour, a different object).",
@@ -145,6 +150,7 @@ def _optional(neg=True, pos=False):
     out["tone_match"] = ("BOOLEAN", _tip("tone_match", default=True))  # last: saved workflows keep their widget order
     if pos:  # pipe version only, after tone_match for the same reason
         out["cfg"] = ("FLOAT", _tip("pipe_cfg", default=1.0, min=1.0, max=30.0, step=0.1, round=0.01))
+    out["flat_shift"] = ("BOOLEAN", _tip("flat_shift", default=True))  # newest: always last
     return out
 
 
@@ -164,6 +170,31 @@ def _zero_out(conditioning):
                 d[k] = torch.zeros_like(d[k])
         out.append([torch.zeros_like(t), d])
     return out
+
+
+def _flat_shift(model):
+    """The model with its flow shift set to none (AuraFlow / SD3 style: 1, Flux style: 0), for the redraw only, so
+    denoise starts at that noise level. Models without a shift (SDXL, SD 1.5) and video models come back unchanged."""
+    try:
+        ms = model.get_model_object("model_sampling")
+    except Exception:
+        return model
+    name = type(ms).__name__
+    if "AV" in name or not hasattr(ms, "shift"):
+        return model
+    flux = "Flux" in name
+    if float(ms.shift) == (0.0 if flux else 1.0):
+        return model
+    new = copy.deepcopy(ms)
+    if flux:
+        new.set_parameters(shift=0.0, timesteps=len(ms.sigmas) if hasattr(ms, "sigmas") else 10000)
+    elif hasattr(ms, "multiplier"):
+        new.set_parameters(shift=1.0, timesteps=len(ms.sigmas) if hasattr(ms, "sigmas") else 1000, multiplier=ms.multiplier)
+    else:
+        return model
+    m = model.clone()
+    m.add_object_patch("model_sampling", new)
+    return m
 
 
 def _box(m):
@@ -336,6 +367,8 @@ def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps
         positive = kw["inpaint_positive"]
     if negative is None:
         negative = _zero_out(positive)
+    if kw.get("flat_shift") is not False:
+        model = _flat_shift(model)
     return dict(model=model, vae=vae, positive=positive, negative=negative, sampler_name=sampler_name,
                 scheduler=scheduler, steps=int(steps), cfg=max(1.0, float(cfg)), denoise=float(kw["denoise"]), seed=int(seed),
                 grow=float(kw["grow"]), feather=float(kw["feather"]), padding=int(kw["padding"]),
