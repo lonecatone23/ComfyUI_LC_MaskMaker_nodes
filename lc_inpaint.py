@@ -84,10 +84,6 @@ TIP = {
     "pipe_cfg": "CFG for the redraw. 1 works for Krea 2, Flux, Z-Image and, at detailer denoise (up to about 0.4), SDXL too "
                 "(tested: SDXL looked the same at cfg 1 to 7). Used instead of the pipe's cfg_1, which is usually the main "
                 "sampler's.",
-    "flat_shift": "On: the redraw ignores the model's shift (ModelSamplingAuraFlow / Flux shift), so denoise means what it "
-                  "says: 0.3 redraws 30%. With shift 4 on the model, denoise 0.3 really redraws about 63% (new face "
-                  "structure, rough skin). Replaces a separate shift-1 node in front of the detailer. Only flow models "
-                  "(Krea 2, Z-Image, Flux, Klein, Qwen, Anima, Chroma) have a shift; SDXL is not changed.",
     "tone_match": "On: the redraw gets the original's brightness, contrast and colour back where it is pasted, keeping the "
                   "new detail. A light redraw comes back a little flat and dull without it. Turn off when the redraw is "
                   "meant to change colours (a new shirt colour, a different object).",
@@ -150,7 +146,6 @@ def _optional(neg=True, pos=False):
     out["tone_match"] = ("BOOLEAN", _tip("tone_match", default=True))  # last: saved workflows keep their widget order
     if pos:  # pipe version only, after tone_match for the same reason
         out["cfg"] = ("FLOAT", _tip("pipe_cfg", default=1.0, min=1.0, max=30.0, step=0.1, round=0.01))
-    out["flat_shift"] = ("BOOLEAN", _tip("flat_shift", default=True))  # newest: always last
     return out
 
 
@@ -172,29 +167,38 @@ def _zero_out(conditioning):
     return out
 
 
-def _flat_shift(model):
-    """The model with its flow shift set to none (AuraFlow / SD3 style: 1, Flux style: 0), for the redraw only, so
-    denoise starts at that noise level. Models without a shift (SDXL, SD 1.5) and video models come back unchanged."""
+def _flat_sampling(model):
+    """The model's sampling with its flow shift set to none (AuraFlow / SD3 style: 1, Flux style: 0), so denoise starts at
+    that noise level: with shift 4, denoise 0.3 would really start at 0.63 (new face structure, rough skin). Always on:
+    tested 0.4 to 0.8 on a face and hands, a kept shift was worse at every strength (a new face from 0.6, the hand turned
+    into a motorcycle part at 0.7); for a bigger redraw raise denoise. A copy, never patched onto the model: clones share one model, and a patch stays on it until another clone loads, so
+    the next sampler using that model would plan its schedule with this shift. None = sample as normal (no shift to
+    flatten: SDXL, SD 1.5, video models, a model already at shift 1)."""
     try:
         ms = model.get_model_object("model_sampling")
     except Exception:
-        return model
+        return None
     name = type(ms).__name__
     if "AV" in name or not hasattr(ms, "shift"):
-        return model
+        return None
     flux = "Flux" in name
     if float(ms.shift) == (0.0 if flux else 1.0):
-        return model
+        return None
     new = copy.deepcopy(ms)
     if flux:
         new.set_parameters(shift=0.0, timesteps=len(ms.sigmas) if hasattr(ms, "sigmas") else 10000)
     elif hasattr(ms, "multiplier"):
         new.set_parameters(shift=1.0, timesteps=len(ms.sigmas) if hasattr(ms, "sigmas") else 1000, multiplier=ms.multiplier)
     else:
-        return model
-    m = model.clone()
-    m.add_object_patch("model_sampling", new)
-    return m
+        return None
+    return new
+
+
+def _flat_sigmas(ms, scheduler, steps, denoise):
+    """KSampler's own denoise schedule, planned on the flat sampling."""
+    if denoise >= 0.9999:
+        return comfy.samplers.calculate_sigmas(ms, scheduler, steps).cpu()
+    return comfy.samplers.calculate_sigmas(ms, scheduler, int(steps / denoise)).cpu()[-(steps + 1):]
 
 
 def _box(m):
@@ -293,11 +297,18 @@ def _inpaint_region(frame, region, box, s):
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     noise = comfy.sample.prepare_noise(latent, s["seed"])
     callback = latent_preview.prepare_callback(model, s["steps"])
-    samples = comfy.sample.sample(
-        model, noise, s["steps"], s["cfg"], s["sampler_name"], s["scheduler"], s["positive"], s["negative"], latent,
-        denoise=s["denoise"], noise_mask=noise_mask, callback=callback,
-        disable_pbar=not comfy.utils.PROGRESS_BAR_ENABLED, seed=s["seed"],
-    )
+    if s.get("flat") is not None:
+        samples = comfy.sample.sample_custom(
+            model, noise, s["cfg"], comfy.samplers.sampler_object(s["sampler_name"]),
+            _flat_sigmas(s["flat"], s["scheduler"], s["steps"], s["denoise"]), s["positive"], s["negative"], latent,
+            noise_mask=noise_mask, callback=callback, disable_pbar=not comfy.utils.PROGRESS_BAR_ENABLED, seed=s["seed"],
+        )
+    else:
+        samples = comfy.sample.sample(
+            model, noise, s["steps"], s["cfg"], s["sampler_name"], s["scheduler"], s["positive"], s["negative"], latent,
+            denoise=s["denoise"], noise_mask=noise_mask, callback=callback,
+            disable_pbar=not comfy.utils.PROGRESS_BAR_ENABLED, seed=s["seed"],
+        )
     patch = vae.decode(samples)
     if patch.ndim == 5:  # 5-D latents decode to (B, T, H, W, C)
         patch = patch.reshape(-1, *patch.shape[-3:])
@@ -367,9 +378,7 @@ def _settings(kw, model, vae, positive, negative, sampler_name, scheduler, steps
         positive = kw["inpaint_positive"]
     if negative is None:
         negative = _zero_out(positive)
-    if kw.get("flat_shift") is not False:
-        model = _flat_shift(model)
-    return dict(model=model, vae=vae, positive=positive, negative=negative, sampler_name=sampler_name,
+    return dict(flat=_flat_sampling(model), model=model, vae=vae, positive=positive, negative=negative, sampler_name=sampler_name,
                 scheduler=scheduler, steps=int(steps), cfg=max(1.0, float(cfg)), denoise=float(kw["denoise"]), seed=int(seed),
                 grow=float(kw["grow"]), feather=float(kw["feather"]), padding=int(kw["padding"]),
                 res=int(kw["inpaint_resolution"]), blend=float(kw["blend"]), tone_match=kw.get("tone_match") is not False)
