@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from .lc_blend_modes import MODE_NAMES, blend_rgba
 from .lc_matting import get_device
 
-METHODS = ["lanczos", "bicubic", "bilinear", "nearest"]
+METHODS = ["lanczos", "bicubic", "bilinear", "nearest", "nvidia_rtx_vsr"]
 
 
 def _lanczos_matrix(n_in, n_out, device, dtype, a=3):
@@ -46,6 +46,11 @@ def _resize(prem, tw, th, method):
         return prem
     if method == "lanczos":
         return _lanczos(prem, th, tw)
+    if method == "nvidia_rtx_vsr":
+        if tw < w or th < h:
+            return _lanczos(prem, th, tw)  # RTX VSR only enlarges
+        from .lc_rtx import rtx_resize
+        return rtx_resize(prem, tw, th).clamp(0, 1)
     if method == "nearest":
         return F.interpolate(prem, size=(th, tw), mode="nearest")
     down = tw < w or th < h
@@ -67,10 +72,10 @@ def _rotate(prem, angle, method, ssaa):
     src_x = xx * c - yy * s
     src_y = xx * s + yy * c
     grid = torch.stack([src_x / (w / 2.0), src_y / (h / 2.0)], dim=-1)[None]
-    sampler = "bicubic" if method == "lanczos" else method   # like PIL: lanczos resizes, rotation samples bicubic
+    sampler = "bicubic" if method in ("lanczos", "nvidia_rtx_vsr") else method   # like PIL: lanczos resizes, rotation samples bicubic
     out = F.grid_sample(prem, grid, mode=sampler, padding_mode="zeros", align_corners=False)
     if k > 1:
-        out = _lanczos(out, nh, nw) if method == "lanczos" else F.avg_pool2d(out, k)
+        out = _lanczos(out, nh, nw) if method in ("lanczos", "nvidia_rtx_vsr") else F.avg_pool2d(out, k)
     return out
 
 
@@ -144,7 +149,7 @@ class LCImageBlendAdvance:
                 }),
                 "transform_method": (METHODS, {
                     "default": "lanczos",
-                    "tooltip": "How the layer is resampled when scaled or rotated. lanczos is the sharpest for resizing; rotation itself always samples with bicubic, like PIL.",
+                    "tooltip": "How the layer is resampled when scaled or rotated. lanczos is the sharpest for resizing; nvidia_rtx_vsr enlarges with RTX Video Super Resolution (RTX cards, shrinking uses lanczos); rotation itself always samples with bicubic, like PIL.",
                 }),
                 "anti_aliasing": ("INT", {
                     "default": 2, "min": 0, "max": 4, "step": 1,
