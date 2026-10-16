@@ -1,7 +1,7 @@
 # LC MaskMaker node list
 
 - `LCImageOutpaint`: LC Outpaint 🖌️➕
-- `LCImageRotatePad`: LC Image Rotate + Pad 🔄
+- `LCImageRotatePad`: LC Outpaint, Rotate, & Pad 🔄
 - `LCFaceCrop`: LC Face Crop 📐
 - `LCSplineMask`: LC Create Mask 🖼️✏️
 - `LCMaskRefine`: LC Mask Refine ✨

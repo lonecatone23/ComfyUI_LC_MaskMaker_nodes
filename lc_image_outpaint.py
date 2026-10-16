@@ -80,6 +80,10 @@ class LCImageOutpaint(PreviewImage):
                     "default": "8",
                     "tooltip": "Round the final width/height up to a multiple of this (extra goes to the right/bottom). 1 = off.",
                 }),
+                "max_megapixels": ("FLOAT", {
+                    "default": 2.0, "min": 0.0, "max": 64.0, "step": 0.1,
+                    "tooltip": "Stops the edges from being dragged past this canvas size, so the canvas never grows bigger than the model handles well (Krea 2 and AnyPaint like about 2). Only limits dragging: the run itself is never resized. 0 = no limit.",
+                }),
             },
             "hidden": {
                 "unique_id": "UNIQUE_ID",
@@ -98,7 +102,7 @@ class LCImageOutpaint(PreviewImage):
         "downstream until you have pulled an edge out."
     )
 
-    def outpaint(self, image, left, top, right, bottom, aspect="free", snap_to="8", block=False, hold_mask=False, unique_id=None):
+    def outpaint(self, image, left, top, right, bottom, aspect="free", snap_to="8", block=False, hold_mask=False, max_megapixels=2.0, unique_id=None):
         b, h, w, c = image.shape
 
         l = int(round(w * _clamp(float(left), 0.0, MAX_PCT) / 100.0))

@@ -1,5 +1,5 @@
 /**
- * LC Image Rotate + Pad 🔄: turn, crop and pad on the node.
+ * LC Outpaint, Rotate, & Pad 🔄: turn, crop and pad on the node.
  * Round handle turns the picture (Shift = 15° steps), the frame's square handles pad (drag out) or crop (drag in),
  * dragging inside the frame moves the picture in it. Same layout helpers as LC Outpaint; the frame maths mirrors
  * lc_rotate_pad.py (base_box / frame_rect), so the preview matches the output.
@@ -318,15 +318,77 @@ function drawPreview(node, ctx) {
   ctx.fillStyle = "rgba(255,255,255,0.75)";
   ctx.textAlign = "center";
   const turn = Math.abs(s.angle) > 0.001 ? `  ↻ ${(Math.round(s.angle * 10) / 10).toFixed(1)}°` : "";
-  ctx.fillText(`${L.srcW}×${L.srcH}  →  ${outW}×${outH}${turn}`, box.x + box.w / 2, box.y + box.h - 2);
+  const cap = capMP(node);
+  const mp = (outW * outH) / 1e6;
+  if (cap > 0 && mp >= cap - 0.005) ctx.fillStyle = "#f3c969"; // at the limit
+  ctx.fillText(`${L.srcW}×${L.srcH}  →  ${outW}×${outH} · ${mp.toFixed(1)}${cap > 0 ? `/${cap} MP` : " MP"}${turn}`, box.x + box.w / 2, box.y + box.h - 2);
+  node._lcInfoAt = [box.x + box.w / 2, box.y + box.h - 2]; // the size line: the max megapixels tip sits above it
   ctx.restore();
 }
 
 // ---- interaction ----
 
+// "Max megapixels reached": a small tip above the size line while a drag is held at the limit, fading out after release
+function capTip(node, px, py) {
+  node._lcCapTip = { x: px, y: py, until: performance.now() + 1200 };
+  clearTimeout(node._lcCapTimer);
+  node._lcCapTimer = setTimeout(() => node.setDirtyCanvas?.(true, true), 1250);
+}
+
+function drawCapTip(node, ctx) {
+  const t = node._lcCapTip;
+  if (!t || (performance.now() > t.until && !node._lcDrag)) return;
+  const text = "Max megapixels reached";
+  ctx.save();
+  ctx.font = "bold 11px sans-serif";
+  const w = ctx.measureText(text).width + 14, h = 20;
+  const [cx, cy] = node._lcInfoAt || [node.size[0] / 2, node.size[1] - 16];
+  const x = Math.max(4, Math.min(cx - w / 2, node.size[0] - w - 4));
+  const y = cy - h - 14;
+  ctx.fillStyle = "rgba(20,22,26,0.92)";
+  ctx.strokeStyle = "#f3c969";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(x, y, w, h, 5) : ctx.rect(x, y, w, h);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#f3c969";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, x + 7, y + h / 2 + 0.5);
+  ctx.restore();
+}
+
+
+// max_megapixels: the frame stops where the output reaches it (0 = no limit). Only the drag is limited.
+const capMP = (node) => Math.max(0, Number(getW(node, "max_megapixels")?.value) || 0);
+const frameMP = (s, w, h) => { const f = frameRect(w, h, s); return ((f.x1 - f.x0) * (f.y1 - f.y0)) / 1e6; };
+
 function processDrag(node, px, py, shift) {
   const drag = node._lcDrag;
   if (!drag) return;
+  const { layout: L } = drag;
+  const cap = capMP(node);
+  const over = (x) => cap > 0 && frameMP(x, L.srcW, L.srcH) > cap + 1e-9 && frameMP(x, L.srcW, L.srcH) > frameMP(drag.orig, L.srcW, L.srcH);
+  let s = dragTo(drag, px, py, shift);
+  if (over(s)) {
+    if (drag.mode === "rotate") s = readState(node); // a turn that would grow past the limit stays where it was
+    else {
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 18; i++) {
+        const mid = (lo + hi) / 2;
+        if (over(dragTo(drag, drag.start.x + (px - drag.start.x) * mid, drag.start.y + (py - drag.start.y) * mid, shift))) hi = mid;
+        else lo = mid;
+      }
+      s = dragTo(drag, drag.start.x + (px - drag.start.x) * lo, drag.start.y + (py - drag.start.y) * lo, shift);
+    }
+    capTip(node, px, py);
+  } else if (node._lcCapTip && node._lcDrag) node._lcCapTip = null;
+  writeState(node, s);
+  node.setDirtyCanvas?.(true, true);
+}
+
+function dragTo(drag, px, py, shift) {
   const { layout: L, orig: o } = drag;
   let s = { ...o };
   if (drag.mode === "rotate") {
@@ -354,8 +416,7 @@ function processDrag(node, px, py, shift) {
     const ar = aspectRatio(L.srcW, L.srcH, o.aspect);
     if (ar && drag.mode !== "move") s = fixAspect(s, ar, L.srcW, L.srcH, drag.handle);
   }
-  writeState(node, s);
-  node.setDirtyCanvas?.(true, true);
+  return s;
 }
 
 function endDrag() {
@@ -364,6 +425,36 @@ function endDrag() {
   _activeNode._lcRpFrozen = null;
   _activeNode.setDirtyCanvas?.(true, true);
   _activeNode = null;
+}
+
+// Portrait <-> landscape: the frame swaps width and height around its own centre; a locked ratio flips with it
+// (16:9 -> 9:16), and "original" becomes "free" since the shape no longer matches the source.
+function flipFrame(node) {
+  const s = readState(node);
+  const next = s.aspect === "original" ? "free" : /^\d+:\d+$/.test(s.aspect) ? s.aspect.split(":").reverse().join(":") : s.aspect;
+  const aw = getW(node, "aspect");
+  if (aw && (next === "free" || ASPECT_MAP[next] !== undefined)) {
+    aw.value = next;
+    s.aspect = next;
+  }
+  const dims = srcDims(node);
+  if (dims) {
+    const { w, h } = dims;
+    const base = baseBox(w, h, s.angle, s.fit);
+    const f = frameRect(w, h, s);
+    const cx = (f.x0 + f.x1) / 2;
+    const cy = (f.y0 + f.y1) / 2;
+    const W = f.x1 - f.x0;
+    const H = f.y1 - f.y0;
+    s.l = ((-base.w / 2 - (cx - H / 2)) / w) * 100;
+    s.r = ((cx + H / 2 - base.w / 2) / w) * 100;
+    s.t = ((-base.h / 2 - (cy - W / 2)) / h) * 100;
+    s.b = ((cy + W / 2 - base.h / 2) / h) * 100;
+    clampState(s, w, h);
+    const ar = aspectRatio(w, h, s.aspect);
+    writeState(node, ar ? fixAspect(s, ar, w, h, "") : s);
+  }
+  node.setDirtyCanvas?.(true, true);
 }
 
 function resetFrame(node) {
@@ -452,6 +543,8 @@ app.registerExtension({
           return out;
         };
       }
+      const flip = this.addWidget("button", "⇄ portrait / landscape", null, () => flipFrame(this));
+      if (flip) flip.serialize = false;
       return r;
     };
 
@@ -485,7 +578,10 @@ app.registerExtension({
     nodeType.prototype.onDrawForeground = function (ctx) {
       lcLaunchFit(this, this._lcRpConfigured);
       const r = onDrawFG?.apply(this, arguments);
-      if (!this.flags?.collapsed) drawPreview(this, ctx);
+      if (!this.flags?.collapsed) {
+        drawPreview(this, ctx);
+        drawCapTip(this, ctx);
+      }
       return r;
     };
 

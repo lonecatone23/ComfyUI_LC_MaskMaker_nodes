@@ -295,15 +295,75 @@ function drawPreview(node, ctx) {
   ctx.font = "11px sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.75)";
   ctx.textAlign = "center";
-  ctx.fillText(`${layout.srcW}×${layout.srcH}  →  ${outW}×${outH}`, box.x + box.w / 2, box.y + box.h - 2);
+  const cap = capMP(node);
+  const mp = (outW * outH) / 1e6;
+  if (cap > 0 && mp >= cap - 0.005) ctx.fillStyle = "#f3c969"; // at the limit
+  ctx.fillText(`${layout.srcW}×${layout.srcH}  →  ${outW}×${outH} · ${mp.toFixed(1)}${cap > 0 ? ` / ${cap} MP` : " MP"}`, box.x + box.w / 2, box.y + box.h - 2);
+  node._lcInfoAt = [box.x + box.w / 2, box.y + box.h - 2]; // the size line: the max megapixels tip sits above it
   ctx.restore();
 }
 
 // ---- interaction ----
 
+// "Max megapixels reached": a small tip above the size line while a drag is held at the limit, fading out after release
+function capTip(node, px, py) {
+  node._lcCapTip = { x: px, y: py, until: performance.now() + 1200 };
+  clearTimeout(node._lcCapTimer);
+  node._lcCapTimer = setTimeout(() => node.setDirtyCanvas?.(true, true), 1250);
+}
+
+function drawCapTip(node, ctx) {
+  const t = node._lcCapTip;
+  if (!t || (performance.now() > t.until && !node._lcDrag)) return;
+  const text = "Max megapixels reached";
+  ctx.save();
+  ctx.font = "bold 11px sans-serif";
+  const w = ctx.measureText(text).width + 14, h = 20;
+  const [cx, cy] = node._lcInfoAt || [node.size[0] / 2, node.size[1] - 16];
+  const x = Math.max(4, Math.min(cx - w / 2, node.size[0] - w - 4));
+  const y = cy - h - 14;
+  ctx.fillStyle = "rgba(20,22,26,0.92)";
+  ctx.strokeStyle = "#f3c969";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(x, y, w, h, 5) : ctx.rect(x, y, w, h);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#f3c969";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, x + 7, y + h / 2 + 0.5);
+  ctx.restore();
+}
+
+
+// max_megapixels: the edges stop where the canvas reaches it (0 = no limit). Only the drag is limited.
+const capMP = (node) => Math.max(0, Number(getW(node, "max_megapixels")?.value) || 0);
+const canvasMP = (e, w, h) => (w * (1 + (e.l + e.r) / 100) * h * (1 + (e.t + e.b) / 100)) / 1e6;
+
 function processDrag(node, px, py) {
   const drag = node._lcDrag;
   if (!drag) return;
+  const { layout } = drag;
+  const cap = capMP(node);
+  let e = dragTo(drag, px, py);
+  const over = (x) => cap > 0 && canvasMP(x, layout.srcW, layout.srcH) > cap + 1e-9 && canvasMP(x, layout.srcW, layout.srcH) > canvasMP(drag.orig, layout.srcW, layout.srcH);
+  if (over(e)) {
+    // the furthest point along this drag that still fits
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 18; i++) {
+      const mid = (lo + hi) / 2;
+      if (over(dragTo(drag, drag.start.x + (px - drag.start.x) * mid, drag.start.y + (py - drag.start.y) * mid))) hi = mid;
+      else lo = mid;
+    }
+    e = dragTo(drag, drag.start.x + (px - drag.start.x) * lo, drag.start.y + (py - drag.start.y) * lo);
+    capTip(node, px, py);
+  } else if (node._lcCapTip && node._lcDrag) node._lcCapTip = null;
+  writeExp(node, e);
+  node.setDirtyCanvas?.(true, true);
+}
+
+function dragTo(drag, px, py) {
   const { layout, orig: o } = drag;
   const dxPct = ((px - drag.start.x) / layout.scale / layout.srcW) * 100;
   const dyPct = ((py - drag.start.y) / layout.scale / layout.srcH) * 100;
@@ -326,8 +386,7 @@ function processDrag(node, px, py) {
     const ar = aspectRatio({ w: layout.srcW, h: layout.srcH }, o.aspect);
     if (ar) e = fixAspect(e, ar, layout.srcW, layout.srcH, id);
   }
-  writeExp(node, e);
-  node.setDirtyCanvas?.(true, true);
+  return e;
 }
 
 function endDrag() {
@@ -495,6 +554,7 @@ app.registerExtension({
       const r = onDrawFG?.apply(this, arguments);
       if (this.flags?.collapsed) return r;
       drawPreview(this, ctx);
+      drawCapTip(this, ctx);
       return r;
     };
 

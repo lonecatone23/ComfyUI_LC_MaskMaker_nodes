@@ -558,7 +558,7 @@ class LCZImageAnyPaint(LCKrea2AnyPaint):
         "Inpaint and outpaint for Z-Image (Turbo / Base) with Alibaba's Z-Image Fun ControlNet Union 2.1 in inpaint "
         "mode: the kept pixels put back after every step and a border the model blends. Your picture outside the mask "
         "comes back unchanged. Describe the whole finished picture in the prompt.\n"
-        "Outpaint: wire LC Outpaint's or Rotate + Pad's control_image and control_mask in."
+        "Outpaint: wire LC Outpaint's or LC Outpaint, Rotate, & Pad's control_image and control_mask in."
     )
 
     @classmethod
@@ -606,7 +606,7 @@ class LCSDXLAnyPaint(LCKrea2AnyPaint):
         "ControlNet Union ProMax in repaint mode, optionally with Fooocus's inpaint patch. The kept pixels are put back "
         "after every step and a border is blended. Your picture outside the mask comes back unchanged. No LoRA needed. "
         "Describe what goes in the mask in a short prompt.\n"
-        "Outpaint: wire LC Outpaint's or Rotate + Pad's control_image and control_mask in."
+        "Outpaint: wire LC Outpaint's or LC Outpaint, Rotate, & Pad's control_image and control_mask in."
     )
 
     @classmethod

@@ -1,5 +1,5 @@
 """
-LC Image Rotate + Pad
+LC Outpaint, Rotate, & Pad
 ---------------------
 Turn, crop and pad a picture by dragging on the node. The picture turns around its centre, then one frame box
 decides what comes out: drag an edge out to pad, in to crop. The mask is white wherever the model has to paint
@@ -116,6 +116,10 @@ class LCImageRotatePad(PreviewImage):
                         "never: always passes the picture on, even untouched."
                     ),
                 }),
+                "max_megapixels": ("FLOAT", {
+                    "default": 2.0, "min": 0.0, "max": 64.0, "step": 0.1,
+                    "tooltip": "Stops the edges from being dragged past this canvas size, so the canvas never grows bigger than the model handles well (Krea 2 and AnyPaint like about 2). Only limits dragging: the run itself is never resized. 0 = no limit.",
+                }),
             },
         }
 
@@ -135,7 +139,7 @@ class LCImageRotatePad(PreviewImage):
         "(drag out) or crop (drag in). The mask covers the new area and the corners a turn opens up."
     )
 
-    def rotate_pad(self, image, angle, fit, fill, left, top, right, bottom, aspect="free", snap_to="16", keep_frame=True, block=True):
+    def rotate_pad(self, image, angle, fit, fill, left, top, right, bottom, aspect="free", snap_to="16", keep_frame=True, block=True, max_megapixels=2.0):
         b, h, w, c = image.shape
         angle = float(angle)
         clamp = lambda v: max(MIN_PCT, min(MAX_PCT, float(v)))
@@ -178,7 +182,7 @@ class LCImageRotatePad(PreviewImage):
 
             return tuple(ExecutionBlocker(None) for _ in outputs)
         except ImportError:
-            print("[LC Image Rotate + Pad] ComfyUI is too old for ExecutionBlocker - block is disabled.")
+            print("[LC Outpaint, Rotate, & Pad] ComfyUI is too old for ExecutionBlocker - block is disabled.")
             return outputs
 
     @staticmethod
@@ -235,4 +239,4 @@ class LCImageRotatePad(PreviewImage):
 
 
 NODE_CLASS_MAPPINGS = {"LCImageRotatePad": LCImageRotatePad}
-NODE_DISPLAY_NAME_MAPPINGS = {"LCImageRotatePad": "LC Image Rotate + Pad 🔄"}
+NODE_DISPLAY_NAME_MAPPINGS = {"LCImageRotatePad": "LC Outpaint, Rotate, & Pad 🔄"}
