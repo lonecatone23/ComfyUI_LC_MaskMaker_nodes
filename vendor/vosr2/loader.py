@@ -114,13 +114,39 @@ def _safe_child_dir(root: Path, name: str) -> Path:
     return candidate
 
 
+def _roots() -> list:
+    """LC change: the main models/vosr2 first, then any vosr2 folder from extra_model_paths.yaml (a shared models folder)."""
+    out, seen = [], set()
+    try:
+        extra = folder_paths.get_folder_paths(VOSR2_FOLDER_KEY)
+    except Exception:
+        extra = []
+    for p in [str(_VOSR2_ROOT), *extra]:
+        key = os.path.normcase(os.path.abspath(p))
+        if key not in seen:
+            seen.add(key)
+            out.append(Path(p))
+    return out
+
+
+def _find_bundle(name: str):
+    """The first complete bundle with this name in any vosr2 folder, or None."""
+    for root in _roots():
+        try:
+            cand = _safe_child_dir(root, name)
+        except VOSR2LoadError:
+            raise
+        if cand.is_dir() and (cand / "args.json").is_file():
+            return cand
+    return None
+
+
 def list_model_bundles() -> list:
-    if not _VOSR2_ROOT.is_dir():
-        return []
-    return sorted(
-        p.name for p in _VOSR2_ROOT.iterdir()
-        if p.is_dir() and (p / "args.json").is_file()
-    )
+    names = set()
+    for root in _roots():
+        if root.is_dir():
+            names.update(p.name for p in root.iterdir() if p.is_dir() and (p / "args.json").is_file())
+    return sorted(names)
 
 
 def model_options() -> list:
@@ -164,7 +190,8 @@ def ensure_vosr2_files(model_name: str) -> None:
     if model_name != KNOWN_MODEL:
         return
 
-    bundle = _VOSR2_ROOT / KNOWN_MODEL
+    shared = _find_bundle(KNOWN_MODEL)
+    bundle = shared if shared is not None else _VOSR2_ROOT / KNOWN_MODEL
     vae_dir = bundle / _VAE_SUBDIR
 
     dit_missing = _find_dit_weight(bundle) is None or not (bundle / "args.json").is_file()
@@ -418,7 +445,7 @@ class VOSR2Model:
 def load_vosr2(model_name: str, dtype: str) -> VOSR2Model:
     ensure_vosr2_files(model_name)
 
-    bundle_dir = _safe_child_dir(_VOSR2_ROOT, model_name)
+    bundle_dir = _find_bundle(model_name) or _safe_child_dir(_VOSR2_ROOT, model_name)
     if not bundle_dir.is_dir():
         raise VOSR2LoadError(f"VOSR2 model bundle not found: {model_name!r}")
     args = _load_args_json(bundle_dir)

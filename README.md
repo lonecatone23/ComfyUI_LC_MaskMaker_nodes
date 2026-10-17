@@ -107,12 +107,23 @@ Release history lives in **git tags**. This page describes the pack **as it is r
 
 - ✋ Models are **never bundled or redistributed**. Model-backed nodes download from the original source the first time you use them, or reuse a copy you already have.
 - Each model in a dropdown is labelled with its license, so you can see what you are picking.
+- 📂 **Shared models folder:** running more than one ComfyUI? Keep one copy of each model in a shared folder and point every install at it in ComfyUI's `extra_model_paths.yaml`. MaskMaker looks there for every model below (main `models` folder first), so you don't need a copy per install. New downloads still go to the main folder.
+
+```yaml
+shared:
+  base_path: D:/shared/models
+  sam3: sam3
+  checkpoints: checkpoints
+  depthanything: depthanything
+  vosr2: vosr2
+  background_removal: background_removal
+```
 - **VITMatte** (LC Mask Refine): `vitmatte-small-composition-1k` and `vitmatte-base-composition-1k`, both Apache-2.0. Saved under `models/vitmatte`. A copy you already have in `models/vitmatte` is picked up automatically.
 - **BiRefNet** (LC Remove Background): general, matting, portrait, and HR 2048 variants, all MIT. Saved under `models/background_removal`, the same folder ComfyUI's own loader reads.
 - **RMBG-2.0** (BRIA): used if you already have it in `models/RMBG/RMBG-2.0`. Not downloaded for you. ⚠️ Non-commercial license.
 - Older BiRefNet `.pth` files (like `BiRefNet-ep480.pth`) use an older layout that ComfyUI cannot load, so they are not listed.
 - **GroundingDINO + SAM** (LC Segment Anything): `grounding-dino-tiny` / `-base` and `sam-vit-base` / `-large` / `-huge`, all Apache-2.0, Hugging Face format. Saved under `models/grounding-dino` and `models/sam`. Your original-format `.pth` files there are not used (different layout).
-- **SAM 3** (LC Segment Anything, sam3 engine): Meta's original `facebook/sam3` is gated (manual approval), so it is never downloaded for you. Your own `sam3.safetensors` in `models/sam3` (or ComfyUI's `models/detection`) is picked up. For a one-click option, the dropdown offers **SAM 3.1** (`sam3.1_multiplex_fp16.safetensors`, 1.7 GB) from `Comfy-Org/sam3.1`, the same ungated copy ComfyUI's own SAM 3 template uses, saved to `models/sam3`. SAM License terms apply (Hugging Face lists it as *other*).
+- **SAM 3** (LC Segment Anything, sam3 engine): Meta's original `facebook/sam3` is gated (manual approval), so it is never downloaded for you. Your own `sam3.safetensors` in `models/sam3` (or ComfyUI's `models/detection` or `models/checkpoints`, where ComfyUI's own SAM 3.1 template keeps it) is picked up. For a one-click option, the dropdown offers **SAM 3.1** (`sam3.1_multiplex_fp16.safetensors`, 1.7 GB) from `Comfy-Org/sam3.1`, the same ungated copy ComfyUI's own SAM 3 template uses, saved to `models/sam3`. SAM License terms apply (Hugging Face lists it as *other*).
 - **Segformer clothes** (LC Person Mask): `mattmdjaga/segformer_b2_clothes`, saved under `models/segformer_b2_clothes`. ⚠️ Its Hugging Face card says license *other* and it is built on NVIDIA's SegFormer, so treat it as **not cleared for commercial use** until you have checked.
 - **MediaPipe selfie multiclass** (LC Person Mask): Google's `selfie_multiclass_256x256.tflite`, saved under `models/mediapipe`. Check its model card for terms. The `mediapipe` Python package is not installed by this pack.
 - **Depth Anything V2** (LC Depth Anything V2): **Small is Apache-2.0**, **Base / Large / Giant are CC-BY-NC-4.0 (non-commercial)**. Saved under `models/depthanything`. Small is listed first so it is the default.

@@ -23,6 +23,36 @@ def models_dir(*parts):
     return os.path.join(folder_paths.models_dir, *parts)
 
 
+def model_dirs(*kinds):
+    """Every folder ComfyUI knows for these model types: the main models folder first, then the ones from
+    extra_model_paths.yaml (a shared models folder), so one copy of a model serves several ComfyUI installs.
+    Downloads still go to the main folder."""
+    out, seen = [], set()
+    for kind in kinds:
+        try:
+            extra = folder_paths.get_folder_paths(kind)
+        except Exception:  # not a registered model type: only the main folder
+            extra = []
+        for p in [models_dir(kind), *extra]:
+            key = os.path.normcase(os.path.abspath(p))
+            if key not in seen:
+                seen.add(key)
+                out.append(p)
+    return out
+
+
+_SHARED_SEEN = set()
+
+
+def _shared(path):
+    """Say once in the console when a model comes from a folder other than ComfyUI/models."""
+    main = os.path.normcase(os.path.abspath(folder_paths.models_dir))
+    if path and not os.path.normcase(os.path.abspath(path)).startswith(main) and path not in _SHARED_SEEN:
+        _SHARED_SEEN.add(path)
+        print(f"[LC MaskMaker] using the shared copy at {path}")
+    return path
+
+
 def _has_hf_model(path):
     return os.path.isfile(os.path.join(path, "config.json")) and any(
         os.path.isfile(os.path.join(path, f)) for f in ("model.safetensors", "pytorch_model.bin")
@@ -30,17 +60,17 @@ def _has_hf_model(path):
 
 
 def scan_hf_models(kind):
-    """Local Hugging Face-format model folders under models/<kind>. Returns {label: path}."""
-    base = models_dir(kind)
+    """Local Hugging Face-format model folders under models/<kind> (and shared model folders). Returns {label: path}."""
     found = {}
-    if not os.path.isdir(base):
-        return found
-    if _has_hf_model(base):
-        found[f"models/{kind} (local)"] = base
-    for name in sorted(os.listdir(base)):
-        p = os.path.join(base, name)
-        if os.path.isdir(p) and _has_hf_model(p):
-            found[name] = p
+    for base in model_dirs(kind):
+        if not os.path.isdir(base):
+            continue
+        if _has_hf_model(base):
+            found.setdefault(f"models/{kind} (local)", base)
+        for name in sorted(os.listdir(base)):
+            p = os.path.join(base, name)
+            if os.path.isdir(p) and _has_hf_model(p):
+                found.setdefault(name, p)
     return found
 
 
@@ -57,7 +87,7 @@ def resolve_vitmatte(choice):
     """Return a local folder for the choice, downloading first if needed."""
     local = scan_hf_models("vitmatte")
     if choice in local:
-        return local[choice]
+        return _shared(local[choice])
     label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
     if label not in VITMATTE_DOWNLOADS:
         raise ValueError(f"[LC MaskMaker] Unknown VITMatte model: {choice}")
@@ -100,16 +130,18 @@ def _bgrem_local():
     found = {}
     by_file = {v[1]: (k, v[2]) for k, v in BGREM_DOWNLOADS.items()}
 
-    core = models_dir("background_removal")
-    if os.path.isdir(core):
+    for core in model_dirs("background_removal"):
+        if not os.path.isdir(core):
+            continue
         for f in sorted(os.listdir(core)):
             if f.endswith(_WEIGHT_EXT):
                 label, size = by_file.get(f, (f"{f} (local)", 1024))
-                found[label] = (os.path.join(core, f), size)
+                found.setdefault(label, (os.path.join(core, f), size))
 
-    rmbg = os.path.join(models_dir("RMBG"), "RMBG-2.0", "model.safetensors")
-    if os.path.isfile(rmbg):
-        found["RMBG-2.0 (BRIA, non-commercial)"] = (rmbg, 1024)
+    for root in model_dirs("RMBG"):
+        rmbg = os.path.join(root, "RMBG-2.0", "model.safetensors")
+        if os.path.isfile(rmbg):
+            found.setdefault("RMBG-2.0 (BRIA, non-commercial)", (rmbg, 1024))
     return found
 
 
@@ -126,7 +158,8 @@ def resolve_bgremoval(choice):
     """Return (path, size) for the choice, downloading first if needed."""
     local = _bgrem_local()
     if choice in local:
-        return local[choice]
+        path, size = local[choice]
+        return _shared(path), size
     label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
     if label not in BGREM_DOWNLOADS:
         raise ValueError(f"[LC MaskMaker] Unknown background removal model: {choice}")
@@ -182,7 +215,7 @@ def resolve_hf(kind, choice):
     """Return a local folder for the choice, downloading first if needed."""
     local = scan_hf_models(kind)
     if choice in local:
-        return local[choice]
+        return _shared(local[choice])
     label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
     table = HF_DOWNLOADS[kind]
     if label not in table:
@@ -231,9 +264,10 @@ def _sam3_kind(fname):
 
 
 def _sam3_local():
-    """{label: path} for SAM 3 files in models/sam3 and in ComfyUI's models/detection folder."""
+    """{label: path} for SAM 3 files in models/sam3, models/detection and models/checkpoints (where ComfyUI's own SAM 3.1
+    template keeps it), including shared model folders from extra_model_paths.yaml."""
     found = {}
-    for folder in (models_dir("sam3"), models_dir("detection")):
+    for folder in model_dirs("sam3", "detection", "checkpoints"):
         if not os.path.isdir(folder):
             continue
         for f in sorted(os.listdir(folder)):
@@ -255,7 +289,7 @@ def sam3_choices():
 def resolve_sam3(choice):
     local = _sam3_local()
     if choice in local:
-        return local[choice]
+        return _shared(local[choice])
     label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
     if label == SAM3_DOWNLOAD_LABEL:
         dest = os.path.join(models_dir("sam3"), SAM3_DOWNLOAD_FILE)
@@ -287,6 +321,9 @@ MEDIAPIPE_URL = (
 
 
 def resolve_mediapipe():
+    for root in model_dirs("mediapipe"):
+        if os.path.isfile(os.path.join(root, MEDIAPIPE_FILE)):
+            return _shared(os.path.join(root, MEDIAPIPE_FILE))
     path = os.path.join(models_dir("mediapipe"), MEDIAPIPE_FILE)
     if not os.path.isfile(path):
         import urllib.request
@@ -338,8 +375,8 @@ def _encoder_from_name(fname):
 def _depth_local():
     """{label: (path, encoder)} of Depth Anything V2 weights we can find."""
     found = {}
-    folders = [(models_dir("depthanything"), ""),
-               (os.path.join(_base_path(), "custom_nodes", "comfyui_controlnet_aux", "ckpts", "depth-anything"), ", from comfyui_controlnet_aux")]
+    folders = [(d, "") for d in model_dirs("depthanything")] + [
+        (os.path.join(_base_path(), "custom_nodes", "comfyui_controlnet_aux", "ckpts", "depth-anything"), ", from comfyui_controlnet_aux")]
     for folder, extra in folders:
         if not os.path.isdir(folder):
             continue
@@ -386,7 +423,7 @@ def resolve_depth(choice):
     # any local file of that size; models/depthanything wins over the controlnet_aux copy
     for _label, (path, e) in local.items():
         if e == enc:
-            return path, enc
+            return _shared(path), enc
     for f, (repo, e) in DEPTH_DOWNLOADS.items():
         if e != enc:
             continue
@@ -411,11 +448,12 @@ BAE_LABEL = "scannet.pt (BAE normals, ScanNet-trained; license unclear, verify b
 
 def _bae_local():
     found = {}
-    for path, extra in ((os.path.join(models_dir("normalbae"), BAE_FILE), ""),
-                        (os.path.join(_base_path(), "custom_nodes", "comfyui_controlnet_aux", "ckpts", "lllyasviel", "Annotators", BAE_FILE),
-                         " [from comfyui_controlnet_aux]")):
+    spots = [(os.path.join(d, BAE_FILE), "") for d in model_dirs("normalbae")] + [
+        (os.path.join(_base_path(), "custom_nodes", "comfyui_controlnet_aux", "ckpts", "lllyasviel", "Annotators", BAE_FILE),
+         " [from comfyui_controlnet_aux]")]
+    for path, extra in spots:
         if os.path.isfile(path):
-            found[BAE_LABEL + extra] = path
+            found.setdefault(BAE_LABEL + extra, path)
     return found
 
 
@@ -428,7 +466,7 @@ def resolve_bae(choice):
     """Accepts the current label and the per-machine labels older versions saved."""
     local = _bae_local()
     if local:
-        return next(iter(local.values()))  # models/normalbae wins over the controlnet_aux copy
+        return _shared(next(iter(local.values())))  # models/normalbae wins over the controlnet_aux copy
     dest = os.path.join(models_dir("normalbae"), BAE_FILE)
     from huggingface_hub import hf_hub_download
 
