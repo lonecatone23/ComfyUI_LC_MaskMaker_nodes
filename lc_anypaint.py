@@ -23,6 +23,10 @@ LC SDXL AnyPaint: the same again for any SDXL checkpoint, painted by xinsir's Co
 (models/controlnet, core ComfyUI), optionally with lllyasviel's Fooocus inpaint patch through Acly's comfyui-inpaint-nodes
 (called at run time, not bundled). The keep runs per latent pixel (SDXL has no 2x2 patches) and cfg / negative are real.
 
+LC Flux 3 Klein AnyPaint: the same crop, keep, border and composite for Flux 3 Klein, painted in edit mode with AusBoss's
+outpaint LoRA (flux-3-image-klein-outpaint, FLUX Kommunity License): the area to paint is filled flat grey #808080, that
+picture is the reference, and the trained instruction tells the model to fill the grey.
+
 The reference path runs in this node's own model wrapper, so it works even when another pack replaces Krea 2's
 forward (ComfyUI-RedNodeStudio does, which made the first version copy the flat fill). LoRAs and attention / speed-up
 options still apply. Method after yijunwang2's reference pipeline (Krea 2 Community License); the reference forward
@@ -93,7 +97,17 @@ TIP = {
     "negative": "What you don't want. SDXL uses a real negative prompt.",
     "cfg": "SDXL cfg. 4 - 6 for most checkpoints.",
     "sdxl_steps": "25 - 30 for a normal SDXL checkpoint, fewer for Lightning / DMD ones (then cfg 1 - 2).",
+    "flux3_lora": "AusBoss's flux-3-image-klein-outpaint (models/loras). It fills flat grey areas while the rest stays put. "
+                  "Applied at lora_strength for this node only. off = plain Flux 3 Klein with a noise mask (it tends to "
+                  "shift or zoom the picture).",
+    "flux3_strength": "1.5 is AusBoss's pick: the picture stays in place more often than at 1.0 on big extensions.",
+    "flux3_prompt": "Describe the whole finished picture: \"a woman in a red coat on a snowy street\". The node adds the "
+                    "LoRA's fill instruction in front for you.",
+    "flux3_steps": "16 for Flux 3 Klein (Distilled). 50 with cfg 3.5 for Base is not supported here: use the Distilled model.",
 }
+FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
+FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
+                     "the existing picture unchanged.")
 
 
 def _tip(k, **kw):
@@ -180,6 +194,24 @@ def _lora_choices():
     loras = folder_paths.get_filename_list("loras")
     hits = [l for l in loras if "anypaint" in l.lower()]
     return hits + [l for l in loras if l not in hits], (hits[0] if hits else (loras[0] if loras else ""))
+
+
+def _flux3_lora_choices():
+    loras = folder_paths.get_filename_list("loras")
+    hits = sorted((l for l in loras if "outpaint" in l.lower() and ("flux-3" in l.lower() or "flux3" in l.lower())))
+    return [OFF] + hits + [l for l in loras if l not in hits], (hits[0] if hits else OFF)
+
+
+def _flux3_model(model, lora_name, strength):
+    """The LoRA only: Flux 3 Klein reads references natively, no wrapper needed."""
+    if lora_name in (OFF, "", None) or not strength:
+        return model.clone()
+    path = folder_paths.get_full_path_or_raise("loras", lora_name)
+    sd = _LORA_CACHE.get(path)
+    if sd is None:
+        _LORA_CACHE.clear()
+        sd = _LORA_CACHE[path] = comfy.utils.load_torch_file(path, safe_load=True)
+    return comfy.sd.load_lora_for_models(model, None, sd, float(strength), 0.0)[0]
 
 
 # --------------------------------------------------------------------------------------- the model runtime
@@ -423,6 +455,15 @@ def _paint(frame, gen_full, s):
         # inpaint mode: the union model gets your picture with the painted area greyed out, plus the mask
         model = ZImageFunControlnet().diffsynth_controlnet(s["model"], s["patch"], vae, image=None, strength=s["strength"],
                                                            inpaint_image=up, mask=gen[None])[0]
+    elif s.get("flux3"):
+        # edit mode: your picture with the area to paint flat grey is the reference, the instruction says fill the grey
+        g = gen[None, ..., None]
+        ref = up * (1.0 - g) + FLUX3_GREY * g
+        clip = s["clip"]
+        pos = clip.encode_from_tokens_scheduled(clip.tokenize(FLUX3_INSTRUCTION + " Scene: " + s["prompt"]))
+        pos = node_helpers.conditioning_set_values(pos, {"reference_latents": [vae.encode(ref)]}, append=True)
+        neg = _zero_out(pos)
+        model = s["model"]
     else:
         ref = _reference(up, gen)
         pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
@@ -433,7 +474,13 @@ def _paint(frame, gen_full, s):
     latent = vae.encode(_telea_fill(up, gen) if s.get("sdxl") else up)
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     lh, lw = latent.shape[-2], latent.shape[-1]
+    if s.get("flux3") and latent.shape[1] == 128:
+        p = 1  # Flux 2 / 3 latents are already one token per latent pixel
     noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
+    if s.get("flux3") and s.get("lora_on"):
+        # with the LoRA the picture stays in place on its own; a noise mask there shifts its brightness and can leave a
+        # box (AusBoss's tests), so the whole canvas is painted and the original pasted back by the composite
+        noise_mask = None
     noise = comfy.sample.prepare_noise(latent, s["seed"])
     callback = latent_preview.prepare_callback(model, s["steps"])
     samples = comfy.sample.sample(
@@ -663,6 +710,51 @@ class LCSDXLAnyPaint(LCKrea2AnyPaint):
         return self._run(image, mask, s)
 
 
-NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint, "LCSDXLAnyPaint": LCSDXLAnyPaint}
+class LCFlux3AnyPaint(LCKrea2AnyPaint):
+    NAME = "LC Flux 3 Klein AnyPaint"
+    DESCRIPTION = (
+        "Inpaint and outpaint for Flux 3 Klein (Distilled) with AusBoss's outpaint LoRA, in edit mode: the area to paint "
+        "is filled flat grey and the model fills the grey. The kept pixels are put back after every step and a border is "
+        "blended. Your picture outside the mask comes back unchanged. Describe the whole finished picture in the prompt.\n"
+        "Outpaint: wire LC Outpaint's or LC Outpaint, Rotate, & Pad's control_image and control_mask in."
+    )
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
+        loras, default = _flux3_lora_choices()
+        req = {}
+        for k, v in base.items():
+            if k == "lora":
+                req[k] = (loras, _tip("flux3_lora", default=default))
+            elif k == "lora_strength":
+                req[k] = ("FLOAT", _tip("flux3_strength", default=1.5, min=0.0, max=2.0, step=0.05))
+            elif k == "prompt":
+                req[k] = ("STRING", _tip("flux3_prompt", default="", multiline=True))
+            elif k == "steps":
+                req[k] = ("INT", _tip("flux3_steps", default=16, min=1, max=100))
+            elif k == "vlm_reference":
+                continue  # Krea 2 only
+            elif k == "model":
+                req[k] = ("MODEL", {"tooltip": "Flux 3 Klein (Distilled). The LoRA is added for this node only."})
+            elif k == "clip":
+                req[k] = ("CLIP", {"tooltip": "Flux 3 Klein's text encoder (Qwen3-VL 4B, CLIP type flux3)."})
+            else:
+                req[k] = v
+        return {"required": req}
+
+    def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, seed, steps, sampler_name, scheduler,
+              crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
+        self._check(prompt, steps)
+        lora_on = lora not in (OFF, "", None) and float(lora_strength) > 0
+        s = dict(model=_flux3_model(model, lora, lora_strength), flux3=True, lora_on=lora_on, clip=clip, vae=vae, prompt=prompt.strip(),
+                 seed=int(seed), steps=int(steps), sampler_name=sampler_name, scheduler=scheduler, crop=bool(crop_to_mask),
+                 padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px), vlm=False,
+                 composite=composite)
+        return self._run(image, mask, s)
+
+
+NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint, "LCSDXLAnyPaint": LCSDXLAnyPaint,
+                       "LCFlux3AnyPaint": LCFlux3AnyPaint}
 NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹",
-                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹"}
+                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹"}

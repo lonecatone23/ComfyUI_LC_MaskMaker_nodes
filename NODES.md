@@ -15,6 +15,7 @@
 - `LCKrea2AnyPaint`: LC Krea2 AnyPaint 🩹
 - `LCZImageAnyPaint`: LC Z-Image AnyPaint 🩹
 - `LCSDXLAnyPaint`: LC SDXL AnyPaint 🩹
+- `LCFlux3AnyPaint`: LC Flux 3 Klein AnyPaint 🩹
 - `LCPersonMask`: LC Person Mask 🧍
 - `LCAutoAdjust`: LC Auto Adjust 🔆
 - `LCDepthAnythingV2`: LC Depth Anything V2 🌊
