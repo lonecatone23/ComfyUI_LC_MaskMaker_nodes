@@ -114,6 +114,8 @@ TIP = {
                  "falling apart. Turn it off with the 8-step turbo LoRA.",
     "moss_steps": "25 (ComfyUI's MOSS template). 8 with the 8-step turbo LoRA on the model.",
     "moss_cfg": "2.5 - 3. 1 with the 8-step turbo LoRA.",
+    "moss_boundary": "Border around the mask that is redrawn and blended (redraw pixels). 8 for MOSS: wider borders come back "
+                     "soft and leave a blurred halo around the painted area.",
 }
 FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
 FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
@@ -798,6 +800,8 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
                 req[k] = (comfy.samplers.KSampler.SAMPLERS, {"default": "er_sde"})
             elif k == "vlm_reference":
                 continue  # Krea 2 only
+            elif k == "boundary_px":
+                req[k] = ("INT", _tip("moss_boundary", default=8, min=0, max=128, step=4))
             elif k == "model":
                 req[k] = ("MODEL", {"tooltip": "MOSS Image (SFT or Base). With the 8-step turbo LoRA: steps 8, cfg 1, skip_layer off."})
             elif k == "clip":
