@@ -9,7 +9,7 @@ VITMatte) plus grow, levels and feather. No preview on the node; add LC Mask Ref
 
 import torch
 
-from . import lc_models
+from . import lc_cache, lc_models
 from .lc_matting import METHODS, get_device, refine_mask
 
 BACKGROUNDS = {
@@ -21,7 +21,7 @@ BACKGROUNDS = {
     "magenta": (1.0, 0.0, 1.0),
 }
 
-_model_cache = {}  # (path, size) -> model; one kept at a time (ComfyUI offloads it after use)
+_model_cache = lc_cache.register("birefnet", {})  # (path, size) -> model; one kept at a time (ComfyUI offloads it after use)
 
 
 def _load_bg_model(path, size):

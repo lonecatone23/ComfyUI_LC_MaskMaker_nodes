@@ -11,7 +11,7 @@ import math
 import torch
 import torch.nn.functional as F
 
-from . import lc_models
+from . import lc_cache, lc_models
 from .lc_matting import get_device, no_cudnn_autotune
 from .lc_temporal import segments, smooth
 
@@ -21,7 +21,7 @@ CONFIGS = {
     "vitl": {"features": 256, "out_channels": [256, 512, 1024, 1024]},
     "vitg": {"features": 384, "out_channels": [1536, 1536, 1536, 1536]},
 }
-_cache = {}  # path -> model on cpu; one kept at a time
+_cache = lc_cache.register("depth", {})  # path -> model on cpu; one kept at a time
 
 
 def _load(path, encoder):

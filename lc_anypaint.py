@@ -35,9 +35,6 @@ is adapted from alexw5702-afk/krea2-anypaint (MIT) and ostris ComfyUI-Krea2-Ostr
 
 from __future__ import annotations
 
-import math
-
-import numpy as np
 import torch
 import torch.nn.functional as F
 
@@ -56,14 +53,15 @@ from comfy.ldm.flux.math import apply_rope
 from comfy.ldm.modules.attention import optimized_attention_masked
 from einops import rearrange
 
+from . import lc_cache
 from .lc_inpaint import _Base, _box, _expand, _preview, _seam_colour, _target, _zero_out
 from .lc_refine_core import blur, grow
 
 REF_EDGE = 384
 TOKEN = 16  # Krea 2: 8x VAE, 2x2 patch
 VLM_PREFIX = "Picture 1: <|vision_start|><|image_pad|><|vision_end|>"
-_LORA_CACHE = {}
-_PATCH_CACHE = {}
+_LORA_CACHE = lc_cache.register("anypaint_lora", {})
+_PATCH_CACHE = lc_cache.register("anypaint_patches", {})
 
 TIP = {
     "prompt": "Describe the WHOLE finished picture, not just the change: \"a woman in a red coat on a snowy street\". "

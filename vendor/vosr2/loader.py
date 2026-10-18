@@ -22,6 +22,7 @@ import json
 import logging
 import os
 import re
+import shutil
 from pathlib import Path
 
 import torch
@@ -129,16 +130,30 @@ def _roots() -> list:
     return out
 
 
+def _bundle_complete(bundle: Path) -> bool:
+    """LC change: args.json, the DiT weight, the VAE and the converted DINOv2 are all there."""
+    return ((bundle / "args.json").is_file() and _find_dit_weight(bundle) is not None
+            and all((bundle / _VAE_SUBDIR / name).is_file() for name in _VAE_FILES)
+            and (bundle / _VISION_FILENAME).is_file())
+
+
 def _find_bundle(name: str):
-    """The first complete bundle with this name in any vosr2 folder, or None."""
+    """The first complete bundle with this name in any vosr2 folder, else the first one with an args.json, or None.
+
+    LC change: a partly copied bundle (args.json but no weights) no longer hides a complete copy in a later folder.
+    """
+    partial = None
     for root in _roots():
         try:
             cand = _safe_child_dir(root, name)
         except VOSR2LoadError:
             raise
         if cand.is_dir() and (cand / "args.json").is_file():
-            return cand
-    return None
+            if _bundle_complete(cand):
+                return cand
+            if partial is None:
+                partial = cand
+    return partial
 
 
 def list_model_bundles() -> list:
@@ -219,11 +234,23 @@ def ensure_vosr2_files(model_name: str) -> None:
         if not (dit_missing or vae_missing):
             return
 
+    # LC change: every download goes through a temp folder inside the bundle (removed afterwards, as lc_models.py
+    # does), so nothing is left in the Hugging Face cache on C:, and the DiT files land in the bundle that is
+    # actually used (a partly copied shared bundle is completed in place instead of a second copy in models/vosr2).
+    tmp_dir = bundle / ".lc_tmp"
     try:
         if dit_missing:
             logging.info("[VOSR2] downloading DiT bundle from %s ...", HF_REPO_ID)
+            prefix = KNOWN_MODEL + "/"
             for f in _DIT_HF_FILES:
-                hf_hub_download(HF_REPO_ID, f, local_dir=str(_VOSR2_ROOT))
+                dest = bundle / f[len(prefix):]
+                if f.endswith("args.json") and dest.is_file():
+                    continue
+                if f.endswith(".safetensors") and _find_dit_weight(bundle) is not None:
+                    continue
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                src = hf_hub_download(HF_REPO_ID, f, local_dir=str(tmp_dir))
+                os.replace(src, dest)
         if vae_missing:
             logging.info("[VOSR2] downloading Qwen-Image 2D VAE from %s ...", HF_REPO_ID)
             vae_dir.mkdir(parents=True, exist_ok=True)
@@ -231,8 +258,9 @@ def ensure_vosr2_files(model_name: str) -> None:
                 hf_hub_download(HF_REPO_ID, f, local_dir=str(bundle))
         if vision_missing:
             logging.info("[VOSR2] downloading + converting DINOv2-L encoder from %s ...", HF_REPO_ID)
-            src = hf_hub_download(HF_REPO_ID, _DINOV2_HF_FILE)
+            src = hf_hub_download(HF_REPO_ID, _DINOV2_HF_FILE, local_dir=str(tmp_dir))
             _convert_dinov2_pth_to_safetensors(Path(src), bundle / _VISION_FILENAME)
+        shutil.rmtree(tmp_dir, ignore_errors=True)
     except Exception as exc:  # LC change: explain a failed download instead of a raw huggingface_hub error
         if isinstance(exc, VOSR2LoadError):
             raise

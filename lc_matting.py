@@ -16,6 +16,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
+from . import lc_cache
 from .lc_refine_core import blur, fix_gaps, guided_filter, levels, trimap_from
 from .lc_refine_core import grow as grow_mask
 
@@ -43,7 +44,7 @@ def get_device():
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-_vitmatte_cache = {}  # folder -> (processor, model); one model kept at a time
+_vitmatte_cache = lc_cache.register("vitmatte", {})  # folder -> (processor, model); one model kept at a time
 
 
 def _load_vitmatte(folder):

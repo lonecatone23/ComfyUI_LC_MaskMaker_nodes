@@ -23,7 +23,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from . import lc_models
+from . import lc_cache, lc_models
 from .lc_matting import METHODS, get_device, refine_mask
 from .lc_temporal import is_clip, segments, smooth_masks
 
@@ -42,7 +42,7 @@ SEGFORMER_PARTS = {
 # MediaPipe selfie multiclass output channels
 MEDIAPIPE_PARTS = {"background": 0, "hair": 1, "body": 2, "face": 3, "clothes": 4, "accessories": 5}
 
-_seg_cache = {}  # folder -> (processor, model)
+_seg_cache = lc_cache.register("segformer", {})  # folder -> (processor, model)
 
 # Facial features cut out by remove_features. Tested: "nostrils" swallows the whole nose, so it is left out.
 FEATURE_WORDS = ["eyes", "eyebrows", "lips", "teeth"]

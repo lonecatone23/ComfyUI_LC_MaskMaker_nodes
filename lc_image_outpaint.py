@@ -7,8 +7,6 @@ left/top/right/bottom store the expansion as a percentage of the source
 (left/right of its width, top/bottom of its height).
 """
 
-import math
-
 import torch
 from nodes import PreviewImage
 

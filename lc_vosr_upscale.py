@@ -10,12 +10,12 @@ download from huggingface.co/CSWRY/VOSR on first run into models/vosr2.
 import torch
 import torch.nn.functional as F
 
-from . import lc_pipe_keys
+from . import lc_cache, lc_pipe_keys
 from .vendor.vosr2 import loader as _vl
 from .vendor.vosr2.inference import run_vosr2
 
 PIPE_TYPE = "LC_PIPE"
-_BUNDLE = {}  # dtype -> loaded VOSR2Model, kept for the session
+_BUNDLE = lc_cache.register("vosr2", {})  # dtype -> loaded VOSR2Model, kept for the session
 
 
 def _bundle(dtype):

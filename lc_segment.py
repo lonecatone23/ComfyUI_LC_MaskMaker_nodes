@@ -19,13 +19,13 @@ import numpy as np
 import torch
 from nodes import PreviewImage
 
-from . import lc_models, lc_sam3
+from . import lc_cache, lc_models, lc_sam3
 from .lc_matting import METHODS, get_device, refine_mask
 from .lc_preview_util import wipe_preview
 
 ENGINES = ["grounding_dino + sam", "sam3"]
 
-_hf_cache = {}    # kind -> (folder, processor, model); one model per kind kept
+_hf_cache = lc_cache.register("grounding_dino_sam", {})    # kind -> (folder, processor, model); one model per kind kept
 
 
 def _tokens(prompt):

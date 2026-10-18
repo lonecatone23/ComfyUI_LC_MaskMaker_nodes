@@ -196,6 +196,8 @@ def _flat_sampling(model):
 
 def _flat_sigmas(ms, scheduler, steps, denoise):
     """KSampler's own denoise schedule, planned on the flat sampling."""
+    if denoise <= 0.0:  # like KSampler: nothing to sample (and no division by zero below)
+        return torch.FloatTensor([])
     if denoise >= 0.9999:
         return comfy.samplers.calculate_sigmas(ms, scheduler, steps).cpu()
     return comfy.samplers.calculate_sigmas(ms, scheduler, int(steps / denoise)).cpu()[-(steps + 1):]
@@ -408,9 +410,9 @@ def _preview(node, before, after, mask, note):
         h, w = before.shape[1], before.shape[2]
         s = min(1.0, 768.0 / max(h, w))
         size = (max(1, int(h * s)), max(1, int(w * s)))
-        src = F.interpolate(before[:1, ..., :3].permute(0, 3, 1, 2).float(), size=size, mode="area")
-        res = F.interpolate(after[:1, ..., :3].permute(0, 3, 1, 2).float(), size=size, mode="area")
-        m = F.interpolate(mask[:1].unsqueeze(1).float(), size=size, mode="bilinear", align_corners=False)
+        src = F.interpolate(before[:1, ..., :3].permute(0, 3, 1, 2).float().cpu(), size=size, mode="area")
+        res = F.interpolate(after[:1, ..., :3].permute(0, 3, 1, 2).float().cpu(), size=size, mode="area")
+        m = F.interpolate(mask[:1].unsqueeze(1).float().cpu(), size=size, mode="bilinear", align_corners=False)
         inside = (m > 0.1).float()
         edge = (F.max_pool2d(inside, 5, 1, 2) - inside).clamp(0, 1)
         color = torch.tensor(OUTLINE).view(1, 3, 1, 1)

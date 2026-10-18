@@ -10,9 +10,11 @@ Two fixes over calling ComfyUI directly:
 
 import torch
 
+from . import lc_cache
+
 MAX_PER_WORD = 16
 
-_cache = {}  # path -> (model patcher, clip)
+_cache = lc_cache.register("sam3", {})  # path -> (model patcher, clip)
 
 
 def load(path):

@@ -11,10 +11,10 @@ import types
 import torch
 import torch.nn.functional as F
 
-from . import lc_models
+from . import lc_cache, lc_models
 from .lc_matting import get_device, no_cudnn_autotune
 
-_cache = {}  # path -> model on cpu; one kept at a time
+_cache = lc_cache.register("normal_bae", {})  # path -> model on cpu; one kept at a time
 
 
 def _load(path):
