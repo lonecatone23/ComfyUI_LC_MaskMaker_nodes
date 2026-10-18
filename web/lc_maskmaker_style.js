@@ -24,6 +24,7 @@ const WITH_PREVIEW = new Set([
   "LCZImageAnyPaint",
   "LCSDXLAnyPaint",
   "LCFlux3AnyPaint",
+  "LCMOSSAnyPaint",
 ]);
 // Nodes without one: only the width standard applies, height stays natural
 const PLAIN = new Set([

@@ -27,6 +27,10 @@ LC Flux 3 Klein AnyPaint: the same crop, keep, border and composite for Flux 3 K
 outpaint LoRA (flux-3-image-klein-outpaint, FLUX Kommunity License): the area to paint is filled flat grey #808080, that
 picture is the reference, and the trained instruction tells the model to fill the grey.
 
+LC MOSS AnyPaint: the same crop, keep, border and composite for MOSS Image, which has no inpaint LoRA or ControlNet: a
+plain masked redraw with a real negative and cfg, skip layer 22 on the negative pass, starting from the picture around the
+mask stretched into it (one token per latent pixel: Flux 2 latents).
+
 The reference path runs in this node's own model wrapper, so it works even when another pack replaces Krea 2's
 forward (ComfyUI-RedNodeStudio does, which made the first version copy the flat fill). LoRAs and attention / speed-up
 options still apply. Method after yijunwang2's reference pipeline (Krea 2 Community License); the reference forward
@@ -102,6 +106,14 @@ TIP = {
     "flux3_prompt": "Describe the whole finished picture: \"a woman in a red coat on a snowy street\". The node adds the "
                     "LoRA's fill instruction in front for you.",
     "flux3_steps": "16 for Flux 3 Klein (Distilled). 50 with cfg 3.5 for Base is not supported here: use the Distilled model.",
+    "moss_prompt": "Describe only what goes in the mask, short: a black sign reading \"MOSS\" on a rainy window. A description "
+                   "of the whole picture paints the whole picture (a second person) into the masked area. Text you want "
+                   "written goes in quotes.",
+    "moss_negative": "MOSS uses a real negative. The recommended one is filled in.",
+    "moss_skip": "Skip layer 22 on the negative pass (the first half of the steps), as MOSS recommends: keeps fine detail from "
+                 "falling apart. Turn it off with the 8-step turbo LoRA.",
+    "moss_steps": "25 (ComfyUI's MOSS template). 8 with the 8-step turbo LoRA on the model.",
+    "moss_cfg": "2.5 - 3. 1 with the 8-step turbo LoRA.",
 }
 FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
 FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
@@ -462,6 +474,11 @@ def _paint(frame, gen_full, s):
         pos = node_helpers.conditioning_set_values(pos, {"reference_latents": [vae.encode(ref)]}, append=True)
         neg = _zero_out(pos)
         model = s["model"]
+    elif s.get("moss"):
+        clip = s["clip"]
+        pos = clip.encode_from_tokens_scheduled(clip.tokenize(s["prompt"]))
+        neg = clip.encode_from_tokens_scheduled(clip.tokenize(s["negative"]))
+        model = s["model"]
     else:
         ref = _reference(up, gen)
         pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
@@ -469,11 +486,11 @@ def _paint(frame, gen_full, s):
         model = s["model"]
     # SDXL keeps the starting picture's broad colours even at full denoise: the painted area starts from the
     # surrounding picture extended into it, whatever fill the canvas came with
-    latent = vae.encode(_telea_fill(up, gen) if s.get("sdxl") else up)
+    latent = vae.encode(_telea_fill(up, gen) if (s.get("sdxl") or s.get("moss")) else up)
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     lh, lw = latent.shape[-2], latent.shape[-1]
-    if s.get("flux3") and latent.shape[1] == 128:
-        p = 1  # Flux 2 / 3 latents are already one token per latent pixel
+    if (s.get("flux3") or s.get("moss")) and latent.shape[1] == 128:
+        p = 1  # Flux 2 / 3 latents (also MOSS) are already one token per latent pixel
     noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
     if s.get("flux3") and s.get("lora_on"):
         # with the LoRA the picture stays in place on its own; a noise mask there shifts its brightness and can leave a
@@ -752,7 +769,64 @@ class LCFlux3AnyPaint(LCKrea2AnyPaint):
         return self._run(image, mask, s)
 
 
+class LCMOSSAnyPaint(LCKrea2AnyPaint):
+    NAME = "LC MOSS AnyPaint"
+    DESCRIPTION = (
+        "Inpaint and outpaint for MOSS Image. MOSS has no inpaint LoRA or ControlNet yet, so this is a masked redraw done "
+        "carefully: it starts from the picture around the mask, keeps your pixels after every step and blends a border, with "
+        "a real negative and skip layer 22. Your picture outside the mask comes back unchanged. Describe only what goes in "
+        "the mask. Small text needs the full steps: the 8-step turbo LoRA garbles it.\n"
+        "Outpaint: wire LC Outpaint's or LC Outpaint, Rotate, & Pad's control_image and control_mask in."
+    )
+    MOSS_NEGATIVE = "nsfw, worst quality, bad anatomy, watermark, jpeg artifact"
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
+        req = {}
+        for k, v in base.items():
+            if k == "lora":
+                req["negative"] = ("STRING", _tip("moss_negative", default=cls.MOSS_NEGATIVE, multiline=True))
+            elif k == "lora_strength":
+                req["skip_layer"] = ("BOOLEAN", _tip("moss_skip", default=True))
+            elif k == "prompt":
+                req[k] = ("STRING", _tip("moss_prompt", default="", multiline=True))
+            elif k == "steps":
+                req[k] = ("INT", _tip("moss_steps", default=25, min=1, max=100))
+                req["cfg"] = ("FLOAT", _tip("moss_cfg", default=2.5, min=0.0, max=30.0, step=0.1, round=0.01))
+            elif k == "sampler_name":
+                req[k] = (comfy.samplers.KSampler.SAMPLERS, {"default": "er_sde"})
+            elif k == "vlm_reference":
+                continue  # Krea 2 only
+            elif k == "model":
+                req[k] = ("MODEL", {"tooltip": "MOSS Image (SFT or Base). With the 8-step turbo LoRA: steps 8, cfg 1, skip_layer off."})
+            elif k == "clip":
+                req[k] = ("CLIP", {"tooltip": "MOSS Image's text encoder (Qwen3.5-9B, CLIP type moss_image)."})
+            else:
+                req[k] = v
+        return {"required": req}
+
+    def paint(self, model, clip, vae, image, mask, prompt, negative, skip_layer, seed, steps, cfg, sampler_name, scheduler,
+              crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
+        self._check(prompt, steps)
+        if type(model.model).__name__ != "MOSSImage":
+            raise ValueError("[LC MOSS AnyPaint] This is for MOSS Image. Use LC Krea2 / Z-Image / SDXL / Flux 3 Klein AnyPaint "
+                             "for those models.")
+        m = model.clone()
+        if skip_layer:
+            from comfy_extras.nodes_slg import SkipLayerGuidanceDiTSimple
+
+            out = SkipLayerGuidanceDiTSimple.execute(m, 0.0, 0.5, double_layers="", single_layers="22")
+            m = out.result[0] if hasattr(out, "result") else out[0]
+        s = dict(model=m, moss=True, clip=clip, vae=vae, prompt=prompt.strip(), negative=(negative or "").strip(),
+                 seed=int(seed), steps=int(steps), cfg=float(cfg), sampler_name=sampler_name, scheduler=scheduler,
+                 crop=bool(crop_to_mask), padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px),
+                 vlm=False, composite=composite)
+        return self._run(image, mask, s)
+
+
 NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint, "LCSDXLAnyPaint": LCSDXLAnyPaint,
-                       "LCFlux3AnyPaint": LCFlux3AnyPaint}
+                       "LCFlux3AnyPaint": LCFlux3AnyPaint, "LCMOSSAnyPaint": LCMOSSAnyPaint}
 NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹",
-                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹"}
+                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹",
+                              "LCMOSSAnyPaint": "LC MOSS AnyPaint 🩹"}
