@@ -74,6 +74,16 @@ def scan_hf_models(kind):
     return found
 
 
+def _label(choice, labels, what):
+    """The download label a saved choice means. A '(local)' file from the machine the workflow was saved on that this
+    machine doesn't have becomes the default download (the first label), so a shared workflow runs instead of failing."""
+    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
+    if label not in labels and choice.endswith(" (local)") and labels:
+        label = next(iter(labels))
+        print(f"[LC MaskMaker] {what} '{choice}' is not on this machine: using '{label}' (downloaded on first use).")
+    return label
+
+
 def vitmatte_choices():
     local = scan_hf_models("vitmatte")
     downloads = []
@@ -88,7 +98,7 @@ def resolve_vitmatte(choice):
     local = scan_hf_models("vitmatte")
     if choice in local:
         return _shared(local[choice])
-    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
+    label = _label(choice, VITMATTE_DOWNLOADS, "VITMatte model")
     if label not in VITMATTE_DOWNLOADS:
         raise ValueError(f"[LC MaskMaker] Unknown VITMatte model: {choice}")
     repo, sub = VITMATTE_DOWNLOADS[label]
@@ -160,7 +170,7 @@ def resolve_bgremoval(choice):
     if choice in local:
         path, size = local[choice]
         return _shared(path), size
-    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
+    label = _label(choice, BGREM_DOWNLOADS, "Background removal model")
     if label not in BGREM_DOWNLOADS:
         raise ValueError(f"[LC MaskMaker] Unknown background removal model: {choice}")
     repo, fname, size = BGREM_DOWNLOADS[label]
@@ -216,8 +226,8 @@ def resolve_hf(kind, choice):
     local = scan_hf_models(kind)
     if choice in local:
         return _shared(local[choice])
-    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
     table = HF_DOWNLOADS[kind]
+    label = _label(choice, table, f"{kind} model")
     if label not in table:
         raise ValueError(f"[LC MaskMaker] Unknown {kind} model: {choice}")
     repo, sub = table[label]
@@ -241,7 +251,7 @@ def known_model(kind, value):
         choices, labels = bgremoval_choices(), set(BGREM_DOWNLOADS)
     else:
         choices, labels = hf_choices(kind), set(HF_DOWNLOADS[kind])
-    if value in choices:
+    if value in choices or value.endswith(" (local)"):  # a '(local)' file this machine lacks: the default downloads
         return True
     label = value[len(DOWNLOAD_PREFIX):] if value.startswith(DOWNLOAD_PREFIX) else value
     return label in labels
@@ -290,7 +300,7 @@ def resolve_sam3(choice):
     local = _sam3_local()
     if choice in local:
         return _shared(local[choice])
-    label = choice[len(DOWNLOAD_PREFIX):] if choice.startswith(DOWNLOAD_PREFIX) else choice
+    label = _label(choice, [SAM3_DOWNLOAD_LABEL], "SAM 3 model")
     if label == SAM3_DOWNLOAD_LABEL:
         dest = os.path.join(models_dir("sam3"), SAM3_DOWNLOAD_FILE)
         if not os.path.isfile(dest):

@@ -102,7 +102,7 @@ class LCRemBG:
         }
 
     @classmethod
-    def VALIDATE_INPUTS(cls, model=None, vitmatte_model=None):
+    def VALIDATE_INPUTS(cls, model=None, vitmatte_model=None, background=None):
         # a '⬇ Download' entry saved on another machine is still valid here once the model is installed
         return lc_models.validate_models(model=("bgremoval", model), vitmatte_model=("vitmatte", vitmatte_model))
 
@@ -137,7 +137,7 @@ class LCRemBG:
 
         rgb_cpu = rgb.cpu().float()
         cutout = torch.cat([rgb_cpu, mask.unsqueeze(-1)], dim=-1)
-        color = torch.tensor(BACKGROUNDS[background], dtype=torch.float32).view(1, 1, 1, 3)
+        color = torch.tensor(BACKGROUNDS.get(background, BACKGROUNDS["black"]), dtype=torch.float32).view(1, 1, 1, 3)
         on_bg = rgb_cpu * mask.unsqueeze(-1) + color * (1.0 - mask.unsqueeze(-1))
 
         return (cutout, mask, on_bg)
