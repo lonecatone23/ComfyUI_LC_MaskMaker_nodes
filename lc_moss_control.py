@@ -55,13 +55,18 @@ class _ControlEmbedder(torch.nn.Module):
 
 
 def _encode(vae, image):
+    """The map's latent at full size and at half size (LC Speed Boost samples the first steps at half size). Each is a
+    real VAE encode of the resized picture: shrinking a packed FLUX.2 latent smears the control and the pose is lost."""
     if image is None:
         return None
     img = image[:1, :, :, :3]
-    h, w = img.shape[1] // 16 * 16, img.shape[2] // 16 * 16
-    if (h, w) != tuple(img.shape[1:3]):
-        img = comfy.utils.common_upscale(img.movedim(-1, 1), w, h, "lanczos", "center").movedim(1, -1)
-    return vae.encode(img).float().cpu()
+    H, W = img.shape[1] // 16, img.shape[2] // 16
+    out = {}
+    for lh, lw in ((H, W), (max(2, round(H / 2)), max(2, round(W / 2)))):
+        px = img if (lh * 16, lw * 16) == tuple(img.shape[1:3]) else             comfy.utils.common_upscale(img.movedim(-1, 1), lw * 16, lh * 16, "lanczos", "center").movedim(1, -1)
+        lat = vae.encode(px).float().cpu()
+        out[tuple(lat.shape[-2:])] = lat
+    return out
 
 
 def _step_index(transformer_options):
@@ -125,19 +130,22 @@ class LCMOSSControl:
             m.add_patches(patches, strength)
         color, depth = _encode(vae, color_map), _encode(vae, depth_map)
         if depth is not None and color is None:
-            color = torch.zeros_like(depth)
+            color = {k: torch.zeros_like(v) for k, v in depth.items()}
         if color is not None and depth is None:
-            depth = torch.zeros_like(color)
+            depth = {k: torch.zeros_like(v) for k, v in color.items()}
         state = {"color": color, "depth": depth, "has_color": color_map is not None, "has_depth": depth_map is not None,
                  "cache": {}}
 
-        def fit(lat, x):
-            key = (id(lat), x.shape[-2:], x.device, x.dtype)
+        def fit(lats, x):
+            size = tuple(x.shape[-2:])
+            key = (id(lats), size, x.device, x.dtype)
             c = state["cache"].get(key)
             if c is None:
-                c = lat
-                if tuple(c.shape[-2:]) != tuple(x.shape[-2:]):
-                    c = F.interpolate(c, size=x.shape[-2:], mode="bilinear", align_corners=False)
+                # the encode made for this size; otherwise the closest one, resized (another size than the map's)
+                c = lats.get(size)
+                if c is None:
+                    c = min(lats.values(), key=lambda t: abs(t.shape[-2] - size[0]) + abs(t.shape[-1] - size[1]))
+                    c = F.interpolate(c, size=size, mode="bilinear", align_corners=False)
                 c = c.to(x.device, x.dtype)
                 state["cache"] = {key: c} if len(state["cache"]) > 8 else {**state["cache"], key: c}
             return c.expand(x.shape[0], -1, -1, -1)
