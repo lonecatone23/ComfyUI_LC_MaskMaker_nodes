@@ -65,6 +65,9 @@ def _encode(vae, image):
     for lh, lw in ((H, W), (max(2, round(H / 2)), max(2, round(W / 2)))):
         px = img if (lh * 16, lw * 16) == tuple(img.shape[1:3]) else             comfy.utils.common_upscale(img.movedim(-1, 1), lw * 16, lh * 16, "lanczos", "center").movedim(1, -1)
         lat = vae.encode(px).float().cpu()
+        if lat.ndim != 4 or lat.shape[1] != 128:
+            raise ValueError(f"LC MOSS Control needs the FLUX.2 VAE (flux2-vae / flux2-vae_small). The VAE plugged in made a "
+                             f"{lat.shape[1]}-channel{' video' if lat.ndim == 5 else ''} latent: check the VAE in the Optimizer / loader.")
         out[tuple(lat.shape[-2:])] = lat
     return out
 
