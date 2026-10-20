@@ -113,6 +113,9 @@ TIP = {
     "moss_skip": "Skip layer 22 on the negative pass (the first half of the steps), as MOSS recommends: keeps fine detail from "
                  "falling apart. Turn it off with the 8-step turbo LoRA.",
     "moss_steps": "25 (ComfyUI's MOSS template). 8 with the 8-step turbo LoRA on the model.",
+    "moss_denoise": "1.0 = paint something new in the mask (a cup, a sign). About 0.75 = change what is already there and keep "
+                    "its shape (hair colour, expression, a shirt's colour): the old pixels guide the redraw. Then describe the whole "
+                    "crop, not only the change: \"a girl smiling with eyes closed, black hair\".",
     "moss_cfg": "2.5 - 3. 1 with the 8-step turbo LoRA.",
     "moss_boundary": "Border around the mask that is redrawn and blended (redraw pixels). 8 for MOSS: wider borders come back "
                      "soft and leave a blurred halo around the painted area.",
@@ -488,7 +491,8 @@ def _paint(frame, gen_full, s):
         model = s["model"]
     # SDXL keeps the starting picture's broad colours even at full denoise: the painted area starts from the
     # surrounding picture extended into it, whatever fill the canvas came with
-    latent = vae.encode(_telea_fill(up, gen) if (s.get("sdxl") or s.get("moss")) else up)
+    keep_old = s.get("denoise", 1.0) < 1.0  # a partial redraw starts from the real pixels: they guide the change
+    latent = vae.encode(_telea_fill(up, gen) if (s.get("sdxl") or s.get("moss")) and not keep_old else up)
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     lh, lw = latent.shape[-2], latent.shape[-1]
     if (s.get("flux3") or s.get("moss")) and latent.shape[1] == 128:
@@ -502,7 +506,7 @@ def _paint(frame, gen_full, s):
     callback = latent_preview.prepare_callback(model, s["steps"])
     samples = comfy.sample.sample(
         model, noise, s["steps"], s.get("cfg", 1.0), s["sampler_name"], s["scheduler"], pos, neg, latent,
-        denoise=1.0, noise_mask=noise_mask, callback=callback, disable_pbar=not comfy.utils.PROGRESS_BAR_ENABLED,
+        denoise=s.get("denoise", 1.0), noise_mask=noise_mask, callback=callback, disable_pbar=not comfy.utils.PROGRESS_BAR_ENABLED,
         seed=s["seed"],
     )
     patch = vae.decode(samples)
@@ -796,6 +800,7 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
             elif k == "steps":
                 req[k] = ("INT", _tip("moss_steps", default=25, min=1, max=100))
                 req["cfg"] = ("FLOAT", _tip("moss_cfg", default=2.5, min=0.0, max=30.0, step=0.1, round=0.01))
+                req["denoise"] = ("FLOAT", _tip("moss_denoise", default=1.0, min=0.05, max=1.0, step=0.05))
             elif k == "sampler_name":
                 req[k] = (comfy.samplers.KSampler.SAMPLERS, {"default": "er_sde"})
             elif k == "vlm_reference":
@@ -810,7 +815,7 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
                 req[k] = v
         return {"required": req}
 
-    def paint(self, model, clip, vae, image, mask, prompt, negative, skip_layer, seed, steps, cfg, sampler_name, scheduler,
+    def paint(self, model, clip, vae, image, mask, prompt, negative, skip_layer, seed, steps, cfg, denoise, sampler_name, scheduler,
               crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
         self._check(prompt, steps)
         if type(model.model).__name__ != "MOSSImage":
@@ -825,7 +830,7 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
         s = dict(model=m, moss=True, clip=clip, vae=vae, prompt=prompt.strip(), negative=(negative or "").strip(),
                  seed=int(seed), steps=int(steps), cfg=float(cfg), sampler_name=sampler_name, scheduler=scheduler,
                  crop=bool(crop_to_mask), padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px),
-                 vlm=False, composite=composite)
+                 vlm=False, composite=composite, denoise=float(denoise))
         return self._run(image, mask, s)
 
 
