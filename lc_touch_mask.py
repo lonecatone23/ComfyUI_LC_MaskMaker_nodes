@@ -33,6 +33,7 @@ import torch
 import torch.nn.functional as F
 
 from . import lc_cache, lc_models
+from .lc_matting import METHODS
 
 DECIDE_MAX = 768  # longer side the growth steps are decided at (the same at preview and run)
 SEG_MAX = 1536
@@ -125,7 +126,41 @@ def _sam(enc, h, w, points=None, box=None):
         _, logit, _, _ = heads(backbone_features=enc["feat"], point_inputs=None, mask_inputs=logit, box_inputs=None,
                                high_res_features=enc["high_res"], multimask_output=False)
         m = F.interpolate(logit.float(), size=(h, w), mode="bilinear", align_corners=False)
-    return (m[0, 0] > 0).float().cpu()
+    return torch.sigmoid(m[0, 0]).cpu()
+
+
+def _sam_multi(enc, h, w, pt):
+    """SAM's three answers for one tap (a part, the middle, the whole thing) as soft masks, each refined once.
+    Same decoder call as ComfyUI's forward_sam_heads, minus its pick of the 'best' one."""
+    import comfy.model_management as mm
+
+    from comfy.ops import cast_to_input
+
+    mm.load_model_gpu(enc["model"])
+    dev, dtype = enc["dev"], enc["dtype"]
+    tr = enc["net"].tracker
+    feat = enc["feat"]
+    # SAM 3.1 (multiplex) keeps its click heads under interactive_*, SAM 3 under the plain names
+    penc = getattr(tr, "interactive_sam_prompt_encoder", None) or tr.sam_prompt_encoder
+    pdec = getattr(tr, "interactive_sam_mask_decoder", None) or tr.sam_mask_decoder
+    coords = torch.tensor([[[pt[0] * 1008, pt[1] * 1008]]], device=dev, dtype=dtype)
+    labels = torch.tensor([[1]], device=dev, dtype=torch.int32)
+    with torch.no_grad():
+        sparse, dense = penc(points=(coords, labels), boxes=None, masks=None)
+        pe = cast_to_input(penc.get_dense_pe(), feat)
+        low, _ious, _tok, _obj = pdec(
+            image_embeddings=feat, image_pe=pe, sparse_prompt_embeddings=cast_to_input(sparse, feat),
+            dense_prompt_embeddings=cast_to_input(dense, feat), high_res_features=enc["high_res"],
+            multimask_output=True, return_all=True)
+        out = []
+        for i in range(low.shape[1]):
+            up = F.interpolate(low[:, i:i + 1].float(), size=(1008, 1008), mode="bilinear", align_corners=False)
+            _, logit, _, _ = tr._forward_sam_heads(backbone_features=feat, point_inputs=None, mask_inputs=up.to(dtype),
+                                                   box_inputs=None, high_res_features=enc["high_res"],
+                                                   multimask_output=False)
+            m = F.interpolate(logit.float(), size=(h, w), mode="bilinear", align_corners=False)
+            out.append(torch.sigmoid(m[0, 0]).cpu())
+    return out
 
 
 def _parts(key, image_hw3, seg_choice):
@@ -171,7 +206,7 @@ def _group(parts, labels, h, w):
         return torch.zeros(h, w)
     p = probs[ids].sum(0)
     p = F.interpolate(p[None, None], size=(h, w), mode="bilinear", align_corners=False)[0, 0]
-    return (p > 0.5).float()
+    return p.clamp(0, 1)
 
 
 # ---------- geometry ----------
@@ -225,7 +260,37 @@ def _seed(sel):
 
 
 def _render(step, ctx, h, w):
-    """Mask of one recipe step at (h, w)."""
+    """Mask of one recipe step at (h, w): cut at the node's threshold, then cleaned (smooth)."""
+    return _tidy(_render_soft(step, ctx, h, w) > ctx["threshold"], ctx["smooth"], h, w)
+
+
+def _tidy(hard, smooth, h, w):
+    """Pinholes filled, stray specks dropped, jagged edges rounded. Measured against the picture size so the preview
+    and the full-size run clean the same amount. Nothing is eroded: thin strands that belong stay."""
+    a = hard.numpy().astype(np.uint8)
+    if smooth <= 0 or not a.any():
+        return torch.from_numpy(a.astype(np.float32))
+    r = max(1, int(round(smooth * max(h, w) / DECIDE_MAX)))
+    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
+    a = cv2.morphologyEx(a, cv2.MORPH_CLOSE, k)  # pinholes and cracks
+    small = (2 * r + 1) ** 2
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(a, connectivity=8)
+    keep = np.zeros(n, bool)
+    keep[1:] = stats[1:, cv2.CC_STAT_AREA] >= small  # stray specks
+    a = keep[lab].astype(np.uint8)
+    inv = (1 - a).astype(np.uint8)
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(inv, connectivity=4)
+    limit = max(small * 4, 0.03 * float(a.sum()))  # gaps between hair strands, dark folds
+    for i in range(1, n):  # holes inside the selection (not the outside, which touches the border)
+        x, y, bw, bh, area = stats[i]
+        if area < limit and x > 0 and y > 0 and x + bw < w and y + bh < h:
+            a[lab == i] = 1
+    soft = cv2.GaussianBlur(a.astype(np.float32), (0, 0), r * 0.6)
+    return torch.from_numpy((soft > 0.5).astype(np.float32))
+
+
+def _render_soft(step, ctx, h, w):
+    """Soft (0-1) mask of one recipe step at (h, w)."""
     kind = step["k"]
     if kind == "lasso":
         box, ip = _lasso_prompt(step["pts"])
@@ -233,13 +298,15 @@ def _render(step, ctx, h, w):
         return m * _poly_mask(step["pts"], h, w, LASSO_SLACK)
     if kind == "point":
         return _sam(ctx["enc"](), h, w, points=[(step["pt"][0], step["pt"][1], 1)])
+    if kind == "pt3":  # one of SAM's three answers for the tap
+        return _sam_multi(ctx["enc"](), h, w, step["pt"])[int(step["i"])]
     if kind == "sam":
         return _sam(ctx["enc"](), h, w, points=[tuple(step["pt"]) + (1,)], box=tuple(step["box"]))
     if kind == "seg":
         labels = None if step["labels"] is None else set(step["labels"])
         m = _group(ctx["parts"](), labels, h, w)
         if step.get("near"):  # only the person the selection is on
-            m = m * _component(_group(ctx["parts"](), None, h, w), step["near"])
+            m = m * _component((_group(ctx["parts"](), None, h, w) > 0.5).float(), step["near"])
         return m
     return torch.zeros(h, w)
 
@@ -264,11 +331,20 @@ def _ladder(seed, ctx, use_person):
     """The growth steps for one selection, decided at DECIDE_MAX: [(name, recipe step)]."""
     h, w = ctx["dh"], ctx["dw"]
     first = {"k": seed["t"], **({"pts": seed["pts"]} if seed["t"] == "lasso" else {"pt": seed["pt"]})}
+    tap_cands = []
+    if seed["t"] == "point":
+        steps = [{"k": "pt3", "pt": seed["pt"], "i": i} for i in range(3)]
+        rendered = [(st, _render(st, ctx, h, w)) for st in steps]
+        rendered = [(st, m) for st, m in rendered if bool(m.any())]
+        if rendered:
+            rendered.sort(key=lambda t: float(t[1].sum()))
+            first = rendered[0][0]
+            tap_cands = [(None, st, m) for st, m in rendered[1:]]
     cur = _render(first, ctx, h, w)
     if not bool(cur.any()):
         return [("nothing found", first)]
     total = float(h * w)
-    person = _group(ctx["parts"](), None, h, w) if use_person else None
+    person = (_group(ctx["parts"](), None, h, w) > 0.5).float() if use_person else None
     on_person = person is not None and float((cur * person).sum()) >= 0.3 * float(cur.sum())
     seg_cands = []
     if on_person:
@@ -279,7 +355,7 @@ def _ladder(seed, ctx, use_person):
     out = [(_name(cur, ctx, on_person) or "picked", first)]
     for _ in range(MAX_STEPS - 1):
         area = float(cur.sum())
-        cands = list(seg_cands)
+        cands = list(seg_cands) + list(tap_cands)
         b, ip = _bbox(cur), _inner_point(cur)
         for s in SAM_SCALES:
             step = {"k": "sam", "box": list(_scaled_box(b, s)), "pt": list(ip)}
@@ -345,10 +421,11 @@ def _combine(sels, masks, h, w):
 class _Ctx:
     """Lazy SAM 3 features and Segformer parts for one picture."""
 
-    def __init__(self, key, image_hw3, sam3_choice, seg_choice):
+    def __init__(self, key, image_hw3, sam3_choice, seg_choice, threshold=0.5, smooth=2):
         h, w = image_hw3.shape[:2]
         s = min(1.0, DECIDE_MAX / float(max(h, w)))
         self.d = {"dh": max(1, round(h * s)), "dw": max(1, round(w * s)),
+                  "threshold": float(threshold), "smooth": int(smooth),
                   "enc": lambda: _encode(key, image_hw3, sam3_choice),
                   "parts": lambda: _parts(key, image_hw3, seg_choice)}
         self.key = key
@@ -359,7 +436,7 @@ class _Ctx:
 
     def ladder(self, sel, use_person):
         seed = _seed(sel)
-        ck = (self.key, json.dumps(seed, sort_keys=True), bool(use_person))
+        ck = (self.key, json.dumps(seed, sort_keys=True), bool(use_person), self.d["threshold"], self.d["smooth"])
         if ck not in _ladder_cache:
             if len(_ladder_cache) > 64:
                 _ladder_cache.clear()
@@ -414,6 +491,14 @@ class LCTouchMask:
                                       "tooltip": "Edge softness in pixels."}),
                 "invert": ("BOOLEAN", {"default": False, "tooltip": "Flip the mask (everything but the selection)."}),
                 "selections": ("STRING", {"default": "[]", "tooltip": "Internal: what you drew and tapped."}),
+                "threshold": ("FLOAT", {"default": 0.5, "min": 0.05, "max": 0.95, "step": 0.01, "tooltip": (
+                    "How sure a pixel must be to join. Lower takes in more (wispy hair, soft edges), higher is tighter.")}),
+                "smooth": ("INT", {"default": 2, "min": 0, "max": 16, "step": 1, "tooltip": (
+                    "Cleans the edge: fills pinholes, drops stray specks and rounds jagged edges, without shrinking the "
+                    "selection. 0 = raw.")}),
+                "refine": (METHODS, {"default": "guided_filter", "tooltip": (
+                    "Edge finish on the run (the preview shows the selection before it). guided_filter: fast, follows "
+                    "the picture's edges. vitmatte: best for hair, slower. none: the hard selection.")}),
             },
         }
 
@@ -423,8 +508,8 @@ class LCTouchMask:
             return True
         return lc_models.validate_models(person_parts=("segformer_b2_clothes", person_parts))
 
-    RETURN_TYPES = ("IMAGE", "MASK", "IMAGE")
-    RETURN_NAMES = ("image", "mask", "cutout")
+    RETURN_TYPES = ("IMAGE", "MASK")
+    RETURN_NAMES = ("control_image", "control_mask")
     FUNCTION = "make"
     CATEGORY = "LC MaskMaker/mask"
     OUTPUT_NODE = True
@@ -433,7 +518,8 @@ class LCTouchMask:
         "(face, + hair, head, person), double-tap to step back. Ctrl + draw cuts out."
     )
 
-    def make(self, image, sam3_model, person_parts, block, grow, feather, invert, selections):
+    def make(self, image, sam3_model, person_parts, block, grow, feather, invert, selections, threshold=0.5, smooth=2,
+             refine="guided_filter"):
         b, h, w, _c = image.shape
         sels = _parse(selections)
         use_person = person_parts != "off"
@@ -442,20 +528,21 @@ class LCTouchMask:
         if sels:
             key = ("run", h, w, float(frame.sum()), float(frame[::7, ::7].std()))
             with _lock:
-                ctx = _Ctx(key, frame, sam3_model, person_parts if use_person else None)
+                ctx = _Ctx(key, frame, sam3_model, person_parts if use_person else None, threshold, smooth)
                 masks = [_sel_mask(s, ctx.ladder(s, use_person), ctx, h, w) for s in sels]
             mask = _combine(sels, masks, h, w)
         empty = not bool(mask.any())
+        if not empty and refine != "none":
+            mask = _refine(image[:1, ..., :3], mask, refine)
         mask = _finish(mask, grow, feather)
         if invert:
             mask = 1.0 - mask
         mask_b = mask[None].repeat(b, 1, 1)
-        cutout = torch.cat([image[..., :3].cpu().float(), mask_b[..., None]], dim=-1)
-        out = (image, mask_b, cutout)
+        out = (image, mask_b)
         if block and empty:
             from comfy_execution.graph import ExecutionBlocker
 
-            out = (ExecutionBlocker(None),) * 3
+            out = (ExecutionBlocker(None),) * 2
         ui = {"src_size": [{"width": int(w), "height": int(h)}]}
         try:
             from nodes import PreviewImage
@@ -466,11 +553,23 @@ class LCTouchMask:
         return {"ui": ui, "result": out}
 
 
+def _refine(image, mask, method):
+    """LC Mask Refine's edge finish (guided filter or VITMatte on the edge band only), as LC Person Mask does it."""
+    from .lc_matting import get_device, refine_mask
+
+    dev = get_device()
+    folder = lc_models.resolve_vitmatte(lc_models.vitmatte_choices()[0]) if method == "vitmatte" else None
+    img = image[0].permute(2, 0, 1).unsqueeze(0).to(dev).float()
+    m = mask.to(dev)[None, None].float()
+    out, _tri = refine_mask(img, m, method, folder, 0.0, 0.0, 0.75, 10.0, 10.0, 0.001, 0.5, 0.01, 0.99, 0.0, 2.0, dev)
+    return out[0, 0].float().cpu().clamp(0, 1)
+
+
 def _finish(mask, grow, feather):
     if grow:
         r = abs(int(grow))
         k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
-        a = mask.numpy().astype(np.uint8)
+        a = mask.numpy().astype(np.float32)
         a = cv2.dilate(a, k) if grow > 0 else cv2.erode(a, k)
         mask = torch.from_numpy(a).float()
     if feather > 0:
@@ -514,7 +613,8 @@ def _overlay(final, active, dh, dw):
 def _preview(body):
     key, frame = _load_view(body.get("image") or {})
     use_person = (body.get("person_parts") or "off") != "off"
-    ctx = _Ctx(key, frame, body.get("sam3_model"), body.get("person_parts") if use_person else None)
+    ctx = _Ctx(key, frame, body.get("sam3_model"), body.get("person_parts") if use_person else None,
+               float(body.get("threshold", 0.5)), int(body.get("smooth", 2)))
     dh, dw = ctx["dh"], ctx["dw"]
     sels = _parse(json.dumps(body.get("selections") or []))
     ladders = [ctx.ladder(s, use_person) for s in sels]

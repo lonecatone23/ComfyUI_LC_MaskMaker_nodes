@@ -23,6 +23,7 @@ const WITH_PREVIEW = new Set([
   "LCSmartInpaintPipe",
   "LCCharacterDetailer",
   "LCCharacterDetailerPipe",
+  "LCDetailerForEach",
   "LCKrea2AnyPaint",
   "LCZImageAnyPaint",
   "LCSDXLAnyPaint",
@@ -40,6 +41,8 @@ const PLAIN = new Set([
   "LCFaceCrop",
   "LCVOSRUpscale",
   "LCVOSRUpscalePipe",
+  "LCDetailFinder",
+  "LCDetailSorter",
 ]);
 
 app.registerExtension({

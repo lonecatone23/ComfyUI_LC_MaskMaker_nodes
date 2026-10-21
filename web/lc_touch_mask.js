@@ -145,6 +145,8 @@ async function refresh(node, tap) {
         image: node._lcView,
         sam3_model: val(node, "sam3_model", ""),
         person_parts: val(node, "person_parts", "off"),
+        threshold: Number(val(node, "threshold", 0.5)),
+        smooth: Number(val(node, "smooth", 2)),
         selections: readSels(node),
         tap: tap || null,
       }),
@@ -338,7 +340,7 @@ app.registerExtension({
       const r = onCreated?.apply(this, arguments);
       this._lcHist = [];
       hideWidget(getW(this, "selections"));
-      for (const name of ["sam3_model", "person_parts"]) {
+      for (const name of ["sam3_model", "person_parts", "threshold", "smooth"]) {
         const w = getW(this, name);
         if (!w) continue;
         const cb = w.callback;
