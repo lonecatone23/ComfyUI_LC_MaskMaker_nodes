@@ -178,6 +178,10 @@ def _flat_sampling(model):
         ms = model.get_model_object("model_sampling")
     except Exception:
         return None
+    if type(getattr(model, "model", None)).__name__ == "MOSSImage":
+        # MOSS Image keeps its own shift (5): flattened to 1 the redraw is too weak to follow the prompt or the cfg
+        # (tested at denoise 0.8: blue eyes / green hair only show unflattened). Every other model is unchanged.
+        return None
     name = type(ms).__name__
     if "AV" in name or not hasattr(ms, "shift"):
         return None
