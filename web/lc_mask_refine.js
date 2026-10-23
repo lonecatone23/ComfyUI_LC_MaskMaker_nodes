@@ -1,7 +1,7 @@
 /**
  * On-node before/after preview for the mask, detailer and AnyPaint nodes.
  * Same behavior as the LC123 image previews: the after picture fitted to the node. Click a spot: it zooms to 100% (one
- * picture pixel per screen pixel) there and the pointer wipes after (left) | before (right). The wheel zooms in and out,
+ * picture pixel per screen pixel) there and the pointer wipes before (left) | after (right). The wheel zooms in and out,
  * double-click goes back. It also goes back when the canvas is zoomed out too far or the node leaves the screen.
  *
  * The node sends up to four small images in message.lc_refine: source, before mask, after mask, trimap.
@@ -430,23 +430,25 @@ class LCMaskPreview {
       return;
     }
 
-    // 100% (times the wheel's magnification): before underneath, after left of the pointer
+    // 100% (times the wheel's magnification): after underneath, before left of the pointer
     const z = L.view;
     ctx.save();
     ctx.imageSmoothingEnabled = false;
     ctx.beginPath();
     ctx.rect(z.dx, z.dy, z.dw, z.dh);
     ctx.clip();
-    this._paintSide(ctx, "before", z.full, view);
-    ctx.restore();
-    const splitX = this.pointerOver ? Math.max(0, Math.min(z.dw, this.pointerPos[0] - z.dx)) : z.dw;
-    ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    ctx.beginPath();
-    ctx.rect(z.dx, z.dy, splitX, z.dh);
-    ctx.clip();
     this._paintSide(ctx, "after", z.full, view);
     ctx.restore();
+    const splitX = this.pointerOver ? Math.max(0, Math.min(z.dw, this.pointerPos[0] - z.dx)) : 0;
+    if (splitX > 0) {
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      ctx.beginPath();
+      ctx.rect(z.dx, z.dy, splitX, z.dh);
+      ctx.clip();
+      this._paintSide(ctx, "before", z.full, view);
+      ctx.restore();
+    }
     if (this.pointerOver) {
       ctx.strokeStyle = "rgba(255,255,255,0.9)";
       ctx.lineWidth = 2;
@@ -459,7 +461,7 @@ class LCMaskPreview {
     ctx.font = "11px sans-serif";
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
-    const label = `${Math.round((this.zoom.mag || 1) * 100)}% · after | before · double-click: back`;
+    const label = `${Math.round((this.zoom.mag || 1) * 100)}% · before | after · double-click: back`;
     const tw = ctx.measureText(label).width;
     ctx.fillStyle = "rgba(0,0,0,0.55)";
     ctx.fillRect(z.dx + z.dw - tw - 10, z.dy + z.dh - 18, tw + 10, 18);
