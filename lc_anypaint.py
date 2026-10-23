@@ -116,11 +116,15 @@ TIP = {
     "moss_denoise": "1.0 = paint something new in the mask (a cup, a sign). About 0.75 = change what is already there and keep "
                     "its shape (hair colour, expression, a shirt's colour): the old pixels guide the redraw. Then describe the whole "
                     "crop, not only the change: \"a girl smiling with eyes closed, black hair\".",
-    "moss_cfg": "2.5 - 3. 1 with the 8-step turbo LoRA.",
+    "moss_cfg": "4 with the edit LoRA (at 2.5 big changes, like a parka into a denim jacket, often do not happen). 2.5 - 3 with lora off. "
+                "1 with the 8-step turbo LoRA.",
     "moss_boundary": "Border around the mask that is redrawn and blended (redraw pixels). 8 for MOSS: wider borders come back "
                      "soft and leave a blurred halo around the painted area.",
+    "moss_edit_lora": "The Moss-Image-Edit LoRA (chinoll, models/loras). With it MOSS sees your whole picture while it paints, so new "
+                      "clothes wrap the body and fit the light. Applied at lora_strength for this node only. off = a plain masked redraw.",
 }
 FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
+MOSS_EDIT_METHOD = "index_timestep_zero_text_start"  # Moss-Image-Edit's layout in ComfyUI core (TextEncodeMOSSImageEdit)
 FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
                      "the existing picture unchanged.")
 
@@ -209,6 +213,13 @@ def _lora_choices():
     loras = folder_paths.get_filename_list("loras")
     hits = [l for l in loras if "anypaint" in l.lower()]
     return hits + [l for l in loras if l not in hits], (hits[0] if hits else (loras[0] if loras else ""))
+
+
+def _moss_edit_choices():
+    loras = folder_paths.get_filename_list("loras")
+    hits = sorted(l for l in loras if "moss-image-edit" in l.lower().replace("_", "-"))
+    rest = [l for l in loras if l not in hits]
+    return hits + [OFF] + rest, (hits[0] if hits else OFF)
 
 
 def _flux3_lora_choices():
@@ -484,6 +495,14 @@ def _paint(frame, gen_full, s):
         pos = clip.encode_from_tokens_scheduled(clip.tokenize(s["prompt"]))
         neg = clip.encode_from_tokens_scheduled(clip.tokenize(s["negative"]))
         model = s["model"]
+        if s.get("edit"):
+            # the edit LoRA's reference: the crop as it is (the shirt being replaced shows the body's shape); a flat
+            # outpaint fill is first replaced by the picture around it, so the reference shows no grey band
+            flat = up[0][gen > 0.5]
+            ref = _telea_fill(up, gen) if flat.numel() and float(flat.std(dim=0).max()) < 0.02 else up
+            refs = [vae.encode(ref[..., :3])]
+            pos, neg = [node_helpers.conditioning_set_values(c, {"reference_latents": refs, "reference_latents_method": MOSS_EDIT_METHOD})
+                        for c in (pos, neg)]
     else:
         ref = _reference(up, gen)
         pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
@@ -790,16 +809,19 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
     def INPUT_TYPES(cls):
         base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
         req = {}
+        loras, default = _moss_edit_choices()
         for k, v in base.items():
             if k == "lora":
                 req["negative"] = ("STRING", _tip("moss_negative", default=cls.MOSS_NEGATIVE, multiline=True))
+                req["lora"] = (loras, _tip("moss_edit_lora", default=default))
             elif k == "lora_strength":
+                req[k] = v
                 req["skip_layer"] = ("BOOLEAN", _tip("moss_skip", default=True))
             elif k == "prompt":
                 req[k] = ("STRING", _tip("moss_prompt", default="", multiline=True))
             elif k == "steps":
                 req[k] = ("INT", _tip("moss_steps", default=25, min=1, max=100))
-                req["cfg"] = ("FLOAT", _tip("moss_cfg", default=2.5, min=0.0, max=30.0, step=0.1, round=0.01))
+                req["cfg"] = ("FLOAT", _tip("moss_cfg", default=4.0, min=0.0, max=30.0, step=0.1, round=0.01))
                 req["denoise"] = ("FLOAT", _tip("moss_denoise", default=1.0, min=0.05, max=1.0, step=0.05))
             elif k == "sampler_name":
                 req[k] = (comfy.samplers.KSampler.SAMPLERS, {"default": "er_sde"})
@@ -815,13 +837,14 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
                 req[k] = v
         return {"required": req}
 
-    def paint(self, model, clip, vae, image, mask, prompt, negative, skip_layer, seed, steps, cfg, denoise, sampler_name, scheduler,
-              crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
+    def paint(self, model, clip, vae, image, mask, prompt, negative, lora, lora_strength, skip_layer, seed, steps, cfg, denoise,
+              sampler_name, scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
         self._check(prompt, steps)
         if type(model.model).__name__ != "MOSSImage":
             raise ValueError("[LC MOSS AnyPaint] This is for MOSS Image. Use LC Krea2 / Z-Image / SDXL / Flux 3 Klein AnyPaint "
                              "for those models.")
-        m = model.clone()
+        edit = lora not in (OFF, "", None) and bool(lora_strength)
+        m = _flux3_model(model, lora if edit else OFF, lora_strength)  # the LoRA for this node only
         if skip_layer:
             from comfy_extras.nodes_slg import SkipLayerGuidanceDiTSimple
 
@@ -830,7 +853,7 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
         s = dict(model=m, moss=True, clip=clip, vae=vae, prompt=prompt.strip(), negative=(negative or "").strip(),
                  seed=int(seed), steps=int(steps), cfg=float(cfg), sampler_name=sampler_name, scheduler=scheduler,
                  crop=bool(crop_to_mask), padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px),
-                 vlm=False, composite=composite, denoise=float(denoise))
+                 vlm=False, composite=composite, denoise=float(denoise), edit=edit)
         return self._run(image, mask, s)
 
 

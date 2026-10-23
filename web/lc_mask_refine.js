@@ -1,7 +1,8 @@
 /**
- * On-node before/after preview for the mask nodes (Mask Refine, Segment Anything).
- * Same behavior as the LC123 image previews: hover the node and the after image sits on the left
- * of the pointer with the before image on the right; move away and it shows the full after image.
+ * On-node before/after preview for the mask, detailer and AnyPaint nodes.
+ * Same behavior as the LC123 image previews: the after picture fitted to the node. Click a spot: it zooms to 100% (one
+ * picture pixel per screen pixel) there and the pointer wipes after (left) | before (right). The wheel zooms in and out,
+ * double-click goes back. It also goes back when the canvas is zoomed out too far or the node leaves the screen.
  *
  * The node sends up to four small images in message.lc_refine: source, before mask, after mask, trimap.
  * The inpaint nodes send message.lc_inpaint instead: before (areas outlined) and after, plus a one-line note.
@@ -115,14 +116,119 @@ function checkerPattern(ctx) {
   return ctx.createPattern(_checker, "repeat");
 }
 
+// ---- 100% zoom ----------------------------------------------------------
+
+const ZOOMED = new Set();
+let zoomTimer = null;
+let wheelHooked = false;
+
+function tooSmall(w, h) {
+  const ds = app.canvas?.ds?.scale || 1;
+  if (window.LC123Perf?.tooSmall) return window.LC123Perf.tooSmall(w, h); // LC123's "minimum preview size"
+  return Math.sqrt(w * h) * ds < 40;
+}
+
+// while a preview is zoomed: end it once its node is off screen, and let the wheel magnify it
+function watchZoomed() {
+  if (!wheelHooked) {
+    wheelHooked = true;
+    window.addEventListener("wheel", (e) => {
+      if (!ZOOMED.size || !app.canvas) return;
+      const g = app.canvas.convertEventToCanvasOffset?.(e);
+      if (!g) return;
+      for (const c of ZOOMED) {
+        if (c.wheel([g[0] - c.node.pos[0], g[1] - c.node.pos[1]], e.deltaY)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          return;
+        }
+      }
+    }, { capture: true, passive: false });
+  }
+  if (zoomTimer) return;
+  zoomTimer = setInterval(() => {
+    const va = app.canvas?.visible_area;
+    for (const c of ZOOMED) {
+      const n = c.node;
+      if (!c.zoom || !app.graph?.getNodeById?.(n.id)) ZOOMED.delete(c);
+      else if (va && va[2] > 0 && va[3] > 0 &&
+               (n.pos[0] > va[0] + va[2] || n.pos[0] + n.size[0] < va[0] || n.pos[1] > va[1] + va[3] || n.pos[1] + n.size[1] < va[1])) {
+        c.unzoom();
+      }
+    }
+    if (!ZOOMED.size) {
+      clearInterval(zoomTimer);
+      zoomTimer = null;
+    }
+  }, 500);
+}
+
 class LCMaskPreview {
   constructor(node) {
     this.node = node;
     this.views = null;
+    this.zoom = null; // {u, v, mag}: zoom centre as a fraction of the picture, magnification (1 = 100%)
     this.pointerOver = false;
     this.pointerPos = [0, 0];
     this._bind(node);
     queueMicrotask(() => this._restoreFromProps());
+  }
+
+  /** The preview box, the fitted picture in it, and (zoomed) the part of the picture shown and where. */
+  _layout() {
+    const v = this.views;
+    const node = this.node;
+    let top = widgetsBottom(node) + PAD;
+    const x = PAD;
+    const w = Math.max(1, node.size[0] - PAD * 2);
+    let h = Math.max(1, node.size[1] - top - PAD);
+    if (v?.note !== undefined) {
+      top += 18;
+      h -= 18;
+    }
+    if (!v?.w || h < 16) return null;
+    const s = Math.min(w / v.w, h / v.h);
+    const fit = { x: x + (w - v.w * s) / 2, y: top + (h - v.h * s) / 2, w: v.w * s, h: v.h * s };
+    const out = { box: { x, y: top, w, h }, fit };
+    if (this.zoom) {
+      const ds = app.canvas?.ds?.scale || 1;
+      const mag = this.zoom.mag || 1;
+      const sw = Math.min(v.w, (w * ds) / mag), sh = Math.min(v.h, (h * ds) / mag);
+      const dw = (sw * mag) / ds, dh = (sh * mag) / ds;
+      const dx = x + (w - dw) / 2, dy = top + (h - dh) / 2;
+      const u0 = Math.max(0, Math.min(v.w - sw, this.zoom.u * v.w - sw / 2));
+      const v0 = Math.max(0, Math.min(v.h - sh, this.zoom.v * v.h - sh / 2));
+      const k = dw / sw; // node units per picture pixel
+      out.view = { dx, dy, dw, dh, sw, sh, u0, v0, full: { x: dx - u0 * k, y: dy - v0 * k, w: v.w * k, h: v.h * k } };
+    }
+    return out;
+  }
+
+  unzoom() {
+    this.zoom = null;
+    ZOOMED.delete(this);
+    app.canvas?.setDirty?.(true, true);
+  }
+
+  wheel(pos, delta) {
+    const L = this.zoom && this._layout();
+    const z = L?.view;
+    if (!z || pos[0] < z.dx || pos[0] > z.dx + z.dw || pos[1] < z.dy || pos[1] > z.dy + z.dh) return false;
+    const v = this.views;
+    const fx = (pos[0] - z.dx) / z.dw, fy = (pos[1] - z.dy) / z.dh;
+    const pu = (z.u0 + fx * z.sw) / v.w, pv = (z.v0 + fy * z.sh) / v.h; // the picture point under the pointer
+    const old = this.zoom.mag || 1;
+    const step = Math.pow(1.25, Math.max(1, Math.min(4, Math.abs(delta) / 100)));
+    const mag = Math.min(16, old * (delta > 0 ? 1 / step : step));
+    const fitMag = (app.canvas?.ds?.scale || 1) * Math.min(L.box.w / v.w, L.box.h / v.h);
+    if (delta > 0 && mag <= fitMag * 1.05) {
+      this.unzoom(); // out past the whole picture: the fitted view again
+      return true;
+    }
+    const vw = (z.sw * old) / mag / v.w, vh = (z.sh * old) / mag / v.h;
+    this.zoom = { u: pu - fx * vw + vw / 2, v: pv - fy * vh + vh / 2, mag };
+    app.canvas?.setDirty?.(true, true);
+    return true;
   }
 
   _bind(node) {
@@ -147,8 +253,33 @@ class LCMaskPreview {
     const origMouseMove = node.onMouseMove;
     node.onMouseMove = function (e, pos) {
       self.pointerPos = pos;
-      if (self.pointerOver && self.views) app.canvas?.setDirty?.(true, true);
+      if (self.zoom && self.pointerOver && self.views) app.canvas?.setDirty?.(true, true);
       return origMouseMove ? origMouseMove.apply(this, arguments) : false;
+    };
+
+    // click on the picture: 100% there; double-click: back to the fitted picture
+    const origMouseDown = node.onMouseDown;
+    node.onMouseDown = function (e, pos) {
+      if (!self.zoom && (e.button === 0 || e.button === undefined)) {
+        const f = self._layout()?.fit;
+        if (f && pos[0] >= f.x && pos[0] <= f.x + f.w && pos[1] >= f.y && pos[1] <= f.y + f.h) {
+          self.zoom = { u: (pos[0] - f.x) / f.w, v: (pos[1] - f.y) / f.h, mag: 1 };
+          ZOOMED.add(self);
+          watchZoomed();
+          app.canvas?.setDirty?.(true, true);
+          return true;
+        }
+      }
+      return origMouseDown ? origMouseDown.apply(this, arguments) : false;
+    };
+
+    const origDblClick = node.onDblClick;
+    node.onDblClick = function (e, pos) {
+      if (self.zoom) {
+        self.unzoom();
+        return true;
+      }
+      return origDblClick ? origDblClick.apply(this, arguments) : false;
     };
 
     const origEnter = node.onMouseEnter;
@@ -283,38 +414,58 @@ class LCMaskPreview {
       if (h < 16) return;
     }
 
-    // fit the image inside the box (letterbox)
-    const s = Math.min(w / v.w, h / v.h);
-    const iw = v.w * s;
-    const ih = v.h * s;
-    const r = { x: x + (w - iw) / 2, y: top + (h - ih) / 2, w: iw, h: ih };
+    if (this.zoom && tooSmall(w, h)) this.unzoom(); // canvas zoomed out to where the preview is no longer drawn
+    const L = this._layout();
+    if (!L) return;
     const view = getW(node, "preview_view")?.value || "cutout";
 
-    // before underneath, after clipped to the left of the pointer (full after when not hovering)
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(r.x, r.y, r.w, r.h);
-    ctx.clip();
-    this._paintSide(ctx, "before", r, view);
-    ctx.restore();
+    if (!L.view) {
+      // the after picture, fitted
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(L.fit.x, L.fit.y, L.fit.w, L.fit.h);
+      ctx.clip();
+      this._paintSide(ctx, "after", L.fit, view);
+      ctx.restore();
+      return;
+    }
 
-    let splitX = r.w;
-    if (this.pointerOver) splitX = Math.max(0, Math.min(r.w, this.pointerPos[0] - r.x));
+    // 100% (times the wheel's magnification): before underneath, after left of the pointer
+    const z = L.view;
     ctx.save();
+    ctx.imageSmoothingEnabled = false;
     ctx.beginPath();
-    ctx.rect(r.x, r.y, splitX, r.h);
+    ctx.rect(z.dx, z.dy, z.dw, z.dh);
     ctx.clip();
-    this._paintSide(ctx, "after", r, view);
+    this._paintSide(ctx, "before", z.full, view);
     ctx.restore();
-
+    const splitX = this.pointerOver ? Math.max(0, Math.min(z.dw, this.pointerPos[0] - z.dx)) : z.dw;
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.beginPath();
+    ctx.rect(z.dx, z.dy, splitX, z.dh);
+    ctx.clip();
+    this._paintSide(ctx, "after", z.full, view);
+    ctx.restore();
     if (this.pointerOver) {
       ctx.strokeStyle = "rgba(255,255,255,0.9)";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(r.x + splitX, r.y);
-      ctx.lineTo(r.x + splitX, r.y + r.h);
+      ctx.moveTo(z.dx + splitX, z.dy);
+      ctx.lineTo(z.dx + splitX, z.dy + z.dh);
       ctx.stroke();
     }
+    ctx.save();
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    const label = `${Math.round((this.zoom.mag || 1) * 100)}% · after | before · double-click: back`;
+    const tw = ctx.measureText(label).width;
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(z.dx + z.dw - tw - 10, z.dy + z.dh - 18, tw + 10, 18);
+    ctx.fillStyle = "#fff";
+    ctx.fillText(label, z.dx + z.dw - 5, z.dy + z.dh - 4);
+    ctx.restore();
   }
 }
 

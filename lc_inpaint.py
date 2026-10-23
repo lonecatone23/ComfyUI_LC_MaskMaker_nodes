@@ -408,17 +408,19 @@ def _run(image, masks_per_frame, s):
 
 
 def _preview(node, before, after, mask, note):
-    """Before (with the inpainted areas outlined) and after, small, for the wipe on the node."""
+    """Before (with the inpainted areas outlined) and after, at full size, for the on-node preview (click = 100% zoom)."""
     ui = {"lc_inpaint_note": [note]}
     try:
         h, w = before.shape[1], before.shape[2]
-        s = min(1.0, 768.0 / max(h, w))
-        size = (max(1, int(h * s)), max(1, int(w * s)))
-        src = F.interpolate(before[:1, ..., :3].permute(0, 3, 1, 2).float().cpu(), size=size, mode="area")
-        res = F.interpolate(after[:1, ..., :3].permute(0, 3, 1, 2).float().cpu(), size=size, mode="area")
+        size = (h, w)
+        src = before[:1, ..., :3].permute(0, 3, 1, 2).float().cpu()
+        res = after[:1, ..., :3].permute(0, 3, 1, 2).float().cpu()
+        if res.shape[-2:] != size:
+            res = F.interpolate(res, size=size, mode="area")
         m = F.interpolate(mask[:1].unsqueeze(1).float().cpu(), size=size, mode="bilinear", align_corners=False)
         inside = (m > 0.1).float()
-        edge = (F.max_pool2d(inside, 5, 1, 2) - inside).clamp(0, 1)
+        k = max(5, int(round(5 * max(h, w) / 768)) | 1)  # the outline keeps its look at any size
+        edge = (F.max_pool2d(inside, k, 1, k // 2) - inside).clamp(0, 1)
         color = torch.tensor(OUTLINE).view(1, 3, 1, 1)
         src = src * (1 - edge) + color * edge
         saved = node.save_images(torch.cat([src, res], 0).permute(0, 2, 3, 1), filename_prefix="lc_inpaint")
