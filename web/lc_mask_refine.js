@@ -257,13 +257,21 @@ class LCMaskPreview {
       return origMouseMove ? origMouseMove.apply(this, arguments) : false;
     };
 
-    // click on the picture: 100% there; double-click: back to the fitted picture
+    // the usage tooltip (lc_preview_tip.js) shows over the fitted picture
+    node._lcPreviewHit = (pos) => {
+      if (self.zoom) return false;
+      const f = self._layout()?.fit;
+      return !!f && pos[0] >= f.x && pos[0] <= f.x + f.w && pos[1] >= f.y && pos[1] <= f.y + f.h;
+    };
+    // click on the picture: 100% there (or the on-screen size when the canvas already shows it bigger);
+    // double-click: back to the fitted picture
     const origMouseDown = node.onMouseDown;
     node.onMouseDown = function (e, pos) {
       if (!self.zoom && (e.button === 0 || e.button === undefined)) {
         const f = self._layout()?.fit;
         if (f && pos[0] >= f.x && pos[0] <= f.x + f.w && pos[1] >= f.y && pos[1] <= f.y + f.h) {
-          self.zoom = { u: (pos[0] - f.x) / f.w, v: (pos[1] - f.y) / f.h, mag: 1 };
+          const fit = ((app.canvas?.ds?.scale || 1) * f.w) / self.views.w; // screen pixels per picture pixel now
+          self.zoom = { u: (pos[0] - f.x) / f.w, v: (pos[1] - f.y) / f.h, mag: Math.max(1, fit) };
           ZOOMED.add(self);
           watchZoomed();
           app.canvas?.setDirty?.(true, true);
