@@ -226,7 +226,7 @@ class LCMaskPreview {
       return true;
     }
     const vw = (z.sw * old) / mag / v.w, vh = (z.sh * old) / mag / v.h;
-    this.zoom = { u: pu - fx * vw + vw / 2, v: pv - fy * vh + vh / 2, mag };
+    this.zoom = { u: pu - fx * vw + vw / 2, v: pv - fy * vh + vh / 2, mag, ds0: this.zoom.ds0 };
     app.canvas?.setDirty?.(true, true);
     return true;
   }
@@ -271,7 +271,7 @@ class LCMaskPreview {
         const f = self._layout()?.fit;
         if (f && pos[0] >= f.x && pos[0] <= f.x + f.w && pos[1] >= f.y && pos[1] <= f.y + f.h) {
           const fit = ((app.canvas?.ds?.scale || 1) * f.w) / self.views.w; // screen pixels per picture pixel now
-          self.zoom = { u: (pos[0] - f.x) / f.w, v: (pos[1] - f.y) / f.h, mag: Math.max(1, fit) };
+          self.zoom = { u: (pos[0] - f.x) / f.w, v: (pos[1] - f.y) / f.h, mag: Math.max(1, fit), ds0: app.canvas?.ds?.scale || 1 };
           ZOOMED.add(self);
           watchZoomed();
           app.canvas?.setDirty?.(true, true);
@@ -422,7 +422,9 @@ class LCMaskPreview {
       if (h < 16) return;
     }
 
-    if (this.zoom && tooSmall(w, h)) this.unzoom(); // canvas zoomed out to where the preview is no longer drawn
+    // canvas zoomed out to where the preview is no longer drawn, or well out from where it was clicked (big previews)
+    const ds = app.canvas?.ds?.scale || 1;
+    if (this.zoom && (tooSmall(w, h) || ds < (this.zoom.ds0 || ds) * 0.7)) this.unzoom();
     const L = this._layout();
     if (!L) return;
     const view = getW(node, "preview_view")?.value || "cutout";
