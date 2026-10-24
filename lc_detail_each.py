@@ -244,7 +244,7 @@ class LCDetailerForEach(I._Base):
         masks = [[it["mask"] for it in frames[min(i, len(frames) - 1)]] for i in range(image.shape[0])]
         out, mask, done = I._run(image, masks, s)
         note = f"{done} redrawn" if done else "Nothing to redraw (this output is empty). Image passed through."
-        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(p, image), mask) if p else mask
+        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(p, image), mask, broadcast=True) if p else mask
         out_pipe = lc_pipe_keys.updated(p if p else None, out, protect=protect)
         return {"ui": I._preview(self, image, out, mask, note), "result": (out_pipe, out, mask)}
 

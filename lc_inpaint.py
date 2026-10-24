@@ -577,7 +577,8 @@ class LCSmartInpaintPipe(_Base):
         s = _pipe_settings(pipe, kw, name)
         out, mask, note, hits = self._smart(image, kw, s, lc_pipe_keys.found_hits(pipe, image))
         # what goes on down the pipe: the result as the pipe's image, every area redrawn so far, what was found
-        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(pipe, image), mask)
+        # every frame's redrawn area goes on (approved 2026-10-24: different frame counts matter)
+        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(pipe, image), mask, broadcast=True)
         out_pipe = lc_pipe_keys.updated(pipe, out, protect=protect, hits=hits)
         return {"ui": _preview(self, image, out, mask, note), "result": (out_pipe, out, mask)}
 

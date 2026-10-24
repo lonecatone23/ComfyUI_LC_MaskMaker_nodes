@@ -49,8 +49,12 @@ def protect_for(pipe, image):
     return None
 
 
-def merge_masks(a, b):
-    """Max of two (B,H,W) masks, as a new tensor. b is resized to a when sizes differ."""
+def merge_masks(a, b, broadcast=False):
+    """Max of two (B,H,W) masks, as a new tensor. b is resized to a when sizes differ.
+
+    Batch mismatch: by default b's first frame is used for every frame of a (the original behaviour). broadcast=True
+    (every pipe detailer) keeps every frame instead: the result has the larger batch, and the shorter mask repeats
+    its last frame."""
     if a is None:
         return None if b is None else b.float().cpu().clone()
     if b is None:
@@ -59,7 +63,14 @@ def merge_masks(a, b):
     if b.shape[-2:] != a.shape[-2:]:
         b = F.interpolate(b[:, None], size=a.shape[-2:], mode="bilinear", align_corners=False)[:, 0]
     if b.shape[0] != a.shape[0]:
-        b = b[:1].expand(a.shape[0], -1, -1)
+        if not broadcast:
+            b = b[:1].expand(a.shape[0], -1, -1)
+        else:
+            n = max(a.shape[0], b.shape[0])
+            if a.shape[0] < n:
+                a = torch.cat([a, a[-1:].expand(n - a.shape[0], -1, -1)])
+            if b.shape[0] < n:
+                b = torch.cat([b, b[-1:].expand(n - b.shape[0], -1, -1)])
     return torch.maximum(a, b)
 
 

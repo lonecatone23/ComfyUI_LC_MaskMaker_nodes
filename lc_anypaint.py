@@ -27,10 +27,6 @@ LC Flux 3 Klein AnyPaint: the same crop, keep, border and composite for Flux 3 K
 outpaint LoRA (flux-3-image-klein-outpaint, FLUX Kommunity License): the area to paint is filled flat grey #808080, that
 picture is the reference, and the trained instruction tells the model to fill the grey.
 
-LC MOSS AnyPaint: the same crop, keep, border and composite for MOSS Image, which has no inpaint LoRA or ControlNet: a
-plain masked redraw with a real negative and cfg, skip layer 22 on the negative pass, starting from the picture around the
-mask stretched into it (one token per latent pixel: Flux 2 latents).
-
 The reference path runs in this node's own model wrapper, so it works even when another pack replaces Krea 2's
 forward (ComfyUI-RedNodeStudio does, which made the first version copy the flat fill). LoRAs and attention / speed-up
 options still apply. Method after yijunwang2's reference pipeline (Krea 2 Community License); the reference forward
@@ -106,25 +102,8 @@ TIP = {
     "flux3_prompt": "Describe the whole finished picture: \"a woman in a red coat on a snowy street\". The node adds the "
                     "LoRA's fill instruction in front for you.",
     "flux3_steps": "16 for Flux 3 Klein (Distilled). 50 with cfg 3.5 for Base is not supported here: use the Distilled model.",
-    "moss_prompt": "Describe only what goes in the mask, short: a black sign reading \"MOSS\" on a rainy window. A description "
-                   "of the whole picture paints the whole picture (a second person) into the masked area. Text you want "
-                   "written goes in quotes.",
-    "moss_negative": "MOSS uses a real negative. The recommended one is filled in.",
-    "moss_skip": "Skip layer 22 on the negative pass (the first half of the steps), as MOSS recommends: keeps fine detail from "
-                 "falling apart. Turn it off with the 8-step turbo LoRA.",
-    "moss_steps": "25 (ComfyUI's MOSS template). 8 with the 8-step turbo LoRA on the model.",
-    "moss_denoise": "1.0 = paint something new in the mask (a cup, a sign). About 0.75 = change what is already there and keep "
-                    "its shape (hair colour, expression, a shirt's colour): the old pixels guide the redraw. Then describe the whole "
-                    "crop, not only the change: \"a girl smiling with eyes closed, black hair\".",
-    "moss_cfg": "4 with the edit LoRA (at 2.5 big changes, like a parka into a denim jacket, often do not happen). 2.5 - 3 with lora off. "
-                "1 with the 8-step turbo LoRA.",
-    "moss_boundary": "Border around the mask that is redrawn and blended (redraw pixels). 8 for MOSS: wider borders come back "
-                     "soft and leave a blurred halo around the painted area.",
-    "moss_edit_lora": "The Moss-Image-Edit LoRA (chinoll, models/loras). With it MOSS sees your whole picture while it paints, so new "
-                      "clothes wrap the body and fit the light. Applied at lora_strength for this node only. off = a plain masked redraw.",
 }
 FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
-MOSS_EDIT_METHOD = "index_timestep_zero_text_start"  # Moss-Image-Edit's layout in ComfyUI core (TextEncodeMOSSImageEdit)
 FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
                      "the existing picture unchanged.")
 
@@ -148,7 +127,8 @@ def _zimage_patch(name):
     if hit is None:
         from comfy_extras.nodes_model_patch import ModelPatchLoader
 
-        _PATCH_CACHE.clear()
+        for k in [k for k in _PATCH_CACHE if isinstance(k, str)]:  # one Z-Image patch kept; SDXL ControlNet / Fooocus stay
+            del _PATCH_CACHE[k]
         hit = _PATCH_CACHE[name] = ModelPatchLoader().load_model_patch(name)[0]
     return hit
 
@@ -195,6 +175,13 @@ def _out(r):
     return r.args if hasattr(r, "args") else r
 
 
+def _head_rank(head, patch):
+    """Several Fooocus heads: the one in the patch's folder first, then the standard name, then name order."""
+    h = head.replace("\\", "/")
+    folder = patch.replace("\\", "/").rpartition("/")[0]
+    return (h.rpartition("/")[0] != folder, h.rpartition("/")[2].lower() != "fooocus_inpaint_head.pth", head)
+
+
 def _fooocus_patch(patch):
     key = ("fooocus", patch)
     hit = _PATCH_CACHE.get(key)
@@ -204,6 +191,7 @@ def _fooocus_patch(patch):
         if not heads:
             raise ValueError("[LC SDXL AnyPaint] fooocus_inpaint_head.pth is missing from models/inpaint (it comes with "
                              "the patch: huggingface.co/lllyasviel/fooocus_inpaint).")
+        heads.sort(key=lambda f: _head_rank(f, patch))
         hit = _out(_node("INPAINT_LoadFooocusInpaint", "fooocus_inpaint").execute(heads[0], patch))[0]
         _PATCH_CACHE[key] = hit
     return hit
@@ -213,13 +201,6 @@ def _lora_choices():
     loras = folder_paths.get_filename_list("loras")
     hits = [l for l in loras if "anypaint" in l.lower()]
     return hits + [l for l in loras if l not in hits], (hits[0] if hits else (loras[0] if loras else ""))
-
-
-def _moss_edit_choices():
-    loras = folder_paths.get_filename_list("loras")
-    hits = sorted(l for l in loras if "moss-image-edit" in l.lower().replace("_", "-"))
-    rest = [l for l in loras if l not in hits]
-    return hits + [OFF] + rest, (hits[0] if hits else OFF)
 
 
 def _flux3_lora_choices():
@@ -490,19 +471,6 @@ def _paint(frame, gen_full, s):
         pos = node_helpers.conditioning_set_values(pos, {"reference_latents": [vae.encode(ref)]}, append=True)
         neg = _zero_out(pos)
         model = s["model"]
-    elif s.get("moss"):
-        clip = s["clip"]
-        pos = clip.encode_from_tokens_scheduled(clip.tokenize(s["prompt"]))
-        neg = clip.encode_from_tokens_scheduled(clip.tokenize(s["negative"]))
-        model = s["model"]
-        if s.get("edit"):
-            # the edit LoRA's reference: the crop as it is (the shirt being replaced shows the body's shape); a flat
-            # outpaint fill is first replaced by the picture around it, so the reference shows no grey band
-            flat = up[0][gen > 0.5]
-            ref = _telea_fill(up, gen) if flat.numel() and float(flat.std(dim=0).max()) < 0.02 else up
-            refs = [vae.encode(ref[..., :3])]
-            pos, neg = [node_helpers.conditioning_set_values(c, {"reference_latents": refs, "reference_latents_method": MOSS_EDIT_METHOD})
-                        for c in (pos, neg)]
     else:
         ref = _reference(up, gen)
         pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
@@ -511,11 +479,11 @@ def _paint(frame, gen_full, s):
     # SDXL keeps the starting picture's broad colours even at full denoise: the painted area starts from the
     # surrounding picture extended into it, whatever fill the canvas came with
     keep_old = s.get("denoise", 1.0) < 1.0  # a partial redraw starts from the real pixels: they guide the change
-    latent = vae.encode(_telea_fill(up, gen) if (s.get("sdxl") or s.get("moss")) and not keep_old else up)
+    latent = vae.encode(_telea_fill(up, gen) if s.get("sdxl") and not keep_old else up)
     latent = comfy.sample.fix_empty_latent_channels(model, latent)
     lh, lw = latent.shape[-2], latent.shape[-1]
-    if (s.get("flux3") or s.get("moss")) and latent.shape[1] == 128:
-        p = 1  # Flux 2 / 3 latents (also MOSS) are already one token per latent pixel
+    if s.get("flux3") and latent.shape[1] == 128:
+        p = 1  # Flux 2 / 3 latents are already one token per latent pixel
     noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
     if s.get("flux3") and s.get("lora_on"):
         # with the LoRA the picture stays in place on its own; a noise mask there shifts its brightness and can leave a
@@ -794,71 +762,8 @@ class LCFlux3AnyPaint(LCKrea2AnyPaint):
         return self._run(image, mask, s)
 
 
-class LCMOSSAnyPaint(LCKrea2AnyPaint):
-    NAME = "LC MOSS AnyPaint"
-    DESCRIPTION = (
-        "Inpaint and outpaint for MOSS Image. MOSS has no inpaint LoRA or ControlNet yet, so this is a masked redraw done "
-        "carefully: it starts from the picture around the mask, keeps your pixels after every step and blends a border, with "
-        "a real negative and skip layer 22. Your picture outside the mask comes back unchanged. Describe only what goes in "
-        "the mask. Small text needs the full steps: the 8-step turbo LoRA garbles it.\n"
-        "Outpaint: wire LC Outpaint's or LC Outpaint, Rotate, & Pad's control_image and control_mask in."
-    )
-    MOSS_NEGATIVE = "nsfw, worst quality, bad anatomy, watermark, jpeg artifact"
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
-        req = {}
-        loras, default = _moss_edit_choices()
-        for k, v in base.items():
-            if k == "lora":
-                req["negative"] = ("STRING", _tip("moss_negative", default=cls.MOSS_NEGATIVE, multiline=True))
-                req["lora"] = (loras, _tip("moss_edit_lora", default=default))
-            elif k == "lora_strength":
-                req[k] = v
-                req["skip_layer"] = ("BOOLEAN", _tip("moss_skip", default=True))
-            elif k == "prompt":
-                req[k] = ("STRING", _tip("moss_prompt", default="", multiline=True))
-            elif k == "steps":
-                req[k] = ("INT", _tip("moss_steps", default=25, min=1, max=100))
-                req["cfg"] = ("FLOAT", _tip("moss_cfg", default=4.0, min=0.0, max=30.0, step=0.1, round=0.01))
-                req["denoise"] = ("FLOAT", _tip("moss_denoise", default=1.0, min=0.05, max=1.0, step=0.05))
-            elif k == "sampler_name":
-                req[k] = (comfy.samplers.KSampler.SAMPLERS, {"default": "er_sde"})
-            elif k == "vlm_reference":
-                continue  # Krea 2 only
-            elif k == "boundary_px":
-                req[k] = ("INT", _tip("moss_boundary", default=8, min=0, max=128, step=4))
-            elif k == "model":
-                req[k] = ("MODEL", {"tooltip": "MOSS Image (SFT or Base). With the 8-step turbo LoRA: steps 8, cfg 1, skip_layer off."})
-            elif k == "clip":
-                req[k] = ("CLIP", {"tooltip": "MOSS Image's text encoder (Qwen3.5-9B, CLIP type moss_image)."})
-            else:
-                req[k] = v
-        return {"required": req}
-
-    def paint(self, model, clip, vae, image, mask, prompt, negative, lora, lora_strength, skip_layer, seed, steps, cfg, denoise,
-              sampler_name, scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
-        self._check(prompt, steps)
-        if type(model.model).__name__ != "MOSSImage":
-            raise ValueError("[LC MOSS AnyPaint] This is for MOSS Image. Use LC Krea2 / Z-Image / SDXL / Flux 3 Klein AnyPaint "
-                             "for those models.")
-        edit = lora not in (OFF, "", None) and bool(lora_strength)
-        m = _flux3_model(model, lora if edit else OFF, lora_strength)  # the LoRA for this node only
-        if skip_layer:
-            from comfy_extras.nodes_slg import SkipLayerGuidanceDiTSimple
-
-            out = SkipLayerGuidanceDiTSimple.execute(m, 0.0, 0.5, double_layers="", single_layers="22")
-            m = out.result[0] if hasattr(out, "result") else out[0]
-        s = dict(model=m, moss=True, clip=clip, vae=vae, prompt=prompt.strip(), negative=(negative or "").strip(),
-                 seed=int(seed), steps=int(steps), cfg=float(cfg), sampler_name=sampler_name, scheduler=scheduler,
-                 crop=bool(crop_to_mask), padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px),
-                 vlm=False, composite=composite, denoise=float(denoise), edit=edit)
-        return self._run(image, mask, s)
-
 
 NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint, "LCSDXLAnyPaint": LCSDXLAnyPaint,
-                       "LCFlux3AnyPaint": LCFlux3AnyPaint, "LCMOSSAnyPaint": LCMOSSAnyPaint}
+                       "LCFlux3AnyPaint": LCFlux3AnyPaint}
 NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹",
-                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹",
-                              "LCMOSSAnyPaint": "LC MOSS AnyPaint 🩹"}
+                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹"}

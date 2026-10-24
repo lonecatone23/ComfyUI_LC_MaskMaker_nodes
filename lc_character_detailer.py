@@ -225,7 +225,7 @@ class LCCharacterDetailerPipe(_CharBase):
             raise ValueError(f"[{name}] No image: wire one, or put it in the pipe (LC Pipe In / Aspect Ratio pipe).")
         s = I._pipe_settings(pipe, kw, name)
         out, mask, note, hits = self._one(image, kw, s, lc_pipe_keys.found_hits(pipe, image))
-        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(pipe, image), mask)
+        protect = lc_pipe_keys.merge_masks(lc_pipe_keys.protect_for(pipe, image), mask, broadcast=True)
         out_pipe = lc_pipe_keys.updated(pipe, out, protect=protect, hits=hits)
         return {"ui": I._preview(self, self._numbered, out, mask, note), "result": (out_pipe, out, mask)}
 
