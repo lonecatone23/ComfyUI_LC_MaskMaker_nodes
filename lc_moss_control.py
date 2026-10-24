@@ -45,6 +45,8 @@ class _ControlEmbedder(torch.nn.Module):
         super().__init__()
         self.w_cpu, self.b_cpu = weight, bias
         self._dev = None
+        # ComfyUI reads video_embedder.weight's width: it pads the noisy latent (and reference latents) to it
+        self.weight, self.bias = weight, bias
 
     def forward(self, x):
         key = (x.device, x.dtype)
@@ -123,6 +125,7 @@ class LCMOSSControl:
         sd, meta = _load_adapter(control_file)
         m = model.clone()
         emb = _ControlEmbedder(sd["video_embedder.weight"].float(), sd["video_embedder.bias"].float())
+        base = emb.weight.shape[1] - 256  # [latent | color | depth], 128 each
         m.add_object_patch("diffusion_model.video_embedder", emb)
         if strength:
             key_map = comfy.lora.model_lora_keys_unet(m.model, {})
@@ -154,6 +157,8 @@ class LCMOSSControl:
             return c.expand(x.shape[0], -1, -1, -1)
 
         def wrapper(executor, x, timestep, context, transformer_options={}, **kwargs):
+            # ComfyUI (0.42+) already padded the latent to the adapter's width with zeros: keep the latent, add the maps
+            x = x[:, :base]
             frac = _step_index(transformer_options)
             c = fit(state["color"], x)
             d = fit(state["depth"], x)
