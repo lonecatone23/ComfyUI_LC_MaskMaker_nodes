@@ -1,0 +1,1224 @@
+{
+  "LCImageOutpaint": {
+    "description": "交互式 outpaint 准备：在节点上向外拖动画布边缘。原图放在灰色画布上；新增区域的 mask 为白色。可选宽高比锁定（free / original / 常用比例）。block 设为 if_empty_mask 时，在你拉出边缘之前，下游所有内容都会停止。",
+    "inputs": {
+      "image": {
+        "tooltip": "要扩展的源图像。"
+      },
+      "block": {
+        "tooltip": "if_empty_mask：在你至少拖出一条边之前（四个扩展值都为 0），此节点下游的一切都会停止，方便你先设置画布，然后再次排队运行。\nnever：始终让画布和遮罩通过。"
+      },
+      "hold_mask": {
+        "tooltip": "held：保留你设置好的画布（下方的扩展），并每次都带着它传递图像。\nsnap_to_image：未拉出任何边时，图像原样通过（如果 block 设为 if_empty_mask，运行会在此停止）。把边拉出去再运行：这一次会使用这些边，之后框会回弹到图像大小，因此新图像总是从干净的框开始。"
+      },
+      "left": {
+        "tooltip": "向左扩展，占源图宽度的百分比。"
+      },
+      "top": {
+        "tooltip": "顶部的扩展量，占源图高度的 %。"
+      },
+      "right": {
+        "tooltip": "右侧扩展，占源宽度的百分比。"
+      },
+      "bottom": {
+        "tooltip": "底部扩展，占源高度的百分比。"
+      },
+      "aspect": {
+        "tooltip": "锁定最终画布的宽高比。'original' 与源图一致。"
+      },
+      "snap_to": {
+        "tooltip": "将最终宽度/高度向上取整到此值的倍数（多出的部分放在右侧/底部）。1 = 关闭。"
+      },
+      "max_megapixels": {
+        "tooltip": "阻止把边缘拖到超过此画布尺寸,使画布不会超出模型能很好处理的大小(Krea 2 和 AnyPaint 适合约 2)。只限制拖动:运行本身永远不会被缩放。0 = 不限制。"
+      }
+    }
+  },
+  "LCImageRotatePad": {
+    "description": "在节点上拖动来旋转、裁剪和扩边：圆形手柄用于旋转，框的边用于扩边（向外拖）或裁剪（向内拖）。遮罩覆盖新增区域以及旋转后露出的角落。",
+    "inputs": {
+      "image": {
+        "tooltip": "要旋转、裁剪和扩边的图片。"
+      },
+      "keep_frame": {
+        "tooltip": "keep：旋转和画框设置在每次运行后保持不变。重跑同一张图时使用（后期处理、相同 seed）。\nsnap back after run：每次运行结束后，旋转和画框恢复为原图，下一张图从干净状态开始。"
+      },
+      "angle": {
+        "tooltip": "旋转角度，单位度，顺时针。也可以拖动节点上的圆形手柄（按住 Shift 以 15° 步进）。"
+      },
+      "fit": {
+        "tooltip": "expand：画框从整张旋转后的图片外围开始，空白的角会被 mask，交给模型绘制。\ncrop：画框从没有空白角的最大方框开始。"
+      },
+      "fill": {
+        "tooltip": "模型绘制之前新区域里放什么。gray 是 Krea 2 和 AnyPaint 所期望的。edge 会把外缘像素向外拉伸（适用于会复制所见内容的模型）。"
+      },
+      "left": {
+        "tooltip": "画面左边缘，占源宽度的百分比。正值为填充，负值为裁剪。"
+      },
+      "top": {
+        "tooltip": "画框上边缘,占源高度的 %。正值扩边,负值裁切。"
+      },
+      "right": {
+        "tooltip": "画面右边缘，占源宽度的百分比。正值为填充，负值为裁剪。"
+      },
+      "bottom": {
+        "tooltip": "画面底边，占源图高度的 %。正值为填充，负值为裁剪。"
+      },
+      "aspect": {
+        "tooltip": "锁定输出的形状。'original' 与源图一致。"
+      },
+      "snap_to": {
+        "tooltip": "将输出的宽度和高度向上取整到此值的倍数（多出的部分放在右侧和底部）。1 = 关闭。"
+      },
+      "block": {
+        "tooltip": "until turned or framed:当图片未被改动(没有旋转、裁剪、扩边)时,运行会在此节点后停止。先运行一次在此看到图片,设置好后再运行。\nnever:始终把图片传下去,即使未被改动。"
+      },
+      "max_megapixels": {
+        "tooltip": "阻止把边缘拖到超过此画布尺寸,使画布不会超出模型能很好处理的大小(Krea 2 和 AnyPaint 适合约 2)。只限制拖动:运行本身永远不会被缩放。0 = 不限制。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "旋转、裁剪并填充后的图片。"
+      },
+      "1": {
+        "tooltip": "模型绘制的位置为白色：扩边以及旋转后露出的角落。"
+      },
+      "2": {
+        "tooltip": "输出宽度。"
+      },
+      "3": {
+        "tooltip": "输出高度。"
+      }
+    }
+  },
+  "LCSplineMask": {
+    "description": "在节点上绘制遮罩：点击添加点（无数量限制），拖动调整形状，或用铅笔自由绘制。内置羽化、反转和不透明度。",
+    "inputs": {
+      "image": {
+        "tooltip": "要在其上绘制遮罩的图像。"
+      },
+      "block": {
+        "tooltip": "if_empty_mask：没有绘制任何内容时（没有形状，或遮罩全黑），此节点下游的一切都会停止，方便你先绘制，再重新排队。\nnever：始终让图像和遮罩通过。"
+      },
+      "pencil": {
+        "tooltip": "points：点击添加，拖动移动，Shift+点击移除。pencil：徒手绘制。"
+      },
+      "smooth": {
+        "tooltip": "smooth 用曲线穿过各点，而不是直线边。"
+      },
+      "invert": {
+        "tooltip": "反转遮罩（外部变为白色）。"
+      },
+      "feather": {
+        "tooltip": "边缘柔化，单位像素（高斯模糊半径）。"
+      },
+      "opacity": {
+        "tooltip": "Mask 强度。缩放 mask 的值（1.0 = 实心）。"
+      },
+      "overlay_opacity": {
+        "tooltip": "mask 在节点预览上显示的强度。仅用于显示。"
+      },
+      "points": {
+        "tooltip": "内部：规范化的点列表。"
+      }
+    }
+  },
+  "LCMaskRefine": {
+    "description": "用 trimap 收紧遮罩。edge_erode 和 edge_dilate 设定未知带的宽度；guided filter 或 VITMatte 只处理这一条带。节点上带前后对比滑动和 trimap 视图。",
+    "inputs": {
+      "image": {
+        "tooltip": "遮罩所属的图像。用作引导。"
+      },
+      "mask": {
+        "tooltip": "要精修的遮罩。任意尺寸；会缩放到图像大小。"
+      },
+      "method": {
+        "tooltip": "vitmatte：抠图模型，最适合头发和细节。\nguided_filter：快速，无需模型，把未知区域吸附到图像边缘。\nnone：跳过抠图，仅执行 grow、修补缝隙、levels 和 feather。"
+      },
+      "vitmatte_model": {
+        "tooltip": "仅 vitmatte 使用。标有 'Download' 的条目会在首次运行时下载。"
+      },
+      "grow": {
+        "tooltip": "构建 trimap 之前，蒙版扩张（正）或收缩（负）的像素数。"
+      },
+      "fix_gap": {
+        "tooltip": "闭合不超过约这么多像素宽的小孔和裂缝。0 = 关闭。"
+      },
+      "fix_threshold": {
+        "tooltip": "修补缝隙时，mask 像素要多白才算实心。"
+      },
+      "edge_erode": {
+        "tooltip": "TRIMAP。确定前景区域从蒙版边缘向内收缩多少，单位像素。\n此范围内的一切都锁定为白色。越小 = 越紧，需要判断的越少。"
+      },
+      "edge_dilate": {
+        "tooltip": "TRIMAP。未知区域从蒙版边缘向外延伸多远,单位像素。\n超出此范围的一切都锁定为黑色。越小 = 越紧,需要判断的越少。"
+      },
+      "softness": {
+        "tooltip": "仅 guided_filter。越低越贴合图像边缘，越高越平滑。"
+      },
+      "threshold": {
+        "tooltip": "构建 trimap 时，输入 mask 在何处分为内部和外部。往 1.0 提高，则只使用软 mask 的实心核心。"
+      },
+      "black_point": {
+        "tooltip": "小于等于此值的遮罩值会变为 0。清除微弱的雾。"
+      },
+      "white_point": {
+        "tooltip": "蒙版值达到或高于此值时变为 1。让主体更实。"
+      },
+      "feather": {
+        "tooltip": "最终边缘柔化，单位像素。"
+      },
+      "edge_color_spread": {
+        "tooltip": "仅限抠图。把主体的实色向外推这么多像素,以消除背景光晕。0 = 关闭。"
+      },
+      "max_megapixels": {
+        "tooltip": "仅 vitmatte。较大的图像按此尺寸抠图，再缩放回去。"
+      },
+      "detail_erode": {
+        "tooltip": "与 edge_erode 相同,但作用于 detail_region 区域(头发)。更宽能给细发丝留出空间。"
+      },
+      "detail_dilate": {
+        "tooltip": "与 edge_dilate 相同，但作用于 detail_region 区域。"
+      },
+      "detail_blur": {
+        "tooltip": "柔化 detail_region 结果与其余部分融合处的接缝。"
+      },
+      "preview_view": {
+        "tooltip": "节点上的 wipe 显示什么。\ntrimap:左边是 trimap(黑 = 确定的背景,灰 = 未知,白 = 确定的前景),右边是结果。"
+      },
+      "detail_region": {
+        "tooltip": "可选。白色区域（如头发）使用 detail_erode / detail_dilate，而不是 edge_erode / edge_dilate。"
+      }
+    }
+  },
+  "LCRemBG": {
+    "description": "用 BiRefNet 移除背景。输出 RGBA 抠图、蒙版，以及放在纯色背景上的主体。可选 guided filter 或 VITMatte 精修。",
+    "inputs": {
+      "image": {
+        "tooltip": "要从中抠出主体的图像。"
+      },
+      "model": {
+        "tooltip": "背景移除模型。许可证写在标签里。\n标有 'Download' 的条目会在首次运行时获取。"
+      },
+      "refine": {
+        "tooltip": "none：直接使用模型的遮罩。\nguided_filter：速度快，让边缘贴合图像。\nvitmatte：用于头发和精细细节的抠图模型。"
+      },
+      "vitmatte_model": {
+        "tooltip": "仅在 refine 为 vitmatte 时使用。"
+      },
+      "grow": {
+        "tooltip": "在优化之前，将遮罩扩张（正值）或收缩（负值）的像素数。"
+      },
+      "edge_erode": {
+        "tooltip": "精修 trimap：确定前景区域从 mask 边缘向内收缩多远。越小 = 越紧。"
+      },
+      "edge_dilate": {
+        "tooltip": "精修 trimap：未知带越过遮罩边缘的距离。越小 = 越紧。"
+      },
+      "black_point": {
+        "tooltip": "小于等于此值的遮罩值会变为 0。调高可清除微弱的背景雾。"
+      },
+      "white_point": {
+        "tooltip": "蒙版值达到或高于此值时变为 1。调低可让主体更实。"
+      },
+      "feather": {
+        "tooltip": "最终边缘柔化，单位像素。"
+      },
+      "max_megapixels": {
+        "tooltip": "仅 vitmatte。较大的图像按此尺寸抠图，再缩放回去。"
+      },
+      "background": {
+        "tooltip": "on_background 输出中主体后面的颜色。"
+      }
+    }
+  },
+  "LCSegmentAnything": {
+    "description": "通过描述来选取对象。使用 GroundingDINO + SAM（Apache-2.0，按需下载）或 SAM 3，再可选 guided filter / VITMatte 精修，节点上带前后对比擦除。",
+    "inputs": {
+      "image": {
+        "tooltip": "要从中抠取内容的图像。"
+      },
+      "prompt": {
+        "tooltip": "要选择什么,用逗号分隔的简单词语:hair, eyes, bikini。\n每个词单独查找,结果再合并。"
+      },
+      "engine": {
+        "tooltip": "grounding_dino + sam：GroundingDINO 找框，SAM 生成 mask。Apache-2.0 模型，首次使用时下载。\nsam3：SAM 3 一步完成两者（SAM License）。选择 SAM 3.1 下载，或使用 models/sam3 中你自己的 sam3.safetensors。"
+      },
+      "dino_model": {
+        "tooltip": "供 grounding_dino + sam 使用。标有 'Download' 的条目会在首次运行时下载。"
+      },
+      "sam_model": {
+        "tooltip": "供 grounding_dino + sam 使用。base 最快,huge 最准。"
+      },
+      "sam3_model": {
+        "tooltip": "供 sam3 引擎使用。"
+      },
+      "threshold": {
+        "tooltip": "grounding_dino + sam:检测置信度。越低找到越多(误检也越多),越高越挑剔。"
+      },
+      "sam3_threshold": {
+        "tooltip": "sam3：检测置信度。SAM 3 的分数偏高，所以 0.5 是不错的起点。在 0.3 左右时，它会开始为图中并不存在的词编造匹配。"
+      },
+      "max_objects": {
+        "tooltip": "仅 grounding_dino + sam。每个词最多保留这么多个框（最佳优先）。0 = 全部。"
+      },
+      "refine": {
+        "tooltip": "原始遮罩的边缘优化。vitmatte 最适合头发，guided_filter 速度快，none 保留原始遮罩。"
+      },
+      "vitmatte_model": {
+        "tooltip": "仅在 refine 为 vitmatte 时使用。"
+      },
+      "edge_erode": {
+        "tooltip": "Trimap：确定前景从 mask 边缘向内收缩多远（像素）。"
+      },
+      "edge_dilate": {
+        "tooltip": "Trimap：未知带从 mask 边缘向外延伸多远（像素）。"
+      },
+      "black_point": {
+        "tooltip": "等于或低于此值的蒙版值变为 0。"
+      },
+      "white_point": {
+        "tooltip": "mask 值达到或高于此值时变为 1。"
+      },
+      "max_megapixels": {
+        "tooltip": "仅 vitmatte。较大的图像按此尺寸抠图，再缩放回去。"
+      },
+      "preview_view": {
+        "tooltip": "节点上的对比滑动所显示的内容。Before 是原始遮罩。"
+      }
+    }
+  },
+  "LCSmartInpaint": {
+    "description": "找出你描述的内容（手、脸、眼睛等）并以完整细节重绘。每只手或每张脸都有各自的裁剪区，放大到 inpaint_resolution 后重绘，再融合回去。没找到？图像原样通过，节点会告诉你。\n不接负面提示词：适用于 Flux、Krea 2、Anima 和其他 cfg 1 的模型。SDXL 请接一个。",
+    "inputs": {
+      "positive": {
+        "tooltip": "这张图的 prompt。描述整个场景的 prompt,在 denoise 0.3 及以上时可能被画进每个裁切区域(脸里出现一个完整的小场景):接入 inpaint_positive 可避免。"
+      },
+      "prompt": {
+        "tooltip": "要精修什么，用逗号分隔的简单词语：hands, face。\n每个匹配项都会被找到（双手、每张脸）。加 :N 可限制数量，例如 face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "负责查找的 SAM 3 模型。选 SAM 3.1 下载项,或使用你放在 models/sam3 里的 sam3.pt / sam3.safetensors。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 需要有多大把握。越低找到的越多（也包括更多错误的），越高越挑剔。0.5 是不错的起点。\n颜色只是提示：“red dress”仍可能选中绿色裙子。不存在的东西不会被找到。"
+      },
+      "grow": {
+        "tooltip": "局部重绘前把遮罩扩大（正值）或缩小（负值）的像素数。稍微扩大可以盖住边缘。"
+      },
+      "feather": {
+        "tooltip": "遮罩边缘的柔和度，单位像素，让重绘区域与其余部分融合。0 = 硬边。"
+      },
+      "blend": {
+        "tooltip": "重绘内容粘贴的比例：1 = 全部。低于 1 时新旧像素会混合，重绘时略有移动的特征（睫毛、眼睑）可能出现重影。想要更轻的重绘，请降低 denoise。"
+      },
+      "padding": {
+        "tooltip": "每个裁剪区域包含的周围图像像素数，让模型看到上下文。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "每个裁剪区域都会按约这个像素平方数重绘（1024 = 1 百万像素），不论其形状。越高 = 细节越多，速度越慢。"
+      },
+      "sampler_name": {
+        "tooltip": "Sampler。"
+      },
+      "scheduler": {
+        "tooltip": "Scheduler。"
+      },
+      "steps": {
+        "tooltip": "采样步数。"
+      },
+      "cfg": {
+        "tooltip": "重绘用的 CFG。1 适用于 Krea 2、Flux、Z-Image、Anima,在 detailer denoise(最高约 0.4)下 SDXL 也适用(已测试:SDXL 在 cfg 1 到 7 看起来一样)。不会低于 1:低于 1 重绘会出现斑点。"
+      },
+      "denoise": {
+        "tooltip": "重绘的程度。低值保留形状并修正细节，高值从头重绘。"
+      },
+      "seed": {
+        "tooltip": "重绘用的 seed。"
+      },
+      "inpaint_positive": {
+        "tooltip": "可选。仅用于裁剪区域的提示词，例如 'close-up of a woman's face, natural skin'。重绘时会取代 positive 使用。当 positive 描述的是整个场景时建议使用。"
+      },
+      "negative": {
+        "tooltip": "可选。cfg 1 的模型留空；SDXL 等使用负面提示词的模型请接入。"
+      },
+      "tone_match": {
+        "tooltip": "开启：重绘内容粘贴回去时，会找回原图的亮度、对比度和颜色，同时保留新的细节。没有它的话，轻度重绘会显得有点平淡发灰。如果重绘本来就要改变颜色（新的衬衫颜色、不同的物体），请关闭。"
+      }
+    }
+  },
+  "LCSmartInpaintPipe": {
+    "description": "找出你描述的内容（手、脸、眼睛等）并以完整细节重绘。每只手或每张脸都有各自的裁剪区，放大到 inpaint_resolution 后重绘，再融合回去。没找到？图像原样通过，节点会告诉你。\n不接负面提示词：适用于 Flux、Krea 2、Anima 和其他 cfg 1 的模型。SDXL 请接一个。",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe：model、VAE、seed、steps、cfg、sampler 和 scheduler 都来自这里。"
+      },
+      "prompt": {
+        "tooltip": "要精修什么，用逗号分隔的简单词语：hands, face。\n每个匹配项都会被找到（双手、每张脸）。加 :N 可限制数量，例如 face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "负责查找的 SAM 3 模型。选 SAM 3.1 下载项,或使用你放在 models/sam3 里的 sam3.pt / sam3.safetensors。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 需要有多大把握。越低找到的越多（也包括更多错误的），越高越挑剔。0.5 是不错的起点。\n颜色只是提示：“red dress”仍可能选中绿色裙子。不存在的东西不会被找到。"
+      },
+      "grow": {
+        "tooltip": "局部重绘前把遮罩扩大（正值）或缩小（负值）的像素数。稍微扩大可以盖住边缘。"
+      },
+      "feather": {
+        "tooltip": "遮罩边缘的柔和度，单位像素，让重绘区域与其余部分融合。0 = 硬边。"
+      },
+      "blend": {
+        "tooltip": "重绘内容粘贴的比例：1 = 全部。低于 1 时新旧像素会混合，重绘时略有移动的特征（睫毛、眼睑）可能出现重影。想要更轻的重绘，请降低 denoise。"
+      },
+      "padding": {
+        "tooltip": "每个裁剪区域包含的周围图像像素数，让模型看到上下文。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "每个裁剪区域都会按约这个像素平方数重绘（1024 = 1 百万像素），不论其形状。越高 = 细节越多，速度越慢。"
+      },
+      "denoise": {
+        "tooltip": "重绘的程度。低值保留形状并修正细节，高值从头重绘。"
+      },
+      "image": {
+        "tooltip": "可选。空 = 使用 pipe 的图像。当中间有不带 pipe 的节点改动了图片时,接入这个。"
+      },
+      "model": {
+        "tooltip": "可选。在此接入模型,用它代替 pipe 里的模型(例如带了 LoRA 的,或不同的模型)。"
+      },
+      "vae": {
+        "tooltip": "可选。在此接入 VAE,用它代替 pipe 里的。"
+      },
+      "positive": {
+        "tooltip": "这张图的 prompt。描述整个场景的 prompt,在 denoise 0.3 及以上时可能被画进每个裁切区域(脸里出现一个完整的小场景):接入 inpaint_positive 可避免。"
+      },
+      "inpaint_positive": {
+        "tooltip": "可选。仅用于裁剪区域的提示词，例如 'close-up of a woman's face, natural skin'。重绘时会取代 positive 使用。当 positive 描述的是整个场景时建议使用。"
+      },
+      "negative": {
+        "tooltip": "可选。cfg 1 的模型留空；SDXL 等使用负面提示词的模型请接入。"
+      },
+      "tone_match": {
+        "tooltip": "开启：重绘内容粘贴回去时，会找回原图的亮度、对比度和颜色，同时保留新的细节。没有它的话，轻度重绘会显得有点平淡发灰。如果重绘本来就要改变颜色（新的衬衫颜色、不同的物体），请关闭。"
+      },
+      "cfg": {
+        "tooltip": "重绘用的 CFG。1 适用于 Krea 2、Flux、Z-Image，在 detailer denoise（最高约 0.4）下 SDXL 也适用（已测试：SDXL 在 cfg 1 到 7 看起来一样）。用来取代 pipe 里的 cfg_1，后者通常是主采样器的值。"
+      }
+    }
+  },
+  "LCKrea2AnyPaint": {
+    "description": "使用 yijunwang2 的 AnyPaint LoRA 为 Krea 2 做 inpaint 和 outpaint，按其训练方式进行：整幅画布参考、每一步之后把保留的像素放回，以及模型融合的边界。遮罩之外的画面会原样保留。请在提示词中描述完整的成品画面。\nOutpaint：请接入 LC Outpaint 的 control_image 和 control_mask。",
+    "inputs": {
+      "model": {
+        "tooltip": "Krea 2 (Turbo)。LoRA 和补丁仅为此节点添加。"
+      },
+      "clip": {
+        "tooltip": "Krea 2 文本编码器（Qwen3-VL 4B，CLIP type krea2）。"
+      },
+      "mask": {
+        "tooltip": "白色 = 绘制，黑色 = 保留。可选：不接 mask 时，若有 LC Outpaint 的画布则使用它的 mask。要 outpaint，请把 LC Outpaint 的 control_image 接为图像，control_mask 接为 mask。"
+      },
+      "prompt": {
+        "tooltip": "描述完整的最终画面，而不只是改动：\"a woman in a red coat on a snowy street\"。只有移除内容的提示词（\"remove the car\"）往往会留下一团平坦的色块。"
+      },
+      "lora": {
+        "tooltip": "yijunwang2 的 krea2_anypaint_rank32（models/loras）。仅对此节点按 lora_strength 应用。"
+      },
+      "lora_strength": {
+        "tooltip": "1.0 是训练时使用的值。"
+      },
+      "steps": {
+        "tooltip": "8 (Krea 2 Turbo)。用 euler 时 keep 是精确的。"
+      },
+      "sampler_name": {
+        "tooltip": "euler 是 AnyPaint 训练和测试时使用的；keep 步骤仅对 euler 精确。"
+      },
+      "scheduler": {
+        "tooltip": "simple，与参考相同。"
+      },
+      "crop_to_mask": {
+        "tooltip": "开：小遮罩在自己的裁剪区里重绘，并放大到 inpaint_resolution（细节更多）。关：整张图按 inpaint_resolution 处理。"
+      },
+      "padding": {
+        "tooltip": "裁切时蒙版周围的上下文(px)。越多 = 模型看到的场景越多。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "重绘的尺寸（按面积计：1024 = 约 1 MP）。AusBoss 发现超过约 1.6 MP 后，Krea 2 会开始让四肢出现褶皱、天空变暗。"
+      },
+      "boundary_px": {
+        "tooltip": "模型重绘的蒙版周围的边框，用于融合接缝（单位为重绘像素）。32 = 参考值。"
+      },
+      "vlm_reference": {
+        "tooltip": "也把参考图展示给文本编码器。On = 参考配方。"
+      },
+      "composite": {
+        "tooltip": "keep original = 只把涂抹区域（边缘柔和、颜色已校正）贴回去：其余部分完全是你的原图。raw = 模型对裁剪区域的整体重绘。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "涂好遮罩区域的图片。"
+      },
+      "1": {
+        "tooltip": "贴回去之后的结果（边缘柔和）。"
+      }
+    }
+  },
+  "LCZImageAnyPaint": {
+    "description": "用阿里巴巴的 Z-Image Fun ControlNet Union 2.1（inpaint 模式）对 Z-Image（Turbo / Base）做局部重绘和外扩：保留的像素在每一步后都会放回去，并留一圈模型自行融合的边框。遮罩之外的图像原样返回。在提示词里描述整张完成后的图。\n外扩：接入 LC Outpaint 或 LC Outpaint, Rotate, & Pad 的 control_image 和 control_mask。",
+    "inputs": {
+      "model": {
+        "tooltip": "Z-Image（Turbo / Base）。ControlNet 补丁仅为此节点添加。"
+      },
+      "clip": {
+        "tooltip": "Z-Image 的 text encoder（Qwen3 4B，CLIP type lumina2）。"
+      },
+      "mask": {
+        "tooltip": "白色 = 绘制，黑色 = 保留。可选：不接 mask 时，若有 LC Outpaint 的画布则使用它的 mask。要 outpaint，请把 LC Outpaint 的 control_image 接为图像，control_mask 接为 mask。"
+      },
+      "prompt": {
+        "tooltip": "描述完整的最终画面，而不只是改动：\"a woman in a red coat on a snowy street\"。只有移除内容的提示词（\"remove the car\"）往往会留下一团平坦的色块。"
+      },
+      "control": {
+        "tooltip": "阿里巴巴的 Z-Image Fun ControlNet Union 2.1（models/model_patches），用于 inpaint 模式。8steps 版本是为 Z-Image Turbo 制作的。"
+      },
+      "control_strength": {
+        "tooltip": "ControlNet 让绘制内容贴合你的图片的强度。1 = 按训练时的设置。"
+      },
+      "steps": {
+        "tooltip": "8 (Krea 2 Turbo)。用 euler 时 keep 是精确的。"
+      },
+      "sampler_name": {
+        "tooltip": "euler 是 AnyPaint 训练和测试时使用的；keep 步骤仅对 euler 精确。"
+      },
+      "scheduler": {
+        "tooltip": "simple，与参考相同。"
+      },
+      "crop_to_mask": {
+        "tooltip": "开：小遮罩在自己的裁剪区里重绘，并放大到 inpaint_resolution（细节更多）。关：整张图按 inpaint_resolution 处理。"
+      },
+      "padding": {
+        "tooltip": "裁切时蒙版周围的上下文(px)。越多 = 模型看到的场景越多。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "重绘的尺寸（按面积计：1024 = 约 1 MP）。AusBoss 发现超过约 1.6 MP 后，Krea 2 会开始让四肢出现褶皱、天空变暗。"
+      },
+      "boundary_px": {
+        "tooltip": "模型重绘的蒙版周围的边框，用于融合接缝（单位为重绘像素）。32 = 参考值。"
+      },
+      "composite": {
+        "tooltip": "keep original = 只把涂抹区域（边缘柔和、颜色已校正）贴回去：其余部分完全是你的原图。raw = 模型对裁剪区域的整体重绘。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "涂好遮罩区域的图片。"
+      },
+      "1": {
+        "tooltip": "贴回去之后的结果（边缘柔和）。"
+      }
+    }
+  },
+  "LCSDXLAnyPaint": {
+    "description": "适用于任何 SDXL checkpoint（SDXL、Pony、Illustrious 以及你的 finetune）的 inpaint 和 outpaint，由 xinsir 的 ControlNet Union ProMax 以 repaint 模式绘制，可选配 Fooocus 的 inpaint patch。每一步之后都会把保留的像素放回去，并混合边界。mask 之外的画面原样返回。无需 LoRA。用简短的提示词描述 mask 里要放的内容。\nOutpaint：接入 LC Outpaint 或 LC Outpaint, Rotate, & Pad 的 control_image 和 control_mask。",
+    "inputs": {
+      "model": {
+        "tooltip": "任意 SDXL checkpoint。inpaint 补丁只对此节点添加。"
+      },
+      "clip": {
+        "tooltip": "该 checkpoint 的 CLIP。"
+      },
+      "mask": {
+        "tooltip": "白色 = 绘制，黑色 = 保留。可选：不接 mask 时，若有 LC Outpaint 的画布则使用它的 mask。要 outpaint，请把 LC Outpaint 的 control_image 接为图像，control_mask 接为 mask。"
+      },
+      "prompt": {
+        "tooltip": "简短描述遮罩内应有的内容：\"a red bucket full of fish on the pier\"。若要移除某物，请描述那里应有的东西（\"empty wooden planks\"）。留空也可以：会根据遮罩周围的画面填充。"
+      },
+      "negative": {
+        "tooltip": "你不想要的内容。SDXL 使用真正的 negative prompt。"
+      },
+      "control": {
+        "tooltip": "xinsir 的 ControlNet Union SDXL ProMax（models/controlnet），用于 repaint 模式：它让边缘、光线和透视贴合你的图像。off = 只用 Fooocus inpaint。"
+      },
+      "control_strength": {
+        "tooltip": "ControlNet 让绘制内容贴合你原图的力度。越低 = mask 内的自由度越大。"
+      },
+      "fooocus_inpaint": {
+        "tooltip": "可选。lllyasviel 的 Fooocus inpaint patch（放在 models/inpaint，fooocus_inpaint_head.pth 放在旁边）。融合效果最好，能匹配周围的颜色，但更偏向重建原有内容，而不是添加新东西。适合 outpaint 和填充。同时开启 ControlNet 时，把 control_strength 降到约 0.5（Pony / Illustrious 在 1 时会变成噪点）。需要 Acly 的 comfyui-inpaint-nodes。"
+      },
+      "steps": {
+        "tooltip": "普通 SDXL checkpoint 用 25 - 30，Lightning / DMD 的用更少（此时 cfg 1 - 2）。"
+      },
+      "cfg": {
+        "tooltip": "SDXL cfg。大多数 checkpoint 用 4 - 6。"
+      },
+      "crop_to_mask": {
+        "tooltip": "开：小遮罩在自己的裁剪区里重绘，并放大到 inpaint_resolution（细节更多）。关：整张图按 inpaint_resolution 处理。"
+      },
+      "padding": {
+        "tooltip": "裁切时蒙版周围的上下文(px)。越多 = 模型看到的场景越多。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "重绘的尺寸（按面积计：1024 = 约 1 MP）。AusBoss 发现超过约 1.6 MP 后，Krea 2 会开始让四肢出现褶皱、天空变暗。"
+      },
+      "boundary_px": {
+        "tooltip": "模型重绘的蒙版周围的边框，用于融合接缝（单位为重绘像素）。32 = 参考值。"
+      },
+      "composite": {
+        "tooltip": "keep original = 只把涂抹区域（边缘柔和、颜色已校正）贴回去：其余部分完全是你的原图。raw = 模型对裁剪区域的整体重绘。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "涂好遮罩区域的图片。"
+      },
+      "1": {
+        "tooltip": "贴回去之后的结果（边缘柔和）。"
+      }
+    }
+  },
+  "LCFlux3AnyPaint": {
+    "description": "使用 AusBoss 的 outpaint LoRA，在 edit 模式下对 Flux 3 Klein (Distilled) 进行 inpaint 和 outpaint：待绘制区域会被填充为纯灰色，模型再填补灰色部分。每一步之后都会把保留的像素放回，并混合边界。蒙版之外的画面保持原样。请在提示词中描述完整的最终画面。\nOutpaint：接入 LC Outpaint 或 LC Outpaint, Rotate, & Pad 的 control_image 和 control_mask。",
+    "inputs": {
+      "model": {
+        "tooltip": "Flux 3 Klein (Distilled)。LoRA 仅为此节点添加。"
+      },
+      "clip": {
+        "tooltip": "Flux 3 Klein 的文本编码器（Qwen3-VL 4B，CLIP type flux3）。"
+      },
+      "mask": {
+        "tooltip": "白色 = 绘制，黑色 = 保留。可选：不接 mask 时，若有 LC Outpaint 的画布则使用它的 mask。要 outpaint，请把 LC Outpaint 的 control_image 接为图像，control_mask 接为 mask。"
+      },
+      "prompt": {
+        "tooltip": "描述完整的成品画面：\"a woman in a red coat on a snowy street\"。节点会自动在前面加上 LoRA 的填充指令。"
+      },
+      "lora": {
+        "tooltip": "AusBoss 的 flux-3-image-klein-outpaint（models/loras）。它会填充平坦的灰色区域，其余部分保持不变。仅对此节点以 lora_strength 应用。off = 带噪声 mask 的普通 Flux 3 Klein（容易让画面移位或缩放）。"
+      },
+      "lora_strength": {
+        "tooltip": "1.5 是 AusBoss 的推荐：大幅扩展时，画面比 1.0 更常保持在原位。"
+      },
+      "steps": {
+        "tooltip": "Flux 3 Klein (Distilled) 用 16。Base 的 50 步配 cfg 3.5 在此不受支持：请使用 Distilled 模型。"
+      },
+      "sampler_name": {
+        "tooltip": "euler 是 AnyPaint 训练和测试时使用的；keep 步骤仅对 euler 精确。"
+      },
+      "scheduler": {
+        "tooltip": "simple，与参考相同。"
+      },
+      "crop_to_mask": {
+        "tooltip": "开：小遮罩在自己的裁剪区里重绘，并放大到 inpaint_resolution（细节更多）。关：整张图按 inpaint_resolution 处理。"
+      },
+      "padding": {
+        "tooltip": "裁切时蒙版周围的上下文(px)。越多 = 模型看到的场景越多。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "重绘的尺寸（按面积计：1024 = 约 1 MP）。AusBoss 发现超过约 1.6 MP 后，Krea 2 会开始让四肢出现褶皱、天空变暗。"
+      },
+      "boundary_px": {
+        "tooltip": "模型重绘的蒙版周围的边框，用于融合接缝（单位为重绘像素）。32 = 参考值。"
+      },
+      "composite": {
+        "tooltip": "keep original = 只把涂抹区域（边缘柔和、颜色已校正）贴回去：其余部分完全是你的原图。raw = 模型对裁剪区域的整体重绘。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "涂好遮罩区域的图片。"
+      },
+      "1": {
+        "tooltip": "贴回去之后的结果（边缘柔和）。"
+      }
+    }
+  },
+  "LCCharacterDetailer": {
+    "description": "针对单个角色的 LC Smart Detailer。SAM 3 会找出所有匹配项（每张脸、每个人），但只重绘其中一个：从左、右或顶部数第 N 个、第 N 大的，或位于 LC Bounding Boxes 某个框内的那个。为每个角色各设一个：分出 model 分支，加上该角色的 LoRA，并在此选择其脸部。设置和引擎与 LC Smart Detailer 相同。",
+    "inputs": {
+      "positive": {
+        "tooltip": "这张图的 prompt。描述整个场景的 prompt,在 denoise 0.3 及以上时可能被画进每个裁切区域(脸里出现一个完整的小场景):接入 inpaint_positive 可避免。"
+      },
+      "prompt": {
+        "tooltip": "要精修什么，用逗号分隔的简单词语：hands, face。\n每个匹配项都会被找到（双手、每张脸）。加 :N 可限制数量，例如 face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "负责查找的 SAM 3 模型。选 SAM 3.1 下载项,或使用你放在 models/sam3 里的 sam3.pt / sam3.safetensors。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 需要有多大把握。越低找到的越多（也包括更多错误的），越高越挑剔。0.5 是不错的起点。\n颜色只是提示：“red dress”仍可能选中绿色裙子。不存在的东西不会被找到。"
+      },
+      "pick": {
+        "tooltip": "此 detailer 要重绘哪一个匹配项(SAM 3 会找出全部)。如果有多个词(face, hair),第一个词选定人物,其余的词在属于该人物时一并带上。\nleft to right / right to left / top to bottom:number 1 = 按该方向的第一个。\nlargest first:number 1 = 最大的。\nin box:位于 LC Bounding Boxes 第 'number' 个框内的那个(接入它的 elements):即使姿势变化,脸也始终跟随其角色。"
+      },
+      "number": {
+        "tooltip": "选哪一个：1 = 第一个。当 pick 设为 in box 时，为 LC Bounding Boxes 上显示的框编号。"
+      },
+      "grow": {
+        "tooltip": "局部重绘前把遮罩扩大（正值）或缩小（负值）的像素数。稍微扩大可以盖住边缘。"
+      },
+      "feather": {
+        "tooltip": "遮罩边缘的柔和度，单位像素，让重绘区域与其余部分融合。0 = 硬边。"
+      },
+      "blend": {
+        "tooltip": "重绘内容粘贴的比例：1 = 全部。低于 1 时新旧像素会混合，重绘时略有移动的特征（睫毛、眼睑）可能出现重影。想要更轻的重绘，请降低 denoise。"
+      },
+      "padding": {
+        "tooltip": "每个裁剪区域包含的周围图像像素数，让模型看到上下文。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "每个裁剪区域都会按约这个像素平方数重绘（1024 = 1 百万像素），不论其形状。越高 = 细节越多，速度越慢。"
+      },
+      "sampler_name": {
+        "tooltip": "Sampler。"
+      },
+      "scheduler": {
+        "tooltip": "Scheduler。"
+      },
+      "steps": {
+        "tooltip": "采样步数。"
+      },
+      "cfg": {
+        "tooltip": "重绘用的 CFG。1 适用于 Krea 2、Flux、Z-Image、Anima,在 detailer denoise(最高约 0.4)下 SDXL 也适用(已测试:SDXL 在 cfg 1 到 7 看起来一样)。不会低于 1:低于 1 重绘会出现斑点。"
+      },
+      "denoise": {
+        "tooltip": "重绘的程度。低值保留形状并修正细节，高值从头重绘。"
+      },
+      "seed": {
+        "tooltip": "重绘用的 seed。"
+      },
+      "inpaint_positive": {
+        "tooltip": "可选。仅用于裁剪区域的提示词，例如 'close-up of a woman's face, natural skin'。重绘时会取代 positive 使用。当 positive 描述的是整个场景时建议使用。"
+      },
+      "negative": {
+        "tooltip": "可选。cfg 1 的模型留空；SDXL 等使用负面提示词的模型请接入。"
+      },
+      "tone_match": {
+        "tooltip": "开启：重绘内容粘贴回去时，会找回原图的亮度、对比度和颜色，同时保留新的细节。没有它的话，轻度重绘会显得有点平淡发灰。如果重绘本来就要改变颜色（新的衬衫颜色、不同的物体），请关闭。"
+      },
+      "elements": {
+        "tooltip": "LC Bounding Boxes 的元素，用于 pick = in box。"
+      }
+    }
+  },
+  "LCCharacterDetailerPipe": {
+    "description": "针对单个角色的 LC Smart Detailer。SAM 3 会找出所有匹配项（每张脸、每个人），但只重绘其中一个：从左、右或顶部数第 N 个、第 N 大的，或位于 LC Bounding Boxes 某个框内的那个。为每个角色各设一个：分出 model 分支，加上该角色的 LoRA，并在此选择其脸部。设置和引擎与 LC Smart Detailer 相同。",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe：model、VAE、seed、steps、cfg、sampler 和 scheduler 都来自这里。"
+      },
+      "prompt": {
+        "tooltip": "要精修什么，用逗号分隔的简单词语：hands, face。\n每个匹配项都会被找到（双手、每张脸）。加 :N 可限制数量，例如 face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "负责查找的 SAM 3 模型。选 SAM 3.1 下载项,或使用你放在 models/sam3 里的 sam3.pt / sam3.safetensors。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 需要有多大把握。越低找到的越多（也包括更多错误的），越高越挑剔。0.5 是不错的起点。\n颜色只是提示：“red dress”仍可能选中绿色裙子。不存在的东西不会被找到。"
+      },
+      "pick": {
+        "tooltip": "此 detailer 要重绘哪一个匹配项(SAM 3 会找出全部)。如果有多个词(face, hair),第一个词选定人物,其余的词在属于该人物时一并带上。\nleft to right / right to left / top to bottom:number 1 = 按该方向的第一个。\nlargest first:number 1 = 最大的。\nin box:位于 LC Bounding Boxes 第 'number' 个框内的那个(接入它的 elements):即使姿势变化,脸也始终跟随其角色。"
+      },
+      "number": {
+        "tooltip": "选哪一个：1 = 第一个。当 pick 设为 in box 时，为 LC Bounding Boxes 上显示的框编号。"
+      },
+      "grow": {
+        "tooltip": "局部重绘前把遮罩扩大（正值）或缩小（负值）的像素数。稍微扩大可以盖住边缘。"
+      },
+      "feather": {
+        "tooltip": "遮罩边缘的柔和度，单位像素，让重绘区域与其余部分融合。0 = 硬边。"
+      },
+      "blend": {
+        "tooltip": "重绘内容粘贴的比例：1 = 全部。低于 1 时新旧像素会混合，重绘时略有移动的特征（睫毛、眼睑）可能出现重影。想要更轻的重绘，请降低 denoise。"
+      },
+      "padding": {
+        "tooltip": "每个裁剪区域包含的周围图像像素数，让模型看到上下文。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "每个裁剪区域都会按约这个像素平方数重绘（1024 = 1 百万像素），不论其形状。越高 = 细节越多，速度越慢。"
+      },
+      "denoise": {
+        "tooltip": "重绘的程度。低值保留形状并修正细节，高值从头重绘。"
+      },
+      "image": {
+        "tooltip": "可选。空 = 使用 pipe 的图像。当中间有不带 pipe 的节点改动了图片时,接入这个。"
+      },
+      "model": {
+        "tooltip": "可选。在此接入模型,用它代替 pipe 里的模型(例如带了 LoRA 的,或不同的模型)。"
+      },
+      "vae": {
+        "tooltip": "可选。在此接入 VAE,用它代替 pipe 里的。"
+      },
+      "positive": {
+        "tooltip": "这张图的 prompt。描述整个场景的 prompt,在 denoise 0.3 及以上时可能被画进每个裁切区域(脸里出现一个完整的小场景):接入 inpaint_positive 可避免。"
+      },
+      "inpaint_positive": {
+        "tooltip": "可选。仅用于裁剪区域的提示词，例如 'close-up of a woman's face, natural skin'。重绘时会取代 positive 使用。当 positive 描述的是整个场景时建议使用。"
+      },
+      "negative": {
+        "tooltip": "可选。cfg 1 的模型留空；SDXL 等使用负面提示词的模型请接入。"
+      },
+      "tone_match": {
+        "tooltip": "开启：重绘内容粘贴回去时，会找回原图的亮度、对比度和颜色，同时保留新的细节。没有它的话，轻度重绘会显得有点平淡发灰。如果重绘本来就要改变颜色（新的衬衫颜色、不同的物体），请关闭。"
+      },
+      "cfg": {
+        "tooltip": "重绘用的 CFG。1 适用于 Krea 2、Flux、Z-Image，在 detailer denoise（最高约 0.4）下 SDXL 也适用（已测试：SDXL 在 cfg 1 到 7 看起来一样）。用来取代 pipe 里的 cfg_1，后者通常是主采样器的值。"
+      },
+      "elements": {
+        "tooltip": "LC Bounding Boxes 的元素，用于 pick = in box。"
+      }
+    }
+  },
+  "LCDetailFinder": {
+    "description": "用 SAM 3 一次找出所有匹配项（每张脸），供每个角色各用一个 detailer。之后 LC Detail Sorter 会将它们排序并分别输出，每个角色对应一个 LC Detailer For Each。",
+    "inputs": {
+      "prompt": {
+        "tooltip": "要查找的内容，例如 face。输入多个词（face, hair）时，第一个是被计数的对象，其余的会归入各自所属的匹配：每张脸都有自己的头发。"
+      },
+      "sam3_model": {
+        "tooltip": "负责查找的 SAM 3 模型。选 SAM 3.1 下载项,或使用你放在 models/sam3 里的 sam3.pt / sam3.safetensors。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 需要有多大把握。越低找到的越多（也包括更多错误的），越高越挑剔。0.5 是不错的起点。\n颜色只是提示：“red dress”仍可能选中绿色裙子。不存在的东西不会被找到。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "每个匹配的 SAM 3 遮罩，供 LC Detail Sorter 使用（或直接接入 LC Detailer For Each 来全部重绘）。"
+      },
+      "1": {
+        "tooltip": "找到的数量（第一张图像）。"
+      }
+    }
+  },
+  "LCDetailSorter": {
+    "description": "把 LC Detail Finder 的匹配项排序并分别输出：输出 1 = 第一个，2 = 第二个。预览中的编号方式相同。",
+    "inputs": {
+      "sam3_masks": {
+        "tooltip": "来自 LC Detail Finder。"
+      },
+      "pick": {
+        "tooltip": "输出的计数顺序。left to right：1 = 最左边。largest first：1 = 最大的（通常是最近的）。"
+      },
+      "image": {
+        "tooltip": "可选：图片，用于带编号的预览。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "按所选顺序排列的第 1 个匹配项的 SAM 3 遮罩（数量不足时为空）。接到该角色的 LC Detailer For Each。"
+      },
+      "1": {
+        "tooltip": "按所选顺序的第 2 个匹配项的 SAM 3 蒙版（不足时为空）。接到该角色的 LC Detailer For Each。"
+      },
+      "2": {
+        "tooltip": "按所选顺序的第 3 个匹配的 SAM 3 遮罩（匹配数不足时为空）。接到该角色的 LC Detailer For Each。"
+      },
+      "3": {
+        "tooltip": "按所选顺序的第 4 个匹配项的 SAM 3 蒙版(不足 4 个时为空)。接到该角色的 LC Detailer For Each。"
+      },
+      "4": {
+        "tooltip": "按所选顺序的第 5 个匹配项的 SAM 3 mask（不足 5 个时为空）。接入该角色的 LC Detailer For Each。"
+      },
+      "5": {
+        "tooltip": "按所选顺序排列的第 6 个匹配项的 SAM 3 遮罩（数量不足时为空）。接到该角色的 LC Detailer For Each。"
+      },
+      "6": {
+        "tooltip": "按所选顺序的第 7 个匹配项的 SAM 3 蒙版（不足时为空）。接到该角色的 LC Detailer For Each。"
+      },
+      "7": {
+        "tooltip": "按所选顺序排列的第 8 个匹配的 SAM 3 遮罩（不足 8 个时为空）。请接到该角色的 LC Detailer For Each。"
+      }
+    }
+  },
+  "LCDetailerForEach": {
+    "description": "用该角色的模型（其 LoRA 分支）、各自的条件提示词和各自的 seed 重绘收到的内容（来自 LC Detail Sorter 的单个角色，或来自 LC Detail Finder 的全部）。可单独使用，也可配合 LC pipe：接入的 pipe 会填入模型、VAE、提示词和图片，而直接接在此处的内容优先。引擎与 LC Smart Detailer 相同。",
+    "inputs": {
+      "sam3_mask": {
+        "tooltip": "要重绘什么：LC Detail Sorter 的一个输出（一个角色），或 LC Detail Finder 的 sam3_masks（全部）。"
+      },
+      "grow": {
+        "tooltip": "局部重绘前把遮罩扩大（正值）或缩小（负值）的像素数。稍微扩大可以盖住边缘。"
+      },
+      "feather": {
+        "tooltip": "遮罩边缘的柔和度，单位像素，让重绘区域与其余部分融合。0 = 硬边。"
+      },
+      "padding": {
+        "tooltip": "每个裁剪区域包含的周围图像像素数，让模型看到上下文。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "每个裁剪区域都会按约这个像素平方数重绘（1024 = 1 百万像素），不论其形状。越高 = 细节越多，速度越慢。"
+      },
+      "sampler_name": {
+        "tooltip": "Sampler。\n接入 pipe 时使用 pipe 的值，除非这里接了别的东西。"
+      },
+      "scheduler": {
+        "tooltip": "Scheduler。\n接入 pipe 时，除非这里接了别的东西，否则使用 pipe 的值。"
+      },
+      "steps": {
+        "tooltip": "采样步数。\n接了 pipe 时，除非这里接入了其他内容，否则使用 pipe 的值。"
+      },
+      "cfg": {
+        "tooltip": "重绘用的 CFG。1 适用于 Krea 2、Flux、Z-Image、Anima,在 detailer denoise(最高约 0.4)下 SDXL 也适用(已测试:SDXL 在 cfg 1 到 7 看起来一样)。不会低于 1:低于 1 重绘会出现斑点。"
+      },
+      "denoise": {
+        "tooltip": "重绘的程度。低值保留形状并修正细节，高值从头重绘。"
+      },
+      "seed": {
+        "tooltip": "重绘用的 seed。\n接了 pipe 时，除非这里接入了其他内容，否则使用 pipe 的值。"
+      },
+      "pipe": {
+        "tooltip": "可选的 LC pipe：model、VAE、positive、negative 和图片都来自这里，除非在此节点上单独接线。可通过它串联各个 detailer。"
+      },
+      "image": {
+        "tooltip": "图片。留空 = 使用 pipe 的图片。"
+      },
+      "model": {
+        "tooltip": "可选。在此接入模型,用它代替 pipe 里的模型(例如带了 LoRA 的,或不同的模型)。"
+      },
+      "vae": {
+        "tooltip": "可选。在此接入 VAE,用它代替 pipe 里的。"
+      },
+      "positive": {
+        "tooltip": "这张图的 prompt。描述整个场景的 prompt,在 denoise 0.3 及以上时可能被画进每个裁切区域(脸里出现一个完整的小场景):接入 inpaint_positive 可避免。"
+      },
+      "inpaint_positive": {
+        "tooltip": "可选。仅用于裁剪区域的提示词，例如 'close-up of a woman's face, natural skin'。重绘时会取代 positive 使用。当 positive 描述的是整个场景时建议使用。"
+      },
+      "negative": {
+        "tooltip": "可选。cfg 1 的模型留空；SDXL 等使用负面提示词的模型请接入。"
+      },
+      "tone_match": {
+        "tooltip": "开启：重绘内容粘贴回去时，会找回原图的亮度、对比度和颜色，同时保留新的细节。没有它的话，轻度重绘会显得有点平淡发灰。如果重绘本来就要改变颜色（新的衬衫颜色、不同的物体），请关闭。"
+      }
+    }
+  },
+  "LCPersonMask": {
+    "description": "选取人物的各个部位：face、hair、body、clothes、accessories、background。使用 Segformer 或 MediaPipe，可选 guided filter / VITMatte 精修。仅皮肤：mediapipe，face + body，开启 remove_features（用 SAM 3 切掉眼睛、眉毛、嘴唇和牙齿）。",
+    "inputs": {
+      "image": {
+        "tooltip": "含有人物的图像。"
+      },
+      "engine": {
+        "tooltip": "segformer：分辨率更高。Body = 仅手臂和腿（裸露的躯干和脖子会被当作衣服）。\nmediapipe：body 包含躯干和脖子的皮肤。需要 mediapipe 包。"
+      },
+      "segformer_model": {
+        "tooltip": "由 segformer 引擎使用。标有 'Download' 的条目会在首次运行时下载。"
+      },
+      "body": {
+        "tooltip": "脸部以下的皮肤。具体范围见 engine。"
+      },
+      "accessories": {
+        "tooltip": "帽子、眼镜、鞋子、包（以及模型视为配饰的其他东西）。"
+      },
+      "confidence": {
+        "tooltip": "模型需要有多大把握。越低选区越大，越高选区越小。"
+      },
+      "refine": {
+        "tooltip": "原始遮罩的边缘优化。vitmatte 最适合头发，guided_filter 速度快，none 保留原始遮罩。"
+      },
+      "vitmatte_model": {
+        "tooltip": "仅在 refine 为 vitmatte 时使用。"
+      },
+      "edge_erode": {
+        "tooltip": "Trimap：确定前景从 mask 边缘向内收缩多远（像素）。"
+      },
+      "edge_dilate": {
+        "tooltip": "Trimap：未知带从 mask 边缘向外延伸多远（像素）。"
+      },
+      "black_point": {
+        "tooltip": "等于或低于此值的蒙版值变为 0。"
+      },
+      "white_point": {
+        "tooltip": "mask 值达到或高于此值时变为 1。"
+      },
+      "max_megapixels": {
+        "tooltip": "仅 vitmatte。较大的图像按此尺寸抠图，再缩放回去。"
+      },
+      "remove_features": {
+        "tooltip": "使用 SAM 3（LC Segment Anything 和 LC Smart Detailer 所用的模型）把眼睛、眉毛、嘴唇和牙齿从脸上抠出来。engine 为 mediapipe 且开启 face + body 时，得到的是供 LC Skin Beauty、LC Skin Upscale 或 LC Sharpen Pro 使用的纯皮肤遮罩。仅在 face 开启时运行。"
+      }
+    }
+  },
+  "LCTouchMask": {
+    "description": "精确遮罩一个对象：围着它画一圈，SAM 3 会找出边缘。点按可扩展到更大一级（脸、+ 头发、头、人），双击后退一级。Ctrl + 绘制为抠除。",
+    "inputs": {
+      "image": {
+        "tooltip": "要做蒙版的图片。上游的 Load Image 会立即显示,其他节点要运行一次后才显示。"
+      },
+      "sam3_model": {
+        "tooltip": "找出边缘。与 LC Segment Anything 和 LC Smart Detailer 使用的是同一个 SAM 3 模型。"
+      },
+      "person_parts": {
+        "tooltip": "对人物，taps 按身体部位生长（face、hair、head、clothes、person），使用 LC Person Mask 所用的 Segformer 模型。off：每一步都由 SAM 3 决定。"
+      },
+      "block": {
+        "tooltip": "if_empty_mask：未选择任何内容时，下游全部停止，这样你可以先选择，再重新排队。"
+      },
+      "grow": {
+        "tooltip": "将最终遮罩扩张（低于 0 则收缩）这么多像素。"
+      },
+      "feather": {
+        "tooltip": "边缘柔化,单位像素。"
+      },
+      "invert": {
+        "tooltip": "反转遮罩（选区以外的全部内容）。"
+      },
+      "selections": {
+        "tooltip": "内部使用：你绘制和点击的内容。"
+      },
+      "threshold": {
+        "tooltip": "像素需要多确定才会被纳入。越低纳入越多（飘逸的发丝、柔和的边缘），越高越紧。"
+      },
+      "smooth": {
+        "tooltip": "清理边缘:填补针孔、去掉零星杂点、圆滑锯齿边缘,而不缩小选区。0 = 原始。"
+      },
+      "refine": {
+        "tooltip": "运行时的边缘处理（预览显示的是处理前的选区）。guided_filter：快，跟随图像边缘。vitmatte：最适合头发，较慢。none：硬选区。"
+      }
+    }
+  },
+  "LCImageBlendAdvance": {
+    "description": "把图层放到背景上(位置、缩放、长宽比、旋转、镜像),并通过可选的蒙版,用 29 种混合模式之一进行混合。",
+    "inputs": {
+      "layer_image": {
+        "tooltip": "图层。如果有 alpha 通道，会使用它。"
+      },
+      "blend_mode": {
+        "tooltip": "标准混合模式。overlay 参考背景，hard_light 参考图层。\nLayerStyle 旧版 ImageBlend 节点把这两者弄反了；见 swap_roles。"
+      },
+      "opacity": {
+        "tooltip": "图层强度，百分比。"
+      },
+      "swap_roles": {
+        "tooltip": "交换哪张图是底图、哪张是混合图,用于该模式的公式。\n开启 + overlay 时可复现 LayerStyle ImageBlend 旧的 'overlay'(标准的 hard_light)。"
+      },
+      "invert_mask": {
+        "tooltip": "翻转 layer_mask（黑变为可见）。"
+      },
+      "x_percent": {
+        "tooltip": "图层中心，占背景宽度的百分比。50 = 居中。"
+      },
+      "y_percent": {
+        "tooltip": "图层中心，占背景高度的百分比。50 = 居中。"
+      },
+      "scale": {
+        "tooltip": "图层尺寸倍率。"
+      },
+      "aspect_ratio": {
+        "tooltip": "拉伸图层高度。1 = 保持比例。"
+      },
+      "rotate": {
+        "tooltip": "角度，逆时针。"
+      },
+      "transform_method": {
+        "tooltip": "缩放或旋转时图层如何重采样。lanczos 是缩放时最锐利的;nvidia_rtx_vsr 使用 RTX Video Super Resolution 放大(RTX 显卡,缩小时用 lanczos);旋转本身始终用 bicubic 采样,与 PIL 一致。"
+      },
+      "anti_aliasing": {
+        "tooltip": "通过放大绘制再缩小来平滑旋转后的边缘。0 = 关闭。越高越慢。"
+      },
+      "background_image": {
+        "tooltip": "图层所放置的图像。不连接则将图层放在与图层同尺寸的透明画布上（此时输出为 RGBA，遮罩作为其 alpha）。"
+      },
+      "layer_mask": {
+        "tooltip": "白色 = 显示该图层。会与图层的 alpha（如有）相乘。"
+      }
+    }
+  },
+  "LCAutoAdjust": {
+    "description": "自动色阶（逐通道、亮度、饱和度或单色），带有 balance、brightness、contrast 和 saturation 微调、强度混合以及可选遮罩。",
+    "inputs": {
+      "image": {
+        "tooltip": "如果有 alpha 通道，会保留，并在未连接遮罩时用作遮罩。"
+      },
+      "mode": {
+        "tooltip": "RGB:各颜色通道单独拉伸(同时去除偏色)。\nlum + sat:先拉伸饱和度,再拉伸亮度。\nluminance:只拉伸亮度,颜色不变。\nsaturation:只拉伸饱和度。\nmono:拉伸黑白版本。"
+      },
+      "strength": {
+        "tooltip": "使用结果的多少，以百分比表示。"
+      },
+      "brightness": {
+        "tooltip": "自动色阶之后的修剪。"
+      },
+      "contrast": {
+        "tooltip": "自动色阶之后的修剪。"
+      },
+      "saturation": {
+        "tooltip": "自动色阶之后的修剪。"
+      },
+      "red": {
+        "tooltip": "色彩平衡:正值提亮红色通道,负值压暗。mono 模式下不使用。"
+      },
+      "green": {
+        "tooltip": "绿色通道的色彩平衡。"
+      },
+      "blue": {
+        "tooltip": "蓝色通道的色彩平衡。"
+      },
+      "mask": {
+        "tooltip": "同时限定测量色阶的位置和应用结果的位置。"
+      }
+    }
+  },
+  "LCDepthAnythingV2": {
+    "description": "Depth Anything V2 深度图，逐图归一化到 0-1。除非开启 invert，否则亮 = 近。输出 3 通道图像和同一张图的 MASK。",
+    "inputs": {
+      "image": {
+        "tooltip": "要估算深度的图像。"
+      },
+      "model": {
+        "tooltip": "Depth Anything V2 权重。许可证写在标签里：Small 为 Apache-2.0，Base / Large / Giant 为 CC-BY-NC-4.0（非商用）。\n会使用你已有的文件（models/depthanything 或 comfyui_controlnet_aux），或在首次运行时下载。"
+      },
+      "resolution": {
+        "tooltip": "处理时短边的尺寸（会取整为 14 的倍数）。518 是模型训练时的尺寸；大图上调高可能增加细节。"
+      },
+      "invert": {
+        "tooltip": "Off：亮 = 近（Depth Anything 和深度 ControlNet 使用的方式）。On：亮 = 远。"
+      }
+    }
+  },
+  "LCMOSSControl": {
+    "description": "MOSS Image 的 ControlNet：图像跟随色块区域图和 / 或深度图（darask0 的 Color-Depth Control 适配器）。两种图可以只用其一。",
+    "inputs": {
+      "model": {
+        "tooltip": "MOSS Image SFT(或 Base)。可配合 8-step turbo LoRA 使用。"
+      },
+      "vae": {
+        "tooltip": "Flux.2 VAE：贴图用它编码。"
+      },
+      "control_file": {
+        "tooltip": "darask0 的 moss-control.safetensors,放在 models/model_patches。"
+      },
+      "strength": {
+        "tooltip": "适配器 LoRA 的强度。输入层始终完全应用。"
+      },
+      "color_end": {
+        "tooltip": "在步数的这个比例之后停止颜色图:先定布局,再由模型完成表面。由真实照片生成的图:1.0。人台和手绘图:0.4 - 0.5。"
+      },
+      "depth_end": {
+        "tooltip": "在步数的这个比例之后停止深度图。真实照片:1.0。人台:0.15(配合 8-step turbo LoRA 为 0.25),或者不用 depth。再往后人台会透出来。"
+      },
+      "color_map": {
+        "tooltip": "纯色块，每个物体或区域一种颜色（颜色只是 ID）。黑色 = 未指定。尺寸与图片相同。每种颜色请搭配一个区域提示词。"
+      },
+      "depth_map": {
+        "tooltip": "灰度深度图,近 = 白(LC Depth Anything V2 就是这样)。与图片尺寸相同。"
+      }
+    }
+  },
+  "LCNormalBAE": {
+    "description": "BAE 表面法线图(RGB = XYZ),与 ControlNet 的 normal_bae 生成的风格相同。可选的模糊(blur_radius、sigma)使用 ComfyUI 的 Blur Image。",
+    "inputs": {
+      "image": {
+        "tooltip": "要估计表面法线的图像。"
+      },
+      "model": {
+        "tooltip": "BAE 权重（scannet.pt）。基于 ScanNet 训练，其条款不适合商用，且该权重的 Hugging Face 页面只写了 'other'。商用前请先核实。\n使用你已有的副本（models/normalbae 或 comfyui_controlnet_aux），或在首次运行时下载。"
+      },
+      "resolution": {
+        "tooltip": "较短边的处理尺寸。ControlNet 用的是 512；更高会更慢，并可能增加细节。"
+      },
+      "flip_y": {
+        "tooltip": "翻转绿色通道（OpenGL 与 DirectX 风格的法线贴图）。"
+      },
+      "blur_radius": {
+        "tooltip": "用 ComfyUI 的 Blur Image 模糊最终的法线图。半径单位为像素,模糊核宽度为 2 x radius + 1。可平滑 BAE 在平整表面留下的细小噪点。0 = 不模糊。"
+      },
+      "sigma": {
+        "tooltip": "模糊在其半径内扩散的均匀程度（含义与 Blur Image 相同）。越高 = 越强，越接近普通的方框模糊。越低 = 越柔和，权重偏向中心。仅在 blur_radius 大于 0 时使用。"
+      }
+    }
+  },
+  "LCFaceCrop": {
+    "description": "按格式裁剪（LC Aspect Ratio Simplifier 的预设），并把人脸摆在合适位置，而不是盲目居中裁剪。widest 在格式允许范围内保留尽可能多的画面；upper body、head & shoulders 和 face 会按脸的大小裁得更紧（用于角色数据集）。由 SAM 3 找脸，或接入蒙版来框取任意内容。",
+    "inputs": {
+      "aspect_ratio": {
+        "tooltip": "要裁剪成的格式（与 LC Aspect Ratio Simplifier 的列表相同）。"
+      },
+      "custom_width": {
+        "tooltip": "aspect_ratio 为 custom 时使用。"
+      },
+      "custom_height": {
+        "tooltip": "aspect_ratio 为 custom 时使用。"
+      },
+      "framing": {
+        "tooltip": "widest：在格式允许的范围内取尽可能多的画面，脸的位置合理。upper body / head & shoulders / face：更紧，按脸的大小确定（用于数据集）。"
+      },
+      "faces": {
+        "tooltip": "all：找到的每张脸都留在裁剪内。largest：只框住主要的脸。"
+      },
+      "output_size": {
+        "tooltip": "preset size：缩放到该格式的尺寸（如 1080x1350）。keep pixels：按图片自身分辨率裁剪。"
+      },
+      "sam3_model": {
+        "tooltip": "用于找脸的 SAM 3 模型。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 需要多确定它是一张脸。"
+      },
+      "mask": {
+        "tooltip": "可选。以此遮罩取景，而不是搜索人脸（任何主体：汽车、产品、宠物）。"
+      }
+    }
+  },
+  "LCVOSRUpscale": {
+    "description": "内置 VOSR 2.0 一步放大。锐化并补充细节，而不用你的模型重绘画面，所以 detailer 的成果会保留下来。请在 detailer 之后运行。权重首次运行时下载（CSWRY/VOSR，Apache-2.0）。",
+    "inputs": {
+      "upscale_by": {
+        "tooltip": "最终尺寸。1.5x 到 4x 为单次处理（1.5x 比 2x 快约三分之一）。6x 和 8x 分两次处理（3x + 2x、4x + 2x）：一次放大太多会让皮肤碎成一块块。"
+      },
+      "seed": {
+        "tooltip": "VOSR2 是从噪声出发的一步：seed 只会改变最细的颗粒。"
+      },
+      "color_alignment": {
+        "tooltip": "让结果的颜色与输入保持一致。wavelet = 匹配最好。"
+      },
+      "tile_size": {
+        "tooltip": "放大模型的像素分块。VOSR2 以 512 训练：保持在 512。"
+      },
+      "vae_tile_size": {
+        "tooltip": "其 VAE 的像素 tile。越低 = VRAM 越少，稍慢。"
+      },
+      "protect_mask": {
+        "tooltip": "可选。LC Smart Detailer 的蒙版（多个用 max 合并）。会以新尺寸作为 'protected' 输出。"
+      }
+    }
+  },
+  "LCVOSRUpscalePipe": {
+    "description": "在 LC pipe 上运行的 LC VOSR2 Upscale：放大 pipe 中的图像（细节重绘器留在里面的结果），并把结果放回 pipe，同时把细节重绘器处理的区域一并缩放（'protected' 输出）。",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe:图片取自它的 image。"
+      },
+      "upscale_by": {
+        "tooltip": "最终尺寸。1.5x 到 4x 为单次处理（1.5x 比 2x 快约三分之一）。6x 和 8x 分两次处理（3x + 2x、4x + 2x）：一次放大太多会让皮肤碎成一块块。"
+      },
+      "seed": {
+        "tooltip": "VOSR2 是从噪声出发的一步：seed 只会改变最细的颗粒。"
+      },
+      "color_alignment": {
+        "tooltip": "让结果的颜色与输入保持一致。wavelet = 匹配最好。"
+      },
+      "tile_size": {
+        "tooltip": "放大模型的像素分块。VOSR2 以 512 训练：保持在 512。"
+      },
+      "vae_tile_size": {
+        "tooltip": "其 VAE 的像素 tile。越低 = VRAM 越少，稍慢。"
+      },
+      "image": {
+        "tooltip": "可选。空 = 使用 pipe 的图像。当中间有不带 pipe 的节点改动了图片时,接入这个。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "包含放大后图片的 pipe，以及随之缩放的 detailer 区域。"
+      },
+      "1": {
+        "tooltip": "放大后的图片。"
+      },
+      "2": {
+        "tooltip": "detailer 重绘的脸和手，按新尺寸。接入 LC Skin Texture / LC Skin Upscale 的 protect_mask，这样它们就不会在 detailer 的成果上再叠加皮肤细节。"
+      }
+    }
+  }
+}
