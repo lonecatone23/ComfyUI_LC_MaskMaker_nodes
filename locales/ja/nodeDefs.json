@@ -1,0 +1,1224 @@
+{
+  "LCImageOutpaint": {
+    "description": "インタラクティブなアウトペイント準備: ノード上でキャンバスの端を外側にドラッグします。元画像はグレーのキャンバス上に置かれ、新しい領域はマスクが白になります。アスペクトのロックは任意 (free / original / 一般的な比率)。block を if_empty_mask にすると、端を引き出すまで下流のすべてが止まります。",
+    "inputs": {
+      "image": {
+        "tooltip": "拡張する元の画像。"
+      },
+      "block": {
+        "tooltip": "if_empty_mask: 少なくとも1つの辺を引き出す（4つの拡張がすべて 0 ではなくなる）まで、このノード以降のすべてが停止します。キャンバスを設定してから、もう一度キューに入れてください。\nnever: 常にキャンバスとマスクを通します。"
+      },
+      "hold_mask": {
+        "tooltip": "held:設定したキャンバス(下の拡張量)を保持し、実行のたびにその状態で画像を通します。\nsnap_to_image:何も引き出していなければ、画像はそのまま通過します(block を if_empty_mask に設定している場合は、そこで実行が止まります)。エッジをドラッグして広げて再実行すると、その実行では広げた状態が使われ、その後ボックスは画像に戻ります。そのため、新しい画像は常にきれいなボックスから始まります。"
+      },
+      "left": {
+        "tooltip": "左側の拡張量。元の幅に対する %。"
+      },
+      "top": {
+        "tooltip": "上側の拡張量(元の高さに対する%)。"
+      },
+      "right": {
+        "tooltip": "右側の拡張量。元の幅に対する %。"
+      },
+      "bottom": {
+        "tooltip": "下側の拡張量。元の高さに対する %。"
+      },
+      "aspect": {
+        "tooltip": "最終キャンバスのアスペクト比をロックします。'original' は元画像に合わせます。"
+      },
+      "snap_to": {
+        "tooltip": "最終的な幅/高さを、この倍数に切り上げます(余りは右/下に付きます)。1 = オフ。"
+      },
+      "max_megapixels": {
+        "tooltip": "このキャンバスサイズを超えてエッジをドラッグできないようにし、モデルが得意とするサイズ以上にキャンバスが大きくならないようにします (Krea 2 と AnyPaint は約 2 が好み)。制限されるのはドラッグだけで、実行時のサイズが変更されることはありません。0 = 制限なし。"
+      }
+    }
+  },
+  "LCImageRotatePad": {
+    "description": "ノード上でドラッグして画像を回転、クロップ、パディングします:丸いハンドルで回転し、フレームの端でパディング(外へドラッグ)またはクロップ(内へドラッグ)します。マスクは新しい領域と、回転で生じた角を覆います。",
+    "inputs": {
+      "image": {
+        "tooltip": "回転、クロップ、パディングする画像です。"
+      },
+      "keep_frame": {
+        "tooltip": "keep: 回転とフレームは、実行を重ねても設定したままになります。同じ画像を再実行するとき（ポストプロセス、同じ seed）に使います。\nsnap back after run: 実行が終わると、回転とフレームが元の画像に戻るので、次の画像はきれいな状態から始まります。"
+      },
+      "angle": {
+        "tooltip": "時計回りの回転角(度)です。ノード上の丸いハンドルをドラッグしても設定できます(Shift で15°刻み)。"
+      },
+      "fit": {
+        "tooltip": "expand: 回転した画像全体を囲む枠から始まり、空の角はモデルが描くようにマスクされます。\ncrop: 空の角がない最大のボックスから始まります。"
+      },
+      "fill": {
+        "tooltip": "モデルが描く前に、新しい領域に入れるもの。gray は Krea 2 と AnyPaint が想定する値です。edge は外側のピクセルを引き伸ばします（見えているものをコピーするモデル向け）。"
+      },
+      "left": {
+        "tooltip": "フレームの左端。元の幅に対する %。正の値でパディング、負の値でクロップ。"
+      },
+      "top": {
+        "tooltip": "フレームの上端、元の高さに対する %。プラスでパディング、マイナスでクロップ。"
+      },
+      "right": {
+        "tooltip": "フレームの右端。元の幅に対する %。正の値でパディング、負の値でクロップ。"
+      },
+      "bottom": {
+        "tooltip": "フレーム下端(元の高さに対する%)。正の値でパディング、負の値でクロップします。"
+      },
+      "aspect": {
+        "tooltip": "出力の形を固定します。'original' は元の画像に合わせます。"
+      },
+      "snap_to": {
+        "tooltip": "出力の幅と高さを、この倍数に切り上げます(余りは右と下に付きます)。1 = オフ。"
+      },
+      "block": {
+        "tooltip": "until turned or framed: 画像に手が加えられていない間 (回転、クロップ、パディングなし)、このノードで実行が止まります。一度実行してここで画像を確認し、設定してから再実行してください。\nnever: 手が加えられていなくても常に画像を渡します。"
+      },
+      "max_megapixels": {
+        "tooltip": "このキャンバスサイズを超えてエッジをドラッグできないようにし、モデルが得意とするサイズ以上にキャンバスが大きくならないようにします (Krea 2 と AnyPaint は約 2 が好み)。制限されるのはドラッグだけで、実行時のサイズが変更されることはありません。0 = 制限なし。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "回転、クロップ、パディング済みの画像。"
+      },
+      "1": {
+        "tooltip": "モデルが描画する部分は白:パディングと、回転で生じた角です。"
+      },
+      "2": {
+        "tooltip": "出力 width。"
+      },
+      "3": {
+        "tooltip": "出力 height。"
+      }
+    }
+  },
+  "LCSplineMask": {
+    "description": "ノード上でマスクを描きます：クリックで点を追加（上限なし）、ドラッグで形を調整、または鉛筆でフリーハンド。Feather、反転、不透明度が組み込まれています。",
+    "inputs": {
+      "image": {
+        "tooltip": "マスクを描く画像です。"
+      },
+      "block": {
+        "tooltip": "if_empty_mask:何も描かれていない場合(シェイプなし、または真っ黒のマスク)、このノードより下流がすべて停止するので、描いてからもう一度キューに入れてください。\nnever:画像とマスクを常にそのまま通します。"
+      },
+      "pencil": {
+        "tooltip": "points:クリックで追加、ドラッグで移動、Shift+クリックで削除。pencil:フリーハンドで描きます。"
+      },
+      "smooth": {
+        "tooltip": "smooth は、点の間を直線ではなく曲線でつなぎます。"
+      },
+      "invert": {
+        "tooltip": "マスクを反転します（外側が白になります）。"
+      },
+      "feather": {
+        "tooltip": "エッジのやわらかさ（ピクセル）（ガウシアンブラーの半径）。"
+      },
+      "opacity": {
+        "tooltip": "マスクの強さ。マスク値をスケールします (1.0 = ベタ)。"
+      },
+      "overlay_opacity": {
+        "tooltip": "ノード上のプレビューにマスクをどれだけ強く表示するか。表示のみ。"
+      },
+      "points": {
+        "tooltip": "内部用:正規化されたポイントのリスト。"
+      }
+    }
+  },
+  "LCMaskRefine": {
+    "description": "トライマップでマスクを引き締めます。edge_erode と edge_dilate で不確定領域の幅を設定し、guided filter または VITMatte はその領域だけを判定します。ノード上にビフォー/アフターのワイプとトライマップ表示があります。",
+    "inputs": {
+      "image": {
+        "tooltip": "マスクが属する画像。ガイドとして使われます。"
+      },
+      "mask": {
+        "tooltip": "補正するマスク。サイズは問わず、画像に合わせてリサイズされます。"
+      },
+      "method": {
+        "tooltip": "vitmatte:マッティングモデルで、髪や細かいディテールに最適です。\nguided_filter:高速でモデル不要、不確定領域をエッジに合わせます。\nnone:マッティングをスキップし、grow、隙間の修正、levels、feather のみ行います。"
+      },
+      "vitmatte_model": {
+        "tooltip": "vitmatte でのみ使われます。'Download' と表示されたエントリーは、初回実行時に取得されます。"
+      },
+      "grow": {
+        "tooltip": "trimap を作成する前に、マスクを拡大（正）または縮小（負）するピクセル数。"
+      },
+      "fix_gap": {
+        "tooltip": "この幅(ピクセル)程度までの小さな穴や亀裂を塞ぎます。0 = オフ。"
+      },
+      "fix_threshold": {
+        "tooltip": "隙間を埋めるとき、マスクのピクセルがどれだけ白ければ確実とみなすか。"
+      },
+      "edge_erode": {
+        "tooltip": "TRIMAP。確実な前景領域を、マスクの縁から内側にどれだけ引き込むか（ピクセル）。\nこの内側はすべて白に固定されます。小さいほどタイト、判定する領域が少なくなります。"
+      },
+      "edge_dilate": {
+        "tooltip": "TRIMAP。unknown の帯がマスクのエッジの外側へどこまで広がるかをピクセルで指定します。\nこれより外側はすべて黒に固定されます。小さいほどタイトで、判定する範囲が減ります。"
+      },
+      "softness": {
+        "tooltip": "guided_filter のみ。低いほど画像のエッジにタイトに沿い、高いほど滑らかになります。"
+      },
+      "threshold": {
+        "tooltip": "trimap を作るときに、入力マスクを内側と外側に分ける位置です。1.0 に近づけると、ソフトなマスクの確実なコア部分だけが使われます。"
+      },
+      "black_point": {
+        "tooltip": "この値以下のマスク値は 0 になります。うっすらした霞を消します。"
+      },
+      "white_point": {
+        "tooltip": "この値以上のマスク値は 1 になります。被写体をしっかりさせます。"
+      },
+      "feather": {
+        "tooltip": "最終的なエッジのやわらかさ（ピクセル）。"
+      },
+      "edge_color_spread": {
+        "tooltip": "Cutout のみ。被写体のベタ色をこのピクセル数だけ外側に広げ、背景のハローを消します。0 = オフ。"
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte のみ。大きな画像はこのサイズでマッティングしてから、元のサイズに戻します。"
+      },
+      "detail_erode": {
+        "tooltip": "edge_erode と同じですが、detail_region の領域 (髪) 用です。広いと細い毛束に余裕が生まれます。"
+      },
+      "detail_dilate": {
+        "tooltip": "edge_dilate と同じですが、detail_region の領域用です。"
+      },
+      "detail_blur": {
+        "tooltip": "detail_region の結果が周囲に馴染む境目をやわらげます。"
+      },
+      "preview_view": {
+        "tooltip": "ノード上のワイプに表示する内容です。\ntrimap: 左が trimap (黒 = 確実な背景、グレー = 不明、白 = 確実な前景)、右が結果です。"
+      },
+      "detail_region": {
+        "tooltip": "任意。白い領域（髪など）では、edge_erode / edge_dilate の代わりに detail_erode / detail_dilate が使われます。"
+      }
+    }
+  },
+  "LCRemBG": {
+    "description": "BiRefNet で背景を除去します。RGBA の切り抜き、マスク、単色の背景上の被写体を出力します。guided filter または VITMatte による補正も任意で使えます。",
+    "inputs": {
+      "image": {
+        "tooltip": "被写体を切り抜く元の画像。"
+      },
+      "model": {
+        "tooltip": "背景除去モデル。ライセンスはラベルに記載されています。\n'Download' と表示されたエントリーは、初回実行時に取得されます。"
+      },
+      "refine": {
+        "tooltip": "none:モデルのマスクをそのまま使います。\nguided_filter:高速で、エッジを画像に合わせます。\nvitmatte:髪や細かいディテール向けのマッティングモデルです。"
+      },
+      "vitmatte_model": {
+        "tooltip": "refine が vitmatte のときのみ使われます。"
+      },
+      "grow": {
+        "tooltip": "補正前にマスクを拡大(正の値)または縮小(負の値)するピクセル数です。"
+      },
+      "edge_erode": {
+        "tooltip": "trimap の調整: 確実な前景の領域をマスクのエッジから内側にどこまで引き込むか。小さいほどタイト。"
+      },
+      "edge_dilate": {
+        "tooltip": "トライマップの補正:不確定領域がマスクのエッジからどこまで広がるかです。小さいほど狭くなります。"
+      },
+      "black_point": {
+        "tooltip": "この値以下のマスク値は 0 になります。上げると、背景のうっすらした霞が消えます。"
+      },
+      "white_point": {
+        "tooltip": "この値以上のマスク値は 1 になります。下げると被写体がしっかりします。"
+      },
+      "feather": {
+        "tooltip": "最終的なエッジのやわらかさ（ピクセル）。"
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte のみ。大きな画像はこのサイズでマッティングしてから、元のサイズに戻します。"
+      },
+      "background": {
+        "tooltip": "on_background 出力での被写体の背景色。"
+      }
+    }
+  },
+  "LCSegmentAnything": {
+    "description": "説明を入力して対象を選択します。GroundingDINO + SAM（Apache-2.0、必要時にダウンロード）または SAM 3 を使い、その後に任意で guided filter / VITMatte による補正を行います。ノード上にBefore/Afterのワイプがあります。",
+    "inputs": {
+      "image": {
+        "tooltip": "切り抜く対象の画像です。"
+      },
+      "prompt": {
+        "tooltip": "選択対象を、カンマ区切りの簡単な単語で指定します: hair, eyes, bikini。\n各単語を個別に検出し、結果を結合します。"
+      },
+      "engine": {
+        "tooltip": "grounding_dino + sam: GroundingDINO がボックスを見つけ、SAM がマスクを作ります。Apache-2.0 のモデルで、初回使用時にダウンロードされます。\nsam3: SAM 3 が1ステップで両方を行います (SAM License)。SAM 3.1 のダウンロード版を選ぶか、models/sam3 にある自分の sam3.safetensors を使ってください。"
+      },
+      "dino_model": {
+        "tooltip": "grounding_dino + sam で使用します。'Download' と表示された項目は初回実行時に取得されます。"
+      },
+      "sam_model": {
+        "tooltip": "grounding_dino + sam で使用します。base が最速、huge が最高精度です。"
+      },
+      "sam3_model": {
+        "tooltip": "sam3 エンジンで使われます。"
+      },
+      "threshold": {
+        "tooltip": "grounding_dino + sam: 検出の信頼度です。低いほど多く検出し (誤検出も増え)、高いほど厳選します。"
+      },
+      "sam3_threshold": {
+        "tooltip": "sam3: 検出の信頼度。SAM 3 のスコアは高めに出るので、0.5 から始めるのが良いです。0.3 付近では、画像にない言葉に対してマッチをでっち上げ始めます。"
+      },
+      "max_objects": {
+        "tooltip": "grounding_dino + sam のみ。1つの単語につき、最大でこの数のボックスを残します(良いものから)。0 = すべて。"
+      },
+      "refine": {
+        "tooltip": "生のマスクのエッジ補正です。vitmatte は髪に最適、guided_filter は高速、none は生のマスクのままです。"
+      },
+      "vitmatte_model": {
+        "tooltip": "refine が vitmatte のときのみ使われます。"
+      },
+      "edge_erode": {
+        "tooltip": "Trimap: 確実な前景をマスクのエッジから内側にどこまで引き込むか (ピクセル)。"
+      },
+      "edge_dilate": {
+        "tooltip": "Trimap: unknown の帯がマスクのエッジの外側へどこまで広がるか (ピクセル)。"
+      },
+      "black_point": {
+        "tooltip": "この値以下のマスク値は 0 になります。"
+      },
+      "white_point": {
+        "tooltip": "この値以上のマスク値は 1 になります。"
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte のみ。大きな画像はこのサイズでマッティングしてから、元のサイズに戻します。"
+      },
+      "preview_view": {
+        "tooltip": "ノード上のワイプが表示するものです。Before は生のマスクです。"
+      }
+    }
+  },
+  "LCSmartInpaint": {
+    "description": "指定したもの(手、顔、目など)を見つけて、フルディテールで描き直します。手や顔ごとに個別にクロップし、inpaint_resolution まで拡大して描き直し、元の画像に馴染ませます。何も見つからない場合、画像はそのまま通過し、ノードがその旨を知らせます。\nネガティブ未接続:Flux、Krea 2、Anima などの cfg 1 モデルでは問題ありません。SDXL ではネガティブを接続してください。",
+    "inputs": {
+      "positive": {
+        "tooltip": "画像のプロンプトです。シーン全体を説明するプロンプトは、denoise 0.3 以上ですべてのクロップに描き込まれることがあります (顔の中に小さなシーン全体が出る)。防ぐには inpaint_positive をつないでください。"
+      },
+      "prompt": {
+        "tooltip": "ディテールを加える対象を、カンマ区切りの簡単な単語で指定します: hands, face。\nマッチしたものはすべて検出されます (両手、すべての顔)。:N を付けると数を制限できます。例: face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "検出を行う SAM 3 モデルです。SAM 3.1 のダウンロード版を選ぶか、models/sam3 にある自分の sam3.pt / sam3.safetensors を使ってください。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 がどれだけ確信している必要があるかです。低いほど多く見つけます(間違いも増えます)。高いほど慎重になります。0.5 が始めやすい値です。\n色はヒントにすぎません:'red dress' でも緑のドレスを選ぶことがあります。存在しないものは見つかりません。"
+      },
+      "grow": {
+        "tooltip": "インペイント前にマスクを拡大(正の値)または縮小(負の値)するピクセル数です。少し拡大するとエッジを覆えます。"
+      },
+      "feather": {
+        "tooltip": "マスクのエッジのやわらかさ(ピクセル)で、描き直した領域が周囲に馴染みます。0 = ハードエッジ。"
+      },
+      "blend": {
+        "tooltip": "描き直しをどれだけ貼り付けるか：1 = すべて。1未満では古いピクセルと新しいピクセルが混ざり、描き直しで少し動いた部分（まつ毛、まぶた）が二重に見えることがあります。軽い描き直しにしたい場合は、代わりに denoise を下げてください。"
+      },
+      "padding": {
+        "tooltip": "各クロップに含める周囲の画像のピクセル数で、モデルが文脈を把握できるようにします。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "形に関係なく、各クロップはおよそこの二乗のピクセル数（1024 = 1メガピクセル）で描き直されます。高い = ディテールが増え、遅くなります。"
+      },
+      "sampler_name": {
+        "tooltip": "サンプラー。"
+      },
+      "scheduler": {
+        "tooltip": "Scheduler。"
+      },
+      "steps": {
+        "tooltip": "サンプリングのステップ数。"
+      },
+      "cfg": {
+        "tooltip": "描き直しの CFG。Krea 2、Flux、Z-Image、Anima では 1 で動作し、ディテーラーの denoise (約 0.4 まで) なら SDXL でも動作します (テスト済み: SDXL は cfg 1 から 7 まで同じ見た目)。1 未満にはなりません。1 未満だと描き直しがまだらになります。"
+      },
+      "denoise": {
+        "tooltip": "どれだけ描き直すかです。低いと形を保ってディテールを直し、高いとゼロから描き直します。"
+      },
+      "seed": {
+        "tooltip": "描き直しのシード。"
+      },
+      "inpaint_positive": {
+        "tooltip": "任意。クロップ専用のプロンプト。例：'close-up of a woman's face, natural skin'。描き直しで positive の代わりに使われます。positive がシーン全体を記述している場合は常に推奨されます。"
+      },
+      "negative": {
+        "tooltip": "任意。cfg 1 のモデルでは空のままにします。SDXL など negative を使うモデルでは接続してください。"
+      },
+      "tone_match": {
+        "tooltip": "On: 描き直した部分が貼り付けられる際に、元の明るさ、コントラスト、色が戻され、新しいディテールは保たれます。オフだと、軽い描き直しは少し平坦でくすんだ仕上がりになります。描き直しで色を変えたいとき（シャツの色を変える、別のオブジェクトにするなど）はオフにしてください。"
+      }
+    }
+  },
+  "LCSmartInpaintPipe": {
+    "description": "指定したもの(手、顔、目など)を見つけて、フルディテールで描き直します。手や顔ごとに個別にクロップし、inpaint_resolution まで拡大して描き直し、元の画像に馴染ませます。何も見つからない場合、画像はそのまま通過し、ノードがその旨を知らせます。\nネガティブ未接続:Flux、Krea 2、Anima などの cfg 1 モデルでは問題ありません。SDXL ではネガティブを接続してください。",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe：model、VAE、seed、steps、cfg、sampler、scheduler はここから取得されます。"
+      },
+      "prompt": {
+        "tooltip": "ディテールを加える対象を、カンマ区切りの簡単な単語で指定します: hands, face。\nマッチしたものはすべて検出されます (両手、すべての顔)。:N を付けると数を制限できます。例: face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "検出を行う SAM 3 モデルです。SAM 3.1 のダウンロード版を選ぶか、models/sam3 にある自分の sam3.pt / sam3.safetensors を使ってください。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 がどれだけ確信している必要があるかです。低いほど多く見つけます(間違いも増えます)。高いほど慎重になります。0.5 が始めやすい値です。\n色はヒントにすぎません:'red dress' でも緑のドレスを選ぶことがあります。存在しないものは見つかりません。"
+      },
+      "grow": {
+        "tooltip": "インペイント前にマスクを拡大(正の値)または縮小(負の値)するピクセル数です。少し拡大するとエッジを覆えます。"
+      },
+      "feather": {
+        "tooltip": "マスクのエッジのやわらかさ(ピクセル)で、描き直した領域が周囲に馴染みます。0 = ハードエッジ。"
+      },
+      "blend": {
+        "tooltip": "描き直しをどれだけ貼り付けるか：1 = すべて。1未満では古いピクセルと新しいピクセルが混ざり、描き直しで少し動いた部分（まつ毛、まぶた）が二重に見えることがあります。軽い描き直しにしたい場合は、代わりに denoise を下げてください。"
+      },
+      "padding": {
+        "tooltip": "各クロップに含める周囲の画像のピクセル数で、モデルが文脈を把握できるようにします。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "形に関係なく、各クロップはおよそこの二乗のピクセル数（1024 = 1メガピクセル）で描き直されます。高い = ディテールが増え、遅くなります。"
+      },
+      "denoise": {
+        "tooltip": "どれだけ描き直すかです。低いと形を保ってディテールを直し、高いとゼロから描き直します。"
+      },
+      "image": {
+        "tooltip": "任意。空 = pipe の画像。pipe を持たないノードが途中で画像を変更した場合につないでください。"
+      },
+      "model": {
+        "tooltip": "任意。pipe のモデルの代わりに使うモデルをここにつなぎます (LoRA を適用したものや別のモデル)。"
+      },
+      "vae": {
+        "tooltip": "任意。pipe の VAE の代わりに使う VAE をここにつなぎます。"
+      },
+      "positive": {
+        "tooltip": "画像のプロンプトです。シーン全体を説明するプロンプトは、denoise 0.3 以上ですべてのクロップに描き込まれることがあります (顔の中に小さなシーン全体が出る)。防ぐには inpaint_positive をつないでください。"
+      },
+      "inpaint_positive": {
+        "tooltip": "任意。クロップ専用のプロンプト。例：'close-up of a woman's face, natural skin'。描き直しで positive の代わりに使われます。positive がシーン全体を記述している場合は常に推奨されます。"
+      },
+      "negative": {
+        "tooltip": "任意。cfg 1 のモデルでは空のままにします。SDXL など negative を使うモデルでは接続してください。"
+      },
+      "tone_match": {
+        "tooltip": "On: 描き直した部分が貼り付けられる際に、元の明るさ、コントラスト、色が戻され、新しいディテールは保たれます。オフだと、軽い描き直しは少し平坦でくすんだ仕上がりになります。描き直しで色を変えたいとき（シャツの色を変える、別のオブジェクトにするなど）はオフにしてください。"
+      },
+      "cfg": {
+        "tooltip": "描き直し用の CFG。1 は Krea 2、Flux、Z-Image で有効で、ディテーラーの denoise（約0.4まで）なら SDXL でも有効です（テスト済み：SDXL は cfg 1 から 7 まで同じ見た目でした）。パイプの cfg_1（通常はメインのサンプラーの値）の代わりに使われます。"
+      }
+    }
+  },
+  "LCKrea2AnyPaint": {
+    "description": "yijunwang2 の AnyPaint LoRA を使った Krea 2 のインペイント/アウトペイントです。学習時と同じ方法で行われます：キャンバス全体の参照、各ステップのあとに戻される残したピクセル、モデルがなじませる境界。マスク外の画像は変わらずそのまま戻ります。プロンプトには、完成した画像全体を記述してください。\nアウトペイント: LC Outpaint の control_image と control_mask を接続します。",
+    "inputs": {
+      "model": {
+        "tooltip": "Krea 2(Turbo)。LoRA とパッチはこのノードにだけ追加されます。"
+      },
+      "clip": {
+        "tooltip": "Krea 2 のテキストエンコーダー（Qwen3-VL 4B、CLIP タイプ krea2）。"
+      },
+      "mask": {
+        "tooltip": "白 = 描く、黒 = 残す。任意: LC Outpaint のキャンバスを使う場合、マスクなしならそのマスクが使われます。アウトペイントするには、LC Outpaint の control_image を image に、control_mask を mask につないでください。"
+      },
+      "prompt": {
+        "tooltip": "変更点だけでなく、完成した画像の全体を記述してください：\"a woman in a red coat on a snowy street\"。削除のみのプロンプト（\"remove the car\"）では、平坦な塊が残りがちです。"
+      },
+      "lora": {
+        "tooltip": "yijunwang2 の krea2_anypaint_rank32(models/loras)。このノードに限り lora_strength で適用されます。"
+      },
+      "lora_strength": {
+        "tooltip": "1.0 が学習時の値です。"
+      },
+      "steps": {
+        "tooltip": "8 (Krea 2 Turbo)。euler なら keep は正確です。"
+      },
+      "sampler_name": {
+        "tooltip": "euler は AnyPaint が学習・テストされたものです。keep ステップは euler でのみ正確です。"
+      },
+      "scheduler": {
+        "tooltip": "simple、リファレンスと同じです。"
+      },
+      "crop_to_mask": {
+        "tooltip": "オン:小さなマスクは専用のクロップで描き直し、inpaint_resolution まで拡大します(ディテールが増えます)。オフ:画像全体を inpaint_resolution で処理します。"
+      },
+      "padding": {
+        "tooltip": "クロップ時にマスクの周囲に含める範囲 (px)。大きいほどモデルがシーンをより多く見ます。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "描き直しのサイズです(面積として:1024 = 約1 MP)。AusBoss によると、約1.6 MP を超えると Krea 2 は手足にシワが寄り、空が暗くなり始めます。"
+      },
+      "boundary_px": {
+        "tooltip": "つなぎ目をなじませるために、モデルが描き直すマスクの周囲の境界（描き直しのピクセル単位）。32 = 基準値。"
+      },
+      "vlm_reference": {
+        "tooltip": "参照をテキストエンコーダーにも見せます。On = 参照レシピ。"
+      },
+      "composite": {
+        "tooltip": "keep original = 塗った領域だけ(ソフトエッジ、色補正済み)が貼り戻され、それ以外は元の画像そのままです。raw = クロップ全体に対するモデルの描き直し結果そのままです。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "マスク領域を塗りつぶした画像。"
+      },
+      "1": {
+        "tooltip": "貼り戻された位置(ソフトエッジ)。"
+      }
+    }
+  },
+  "LCZImageAnyPaint": {
+    "description": "Alibaba の Z-Image Fun ControlNet Union 2.1 をインペイントモードで使った、Z-Image(Turbo / Base)用のインペイントとアウトペイントです。残したピクセルは毎ステップ後に元に戻され、境界部分はモデルが馴染ませます。マスク外の画像は変わらずそのまま戻ります。プロンプトには完成した画像全体を記述してください。\nアウトペイント:LC Outpaint または LC Outpaint, Rotate, & Pad の control_image と control_mask を接続してください。",
+    "inputs": {
+      "model": {
+        "tooltip": "Z-Image(Turbo / Base)。ControlNet パッチはこのノードにだけ追加されます。"
+      },
+      "clip": {
+        "tooltip": "Z-Image のテキストエンコーダー (Qwen3 4B、CLIP type lumina2)。"
+      },
+      "mask": {
+        "tooltip": "白 = 描く、黒 = 残す。任意: LC Outpaint のキャンバスを使う場合、マスクなしならそのマスクが使われます。アウトペイントするには、LC Outpaint の control_image を image に、control_mask を mask につないでください。"
+      },
+      "prompt": {
+        "tooltip": "変更点だけでなく、完成した画像の全体を記述してください：\"a woman in a red coat on a snowy street\"。削除のみのプロンプト（\"remove the car\"）では、平坦な塊が残りがちです。"
+      },
+      "control": {
+        "tooltip": "Alibaba の Z-Image Fun ControlNet Union 2.1（models/model_patches）を inpaint モードで使用します。8steps 版は Z-Image Turbo 向けです。"
+      },
+      "control_strength": {
+        "tooltip": "ControlNet が描画をあなたの画像にどれだけ強く合わせるか。1 = 学習時の設定どおり。"
+      },
+      "steps": {
+        "tooltip": "8 (Krea 2 Turbo)。euler なら keep は正確です。"
+      },
+      "sampler_name": {
+        "tooltip": "euler は AnyPaint が学習・テストされたものです。keep ステップは euler でのみ正確です。"
+      },
+      "scheduler": {
+        "tooltip": "simple、リファレンスと同じです。"
+      },
+      "crop_to_mask": {
+        "tooltip": "オン:小さなマスクは専用のクロップで描き直し、inpaint_resolution まで拡大します(ディテールが増えます)。オフ:画像全体を inpaint_resolution で処理します。"
+      },
+      "padding": {
+        "tooltip": "クロップ時にマスクの周囲に含める範囲 (px)。大きいほどモデルがシーンをより多く見ます。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "描き直しのサイズです(面積として:1024 = 約1 MP)。AusBoss によると、約1.6 MP を超えると Krea 2 は手足にシワが寄り、空が暗くなり始めます。"
+      },
+      "boundary_px": {
+        "tooltip": "つなぎ目をなじませるために、モデルが描き直すマスクの周囲の境界（描き直しのピクセル単位）。32 = 基準値。"
+      },
+      "composite": {
+        "tooltip": "keep original = 塗った領域だけ(ソフトエッジ、色補正済み)が貼り戻され、それ以外は元の画像そのままです。raw = クロップ全体に対するモデルの描き直し結果そのままです。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "マスク領域を塗りつぶした画像。"
+      },
+      "1": {
+        "tooltip": "貼り戻された位置(ソフトエッジ)。"
+      }
+    }
+  },
+  "LCSDXLAnyPaint": {
+    "description": "あらゆる SDXL チェックポイント (SDXL、Pony、Illustrious、自作のファインチューン) 向けのインペイント / アウトペイントです。xinsir の ControlNet Union ProMax の repaint モードで描画し、Fooocus のインペイントパッチも任意で併用できます。残すピクセルは毎ステップ戻され、境界はブレンドされます。マスク外の画像は変更されずそのまま戻ります。LoRA は不要です。マスクに入れたいものを短いプロンプトで説明してください。\nアウトペイント: LC Outpaint または LC Outpaint, Rotate, & Pad の control_image と control_mask をつなぎます。",
+    "inputs": {
+      "model": {
+        "tooltip": "任意の SDXL チェックポイント。インペイントパッチはこのノードにのみ追加されます。"
+      },
+      "clip": {
+        "tooltip": "チェックポイントの CLIP。"
+      },
+      "mask": {
+        "tooltip": "白 = 描く、黒 = 残す。任意: LC Outpaint のキャンバスを使う場合、マスクなしならそのマスクが使われます。アウトペイントするには、LC Outpaint の control_image を image に、control_mask を mask につないでください。"
+      },
+      "prompt": {
+        "tooltip": "マスクの中に入るものを短く記述します：\"a red bucket full of fish on the pier\"。何かを削除する場合は、代わりにそこにあるべきものを記述します（\"empty wooden planks\"）。空でも動作し、マスク周囲の画像から埋めます。"
+      },
+      "negative": {
+        "tooltip": "避けたいもの。SDXL は本物のネガティブプロンプトを使います。"
+      },
+      "control": {
+        "tooltip": "xinsir の ControlNet Union SDXL ProMax(models/controlnet)を repaint モードで使います:エッジ、光、パースペクティブを元の画像に合わせて保ちます。off = Fooocus inpaint のみ。"
+      },
+      "control_strength": {
+        "tooltip": "ControlNet が絵を元の画像にどれだけ強く固定するか。低いほどマスク内の自由度が上がります。"
+      },
+      "fooocus_inpaint": {
+        "tooltip": "任意。lllyasviel の Fooocus インペイントパッチ (models/inpaint、隣に fooocus_inpaint_head.pth が必要)。最もなじみがよく、周囲の色にも合いますが、新しいものを加えるより元にあったものを再構築する傾向があります。アウトペイントや塗りつぶしに向いています。ControlNet も併用する場合は control_strength を約 0.5 に下げてください (Pony / Illustrious は 1 だとノイズになります)。Acly の comfyui-inpaint-nodes が必要です。"
+      },
+      "steps": {
+        "tooltip": "通常の SDXL チェックポイントでは 25 - 30、Lightning / DMD 系ではそれより少なく（その場合 cfg は 1 - 2）。"
+      },
+      "cfg": {
+        "tooltip": "SDXL の cfg。ほとんどのチェックポイントでは 4 - 6。"
+      },
+      "crop_to_mask": {
+        "tooltip": "オン:小さなマスクは専用のクロップで描き直し、inpaint_resolution まで拡大します(ディテールが増えます)。オフ:画像全体を inpaint_resolution で処理します。"
+      },
+      "padding": {
+        "tooltip": "クロップ時にマスクの周囲に含める範囲 (px)。大きいほどモデルがシーンをより多く見ます。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "描き直しのサイズです(面積として:1024 = 約1 MP)。AusBoss によると、約1.6 MP を超えると Krea 2 は手足にシワが寄り、空が暗くなり始めます。"
+      },
+      "boundary_px": {
+        "tooltip": "つなぎ目をなじませるために、モデルが描き直すマスクの周囲の境界（描き直しのピクセル単位）。32 = 基準値。"
+      },
+      "composite": {
+        "tooltip": "keep original = 塗った領域だけ(ソフトエッジ、色補正済み)が貼り戻され、それ以外は元の画像そのままです。raw = クロップ全体に対するモデルの描き直し結果そのままです。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "マスク領域を塗りつぶした画像。"
+      },
+      "1": {
+        "tooltip": "貼り戻された位置(ソフトエッジ)。"
+      }
+    }
+  },
+  "LCFlux3AnyPaint": {
+    "description": "AusBoss の outpaint LoRA を使った Flux 3 Klein (Distilled) 用のインペイント/アウトペイントです（edit モード）。描画する領域は一様なグレーで塗りつぶされ、モデルがそのグレーを埋めます。残したピクセルは各ステップのあとに戻され、境界はブレンドされます。マスク外の画像は変わらずそのまま戻ります。プロンプトには、完成した画像全体を記述してください。\nアウトペイント: LC Outpaint または LC Outpaint, Rotate, & Pad の control_image と control_mask を接続します。",
+    "inputs": {
+      "model": {
+        "tooltip": "Flux 3 Klein (Distilled)。LoRA はこのノードにだけ追加されます。"
+      },
+      "clip": {
+        "tooltip": "Flux 3 Klein のテキストエンコーダー（Qwen3-VL 4B、CLIP タイプ flux3）。"
+      },
+      "mask": {
+        "tooltip": "白 = 描く、黒 = 残す。任意: LC Outpaint のキャンバスを使う場合、マスクなしならそのマスクが使われます。アウトペイントするには、LC Outpaint の control_image を image に、control_mask を mask につないでください。"
+      },
+      "prompt": {
+        "tooltip": "完成した画像全体を記述してください:\"a woman in a red coat on a snowy street\"。ノードが LoRA の fill instruction を先頭に自動で付けます。"
+      },
+      "lora": {
+        "tooltip": "AusBoss の flux-3-image-klein-outpaint (models/loras)。平らなグレーの領域を塗りつぶし、残りはそのままにします。このノードに限り lora_strength で適用されます。off = ノイズマスク付きの通常の Flux 3 Klein (画像がずれたりズームしたりしがち)。"
+      },
+      "lora_strength": {
+        "tooltip": "1.5 は AusBoss のおすすめです:大きな拡張では、1.0 よりも画像が元の位置にとどまりやすくなります。"
+      },
+      "steps": {
+        "tooltip": "Flux 3 Klein (Distilled) では 16。Base 向けの cfg 3.5 での 50 はここでは非対応です:Distilled モデルを使ってください。"
+      },
+      "sampler_name": {
+        "tooltip": "euler は AnyPaint が学習・テストされたものです。keep ステップは euler でのみ正確です。"
+      },
+      "scheduler": {
+        "tooltip": "simple、リファレンスと同じです。"
+      },
+      "crop_to_mask": {
+        "tooltip": "オン:小さなマスクは専用のクロップで描き直し、inpaint_resolution まで拡大します(ディテールが増えます)。オフ:画像全体を inpaint_resolution で処理します。"
+      },
+      "padding": {
+        "tooltip": "クロップ時にマスクの周囲に含める範囲 (px)。大きいほどモデルがシーンをより多く見ます。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "描き直しのサイズです(面積として:1024 = 約1 MP)。AusBoss によると、約1.6 MP を超えると Krea 2 は手足にシワが寄り、空が暗くなり始めます。"
+      },
+      "boundary_px": {
+        "tooltip": "つなぎ目をなじませるために、モデルが描き直すマスクの周囲の境界（描き直しのピクセル単位）。32 = 基準値。"
+      },
+      "composite": {
+        "tooltip": "keep original = 塗った領域だけ(ソフトエッジ、色補正済み)が貼り戻され、それ以外は元の画像そのままです。raw = クロップ全体に対するモデルの描き直し結果そのままです。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "マスク領域を塗りつぶした画像。"
+      },
+      "1": {
+        "tooltip": "貼り戻された位置(ソフトエッジ)。"
+      }
+    }
+  },
+  "LCCharacterDetailer": {
+    "description": "1人のキャラクター用の LC Smart Detailer です。SAM 3 がすべての一致（すべての顔、すべての人物）を見つけ、そのうち1つだけが描き直されます。左・右・上から N 番目、N 番目に大きいもの、または LC Bounding Boxes のボックス内にあるものを指定できます。キャラクターごとに個別に用意します：モデルを分岐し、そのキャラクターの LoRA を追加して、ここでその顔を選びます。設定とエンジンは LC Smart Detailer と同じです。",
+    "inputs": {
+      "positive": {
+        "tooltip": "画像のプロンプトです。シーン全体を説明するプロンプトは、denoise 0.3 以上ですべてのクロップに描き込まれることがあります (顔の中に小さなシーン全体が出る)。防ぐには inpaint_positive をつないでください。"
+      },
+      "prompt": {
+        "tooltip": "ディテールを加える対象を、カンマ区切りの簡単な単語で指定します: hands, face。\nマッチしたものはすべて検出されます (両手、すべての顔)。:N を付けると数を制限できます。例: face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "検出を行う SAM 3 モデルです。SAM 3.1 のダウンロード版を選ぶか、models/sam3 にある自分の sam3.pt / sam3.safetensors を使ってください。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 がどれだけ確信している必要があるかです。低いほど多く見つけます(間違いも増えます)。高いほど慎重になります。0.5 が始めやすい値です。\n色はヒントにすぎません:'red dress' でも緑のドレスを選ぶことがあります。存在しないものは見つかりません。"
+      },
+      "pick": {
+        "tooltip": "このディテーラーが描き直す対象を選びます (SAM 3 がすべて検出します)。複数の単語 (face, hair) を指定した場合、最初の単語で人物が決まり、残りはその人物に属するものだけが対象になります。\nleft to right / right to left / top to bottom: number 1 = その向きで最初のもの。\nlargest first: number 1 = 最も大きいもの。\nin box: LC Bounding Boxes の box 'number' の内側にあるもの (elements をつなぎます)。ポーズが変わっても顔はそのキャラクターに紐づいたままです。"
+      },
+      "number": {
+        "tooltip": "どれを選ぶか：1 = 最初。pick が in box の場合は、LC Bounding Boxes に表示されるボックスの番号。"
+      },
+      "grow": {
+        "tooltip": "インペイント前にマスクを拡大(正の値)または縮小(負の値)するピクセル数です。少し拡大するとエッジを覆えます。"
+      },
+      "feather": {
+        "tooltip": "マスクのエッジのやわらかさ(ピクセル)で、描き直した領域が周囲に馴染みます。0 = ハードエッジ。"
+      },
+      "blend": {
+        "tooltip": "描き直しをどれだけ貼り付けるか：1 = すべて。1未満では古いピクセルと新しいピクセルが混ざり、描き直しで少し動いた部分（まつ毛、まぶた）が二重に見えることがあります。軽い描き直しにしたい場合は、代わりに denoise を下げてください。"
+      },
+      "padding": {
+        "tooltip": "各クロップに含める周囲の画像のピクセル数で、モデルが文脈を把握できるようにします。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "形に関係なく、各クロップはおよそこの二乗のピクセル数（1024 = 1メガピクセル）で描き直されます。高い = ディテールが増え、遅くなります。"
+      },
+      "sampler_name": {
+        "tooltip": "サンプラー。"
+      },
+      "scheduler": {
+        "tooltip": "Scheduler。"
+      },
+      "steps": {
+        "tooltip": "サンプリングのステップ数。"
+      },
+      "cfg": {
+        "tooltip": "描き直しの CFG。Krea 2、Flux、Z-Image、Anima では 1 で動作し、ディテーラーの denoise (約 0.4 まで) なら SDXL でも動作します (テスト済み: SDXL は cfg 1 から 7 まで同じ見た目)。1 未満にはなりません。1 未満だと描き直しがまだらになります。"
+      },
+      "denoise": {
+        "tooltip": "どれだけ描き直すかです。低いと形を保ってディテールを直し、高いとゼロから描き直します。"
+      },
+      "seed": {
+        "tooltip": "描き直しのシード。"
+      },
+      "inpaint_positive": {
+        "tooltip": "任意。クロップ専用のプロンプト。例：'close-up of a woman's face, natural skin'。描き直しで positive の代わりに使われます。positive がシーン全体を記述している場合は常に推奨されます。"
+      },
+      "negative": {
+        "tooltip": "任意。cfg 1 のモデルでは空のままにします。SDXL など negative を使うモデルでは接続してください。"
+      },
+      "tone_match": {
+        "tooltip": "On: 描き直した部分が貼り付けられる際に、元の明るさ、コントラスト、色が戻され、新しいディテールは保たれます。オフだと、軽い描き直しは少し平坦でくすんだ仕上がりになります。描き直しで色を変えたいとき（シャツの色を変える、別のオブジェクトにするなど）はオフにしてください。"
+      },
+      "elements": {
+        "tooltip": "pick = in box 用の、LC Bounding Boxes の elements。"
+      }
+    }
+  },
+  "LCCharacterDetailerPipe": {
+    "description": "1人のキャラクター用の LC Smart Detailer です。SAM 3 がすべての一致（すべての顔、すべての人物）を見つけ、そのうち1つだけが描き直されます。左・右・上から N 番目、N 番目に大きいもの、または LC Bounding Boxes のボックス内にあるものを指定できます。キャラクターごとに個別に用意します：モデルを分岐し、そのキャラクターの LoRA を追加して、ここでその顔を選びます。設定とエンジンは LC Smart Detailer と同じです。",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe：model、VAE、seed、steps、cfg、sampler、scheduler はここから取得されます。"
+      },
+      "prompt": {
+        "tooltip": "ディテールを加える対象を、カンマ区切りの簡単な単語で指定します: hands, face。\nマッチしたものはすべて検出されます (両手、すべての顔)。:N を付けると数を制限できます。例: face:1。"
+      },
+      "sam3_model": {
+        "tooltip": "検出を行う SAM 3 モデルです。SAM 3.1 のダウンロード版を選ぶか、models/sam3 にある自分の sam3.pt / sam3.safetensors を使ってください。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 がどれだけ確信している必要があるかです。低いほど多く見つけます(間違いも増えます)。高いほど慎重になります。0.5 が始めやすい値です。\n色はヒントにすぎません:'red dress' でも緑のドレスを選ぶことがあります。存在しないものは見つかりません。"
+      },
+      "pick": {
+        "tooltip": "このディテーラーが描き直す対象を選びます (SAM 3 がすべて検出します)。複数の単語 (face, hair) を指定した場合、最初の単語で人物が決まり、残りはその人物に属するものだけが対象になります。\nleft to right / right to left / top to bottom: number 1 = その向きで最初のもの。\nlargest first: number 1 = 最も大きいもの。\nin box: LC Bounding Boxes の box 'number' の内側にあるもの (elements をつなぎます)。ポーズが変わっても顔はそのキャラクターに紐づいたままです。"
+      },
+      "number": {
+        "tooltip": "どれを選ぶか：1 = 最初。pick が in box の場合は、LC Bounding Boxes に表示されるボックスの番号。"
+      },
+      "grow": {
+        "tooltip": "インペイント前にマスクを拡大(正の値)または縮小(負の値)するピクセル数です。少し拡大するとエッジを覆えます。"
+      },
+      "feather": {
+        "tooltip": "マスクのエッジのやわらかさ(ピクセル)で、描き直した領域が周囲に馴染みます。0 = ハードエッジ。"
+      },
+      "blend": {
+        "tooltip": "描き直しをどれだけ貼り付けるか：1 = すべて。1未満では古いピクセルと新しいピクセルが混ざり、描き直しで少し動いた部分（まつ毛、まぶた）が二重に見えることがあります。軽い描き直しにしたい場合は、代わりに denoise を下げてください。"
+      },
+      "padding": {
+        "tooltip": "各クロップに含める周囲の画像のピクセル数で、モデルが文脈を把握できるようにします。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "形に関係なく、各クロップはおよそこの二乗のピクセル数（1024 = 1メガピクセル）で描き直されます。高い = ディテールが増え、遅くなります。"
+      },
+      "denoise": {
+        "tooltip": "どれだけ描き直すかです。低いと形を保ってディテールを直し、高いとゼロから描き直します。"
+      },
+      "image": {
+        "tooltip": "任意。空 = pipe の画像。pipe を持たないノードが途中で画像を変更した場合につないでください。"
+      },
+      "model": {
+        "tooltip": "任意。pipe のモデルの代わりに使うモデルをここにつなぎます (LoRA を適用したものや別のモデル)。"
+      },
+      "vae": {
+        "tooltip": "任意。pipe の VAE の代わりに使う VAE をここにつなぎます。"
+      },
+      "positive": {
+        "tooltip": "画像のプロンプトです。シーン全体を説明するプロンプトは、denoise 0.3 以上ですべてのクロップに描き込まれることがあります (顔の中に小さなシーン全体が出る)。防ぐには inpaint_positive をつないでください。"
+      },
+      "inpaint_positive": {
+        "tooltip": "任意。クロップ専用のプロンプト。例：'close-up of a woman's face, natural skin'。描き直しで positive の代わりに使われます。positive がシーン全体を記述している場合は常に推奨されます。"
+      },
+      "negative": {
+        "tooltip": "任意。cfg 1 のモデルでは空のままにします。SDXL など negative を使うモデルでは接続してください。"
+      },
+      "tone_match": {
+        "tooltip": "On: 描き直した部分が貼り付けられる際に、元の明るさ、コントラスト、色が戻され、新しいディテールは保たれます。オフだと、軽い描き直しは少し平坦でくすんだ仕上がりになります。描き直しで色を変えたいとき（シャツの色を変える、別のオブジェクトにするなど）はオフにしてください。"
+      },
+      "cfg": {
+        "tooltip": "描き直し用の CFG。1 は Krea 2、Flux、Z-Image で有効で、ディテーラーの denoise（約0.4まで）なら SDXL でも有効です（テスト済み：SDXL は cfg 1 から 7 まで同じ見た目でした）。パイプの cfg_1（通常はメインのサンプラーの値）の代わりに使われます。"
+      },
+      "elements": {
+        "tooltip": "pick = in box 用の、LC Bounding Boxes の elements。"
+      }
+    }
+  },
+  "LCDetailFinder": {
+    "description": "キャラクターごとのディテーラー用に、SAM 3 ですべての一致（すべての顔）を一度で見つけます。その後 LC Detail Sorter が順番に並べて分け、キャラクターごとに1つの LC Detailer For Each に出力します。",
+    "inputs": {
+      "prompt": {
+        "tooltip": "探すもの(例:face)。複数の単語(face, hair)を指定すると、最初の単語がカウント対象になり、残りはそれに属するマッチに加わります:顔ごとに、その顔の髪が対応します。"
+      },
+      "sam3_model": {
+        "tooltip": "検出を行う SAM 3 モデルです。SAM 3.1 のダウンロード版を選ぶか、models/sam3 にある自分の sam3.pt / sam3.safetensors を使ってください。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 がどれだけ確信している必要があるかです。低いほど多く見つけます(間違いも増えます)。高いほど慎重になります。0.5 が始めやすい値です。\n色はヒントにすぎません:'red dress' でも緑のドレスを選ぶことがあります。存在しないものは見つかりません。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "LC Detail Sorter 用に、すべてのマッチの SAM 3 マスクです(または LC Detailer For Each に直接つなげて、すべてを描き直します)。"
+      },
+      "1": {
+        "tooltip": "見つかった数(最初の画像)。"
+      }
+    }
+  },
+  "LCDetailSorter": {
+    "description": "LC Detail Finder の一致を順番に並べて分けます：出力 1 = 1番目、2 = 2番目。プレビューにも同じ番号が付きます。",
+    "inputs": {
+      "sam3_masks": {
+        "tooltip": "LC Detail Finder から。"
+      },
+      "pick": {
+        "tooltip": "出力の数え方の順序。left to right: 1 = 一番左。largest first: 1 = 最も大きいもの（通常は最も近いもの）。"
+      },
+      "image": {
+        "tooltip": "任意:番号付きプレビュー用の画像です。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "選択した順序での、match 1 の SAM 3 マスクです(該当がない場合は空)。そのキャラクターの LC Detailer For Each に接続してください。"
+      },
+      "1": {
+        "tooltip": "選択した順序での2番目の一致の SAM 3 マスク（それ未満の場合は空）。そのキャラクターの LC Detailer For Each に接続してください。"
+      },
+      "2": {
+        "tooltip": "選択した順序での、match 3 の SAM 3 マスクです(該当がない場合は空)。そのキャラクターの LC Detailer For Each に接続してください。"
+      },
+      "3": {
+        "tooltip": "選んだ順序で4番目にマッチしたものの SAM 3 マスクです (それより少ない場合は空)。そのキャラクターの LC Detailer For Each につないでください。"
+      },
+      "4": {
+        "tooltip": "選んだ順序で5番目にマッチしたものの SAM 3 マスクです (それより少ない場合は空)。そのキャラクターの LC Detailer For Each につないでください。"
+      },
+      "5": {
+        "tooltip": "選択した順序での、match 6 の SAM 3 マスクです(該当がない場合は空)。そのキャラクターの LC Detailer For Each に接続してください。"
+      },
+      "6": {
+        "tooltip": "選択した順序での7番目の一致の SAM 3 マスク（それ未満の場合は空）。そのキャラクターの LC Detailer For Each に接続してください。"
+      },
+      "7": {
+        "tooltip": "選択した順序での8番目の一致の SAM 3 マスク（それ未満の場合は空）。そのキャラクターの LC Detailer For Each に接続してください。"
+      }
+    }
+  },
+  "LCDetailerForEach": {
+    "description": "渡されたもの(LC Detail Sorter の1キャラクター、または LC Detail Finder のすべて)を、そのキャラクターのモデル(LoRA ブランチ)、専用の conditioning 済みプロンプト、専用の seed で描き直します。単独でも、LC pipe 上でも動作します。接続された pipe がモデル、VAE、プロンプト、画像を補い、ここに接続したものが優先されます。LC Smart Detailer と同じエンジンです。",
+    "inputs": {
+      "sam3_mask": {
+        "tooltip": "描き直す対象：LC Detail Sorter の出力の1つ（1人のキャラクター）、または LC Detail Finder の sam3_masks（全員）。"
+      },
+      "grow": {
+        "tooltip": "インペイント前にマスクを拡大(正の値)または縮小(負の値)するピクセル数です。少し拡大するとエッジを覆えます。"
+      },
+      "feather": {
+        "tooltip": "マスクのエッジのやわらかさ(ピクセル)で、描き直した領域が周囲に馴染みます。0 = ハードエッジ。"
+      },
+      "padding": {
+        "tooltip": "各クロップに含める周囲の画像のピクセル数で、モデルが文脈を把握できるようにします。"
+      },
+      "inpaint_resolution": {
+        "tooltip": "形に関係なく、各クロップはおよそこの二乗のピクセル数（1024 = 1メガピクセル）で描き直されます。高い = ディテールが増え、遅くなります。"
+      },
+      "sampler_name": {
+        "tooltip": "サンプラー。\npipe をつないだ場合、ここに何もつながない限り pipe の値が使われます。"
+      },
+      "scheduler": {
+        "tooltip": "Scheduler。\npipe が接続されている場合、ここに何も接続していなければ pipe の値が使われます。"
+      },
+      "steps": {
+        "tooltip": "サンプリングの steps。\nパイプが接続されている場合、ここに何かを接続しない限りパイプの値が使われます。"
+      },
+      "cfg": {
+        "tooltip": "描き直しの CFG。Krea 2、Flux、Z-Image、Anima では 1 で動作し、ディテーラーの denoise (約 0.4 まで) なら SDXL でも動作します (テスト済み: SDXL は cfg 1 から 7 まで同じ見た目)。1 未満にはなりません。1 未満だと描き直しがまだらになります。"
+      },
+      "denoise": {
+        "tooltip": "どれだけ描き直すかです。低いと形を保ってディテールを直し、高いとゼロから描き直します。"
+      },
+      "seed": {
+        "tooltip": "描き直し用の seed。\nパイプが接続されている場合、ここに何かを接続しない限りパイプの値が使われます。"
+      },
+      "pipe": {
+        "tooltip": "任意の LC pipe:このノードで接続しない限り、モデル、VAE、ポジティブ、ネガティブ、画像はここから取得します。ディテーラーをこれで連結してください。"
+      },
+      "image": {
+        "tooltip": "画像です。空 = pipe の画像。"
+      },
+      "model": {
+        "tooltip": "任意。pipe のモデルの代わりに使うモデルをここにつなぎます (LoRA を適用したものや別のモデル)。"
+      },
+      "vae": {
+        "tooltip": "任意。pipe の VAE の代わりに使う VAE をここにつなぎます。"
+      },
+      "positive": {
+        "tooltip": "画像のプロンプトです。シーン全体を説明するプロンプトは、denoise 0.3 以上ですべてのクロップに描き込まれることがあります (顔の中に小さなシーン全体が出る)。防ぐには inpaint_positive をつないでください。"
+      },
+      "inpaint_positive": {
+        "tooltip": "任意。クロップ専用のプロンプト。例：'close-up of a woman's face, natural skin'。描き直しで positive の代わりに使われます。positive がシーン全体を記述している場合は常に推奨されます。"
+      },
+      "negative": {
+        "tooltip": "任意。cfg 1 のモデルでは空のままにします。SDXL など negative を使うモデルでは接続してください。"
+      },
+      "tone_match": {
+        "tooltip": "On: 描き直した部分が貼り付けられる際に、元の明るさ、コントラスト、色が戻され、新しいディテールは保たれます。オフだと、軽い描き直しは少し平坦でくすんだ仕上がりになります。描き直しで色を変えたいとき（シャツの色を変える、別のオブジェクトにするなど）はオフにしてください。"
+      }
+    }
+  },
+  "LCPersonMask": {
+    "description": "人物の部位を選択します:顔、髪、体、服、アクセサリー、背景。Segformer または MediaPipe を使い、guided filter / VITMatte による補正も任意で使えます。肌のみ:mediapipe、face + body、remove_features オン(SAM 3 で目、眉、唇、歯を除外)。",
+    "inputs": {
+      "image": {
+        "tooltip": "人物が写っている画像。"
+      },
+      "engine": {
+        "tooltip": "segformer: 高解像度。Body = 腕と脚のみ (むき出しの胴体と首は服として読まれます)。\nmediapipe: Body に胴体と首の肌も含まれます。mediapipe パッケージが必要です。"
+      },
+      "segformer_model": {
+        "tooltip": "segformer エンジンで使われます。'Download' と表示されたエントリーは、初回実行時に取得されます。"
+      },
+      "body": {
+        "tooltip": "顔より下の肌です。対象の範囲は engine を参照してください。"
+      },
+      "accessories": {
+        "tooltip": "帽子、メガネ、靴、バッグ（そしてモデルがアクセサリーと呼ぶその他のもの）。"
+      },
+      "confidence": {
+        "tooltip": "モデルがどれだけ確信している必要があるかです。低いと選択範囲が広がり、高いと狭まります。"
+      },
+      "refine": {
+        "tooltip": "生のマスクのエッジ補正です。vitmatte は髪に最適、guided_filter は高速、none は生のマスクのままです。"
+      },
+      "vitmatte_model": {
+        "tooltip": "refine が vitmatte のときのみ使われます。"
+      },
+      "edge_erode": {
+        "tooltip": "Trimap: 確実な前景をマスクのエッジから内側にどこまで引き込むか (ピクセル)。"
+      },
+      "edge_dilate": {
+        "tooltip": "Trimap: unknown の帯がマスクのエッジの外側へどこまで広がるか (ピクセル)。"
+      },
+      "black_point": {
+        "tooltip": "この値以下のマスク値は 0 になります。"
+      },
+      "white_point": {
+        "tooltip": "この値以上のマスク値は 1 になります。"
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte のみ。大きな画像はこのサイズでマッティングしてから、元のサイズに戻します。"
+      },
+      "remove_features": {
+        "tooltip": "SAM 3(LC Segment Anything と LC Smart Detailer が使うモデル)で、顔から目、眉、唇、歯を切り抜きます。engine を mediapipe にして face + body をオンにすると、LC Skin Beauty、LC Skin Upscale、LC Sharpen Pro 用の肌のみのマスクになります。face がオンのときだけ動作します。"
+      }
+    }
+  },
+  "LCTouchMask": {
+    "description": "1つのものを正確にマスクします：周囲を囲むと、SAM 3 がその輪郭を見つけます。タップすると次に大きいもの（顔、+ 髪、頭、人物）に拡大し、ダブルタップで一つ戻ります。Ctrl + 描画で切り抜きます。",
+    "inputs": {
+      "image": {
+        "tooltip": "マスクを作る画像。上流の Load Image はすぐ表示され、それ以外は1回実行した後に表示されます。"
+      },
+      "sam3_model": {
+        "tooltip": "エッジを検出します。LC Segment Anything と LC Smart Detailer が使うのと同じ SAM 3 モデルです。"
+      },
+      "person_parts": {
+        "tooltip": "人物では、LC Person Mask が使う Segformer モデルで、体の部位(顔、髪、頭、服、人物)ごとに taps が増えます。off:毎ステップ SAM 3 が判断します。"
+      },
+      "block": {
+        "tooltip": "if_empty_mask:何も選択されていない場合、下流がすべて停止するので、選択してからもう一度キューに入れてください。"
+      },
+      "grow": {
+        "tooltip": "完成したマスクをこのピクセル数だけ拡大(0 未満では縮小)します。"
+      },
+      "feather": {
+        "tooltip": "エッジの柔らかさ (ピクセル)。"
+      },
+      "invert": {
+        "tooltip": "マスクを反転します(選択範囲以外のすべて)。"
+      },
+      "selections": {
+        "tooltip": "内部用:描いてタップした内容です。"
+      },
+      "threshold": {
+        "tooltip": "ピクセルが加わるために必要な確信度。低いほど多く取り込み（細い髪、柔らかいエッジ）、高いほどタイトになります。"
+      },
+      "smooth": {
+        "tooltip": "エッジを整えます。ピンホールを埋め、ゴミのような点を除き、ギザギザを丸めますが、選択範囲は縮みません。0 = 生のまま。"
+      },
+      "refine": {
+        "tooltip": "実行時のエッジ仕上げ (プレビューにはその前の選択範囲が表示されます)。guided_filter: 高速で、画像のエッジに沿います。vitmatte: 髪に最適、遅い。none: ハードな選択範囲のまま。"
+      }
+    }
+  },
+  "LCImageBlendAdvance": {
+    "description": "背景にレイヤーを配置 (位置、スケール、アスペクト、回転、ミラー) し、29種のブレンドモードのいずれかで、任意のマスクを通して合成します。",
+    "inputs": {
+      "layer_image": {
+        "tooltip": "レイヤーです。アルファチャンネルがある場合はそれが使われます。"
+      },
+      "blend_mode": {
+        "tooltip": "標準のブレンドモードです。overlay は背景を基準にし、hard_light はレイヤーを基準にします。\nLayerStyle の古い ImageBlend ノードでは、この2つが入れ替わっていました。swap_roles を参照してください。"
+      },
+      "opacity": {
+        "tooltip": "レイヤーの強さ（パーセント）。"
+      },
+      "swap_roles": {
+        "tooltip": "モードの式で、どちらの画像をベースにし、どちらをブレンドにするかを入れ替えます。\nオンにして overlay を選ぶと、LayerStyle ImageBlend の従来の 'overlay' (標準の hard_light) を再現します。"
+      },
+      "invert_mask": {
+        "tooltip": "layer_mask を反転します（黒が見える側になります）。"
+      },
+      "x_percent": {
+        "tooltip": "レイヤーの中心位置(背景の幅に対する%)。50 = 中央。"
+      },
+      "y_percent": {
+        "tooltip": "レイヤーの中心。背景の高さに対する %。50 = 中央。"
+      },
+      "scale": {
+        "tooltip": "レイヤーサイズの乗数。"
+      },
+      "aspect_ratio": {
+        "tooltip": "レイヤーの高さを伸縮します。1 = 比率を維持。"
+      },
+      "rotate": {
+        "tooltip": "角度（反時計回り）。"
+      },
+      "transform_method": {
+        "tooltip": "スケールや回転時のレイヤーのリサンプル方法です。lanczos はリサイズで最もシャープです。nvidia_rtx_vsr は RTX Video Super Resolution で拡大します (RTX カード用。縮小は lanczos)。回転自体は常に PIL と同じ bicubic でサンプリングされます。"
+      },
+      "anti_aliasing": {
+        "tooltip": "回転したエッジを、大きく描いてから縮小することで滑らかにします。0 = オフ。高いほど遅くなります。"
+      },
+      "background_image": {
+        "tooltip": "レイヤーを配置する先の画像。未接続のままにすると、レイヤーと同じサイズの透明なキャンバスに配置されます（出力は RGBA になり、マスクがそのアルファになります）。"
+      },
+      "layer_mask": {
+        "tooltip": "白 = レイヤーが見える部分。レイヤーのアルファがあれば、それと乗算されます。"
+      }
+    }
+  },
+  "LCAutoAdjust": {
+    "description": "自動レベル補正(チャンネルごと、輝度、彩度、モノクロ)に、バランス、明るさ、コントラスト、彩度の微調整、strength によるブレンド、任意のマスクを組み合わせたものです。",
+    "inputs": {
+      "image": {
+        "tooltip": "アルファチャンネルがある場合は保持され、マスクが接続されていないときにマスクとして使われます。"
+      },
+      "mode": {
+        "tooltip": "RGB: 各色チャンネルを個別に伸ばします (色かぶりも除去)。\nlum + sat: 彩度を伸ばしてから輝度を伸ばします。\nluminance: 明るさだけを伸ばし、色はそのままです。\nsaturation: 彩度だけを伸ばします。\nmono: 白黒版を伸ばします。"
+      },
+      "strength": {
+        "tooltip": "結果をどれだけ使うかを、パーセントで指定します。"
+      },
+      "brightness": {
+        "tooltip": "オートレベルの後のトリム。"
+      },
+      "contrast": {
+        "tooltip": "オートレベルの後のトリム。"
+      },
+      "saturation": {
+        "tooltip": "オートレベルの後のトリム。"
+      },
+      "red": {
+        "tooltip": "カラーバランス: プラスで赤チャンネルが明るく、マイナスで暗くなります。mono モードでは使用されません。"
+      },
+      "green": {
+        "tooltip": "緑チャンネルのカラーバランス。"
+      },
+      "blue": {
+        "tooltip": "青チャンネルのカラーバランス。"
+      },
+      "mask": {
+        "tooltip": "レベルを測定する場所と、結果を適用する場所の両方を制限します。"
+      }
+    }
+  },
+  "LCDepthAnythingV2": {
+    "description": "Depth Anything V2 の depth マップで、画像ごとに 0-1 に正規化されます。invert がオンでない限り、明るい = 近い。3チャンネル画像と、同じマップの MASK を出力します。",
+    "inputs": {
+      "image": {
+        "tooltip": "depth を推定する画像です。"
+      },
+      "model": {
+        "tooltip": "Depth Anything V2 の重み。ライセンスはラベルに記載されています：Small は Apache-2.0、Base / Large / Giant は CC-BY-NC-4.0（非商用）。\nすでにあるファイル（models/depthanything または comfyui_controlnet_aux）を使うか、初回実行時にダウンロードします。"
+      },
+      "resolution": {
+        "tooltip": "短辺を処理するサイズです(14の倍数に丸められます)。518 はモデルが学習したサイズで、それより大きくすると大きな画像でディテールが増えることがあります。"
+      },
+      "invert": {
+        "tooltip": "オフ:明るい = 近い(Depth Anything や depth ControlNet が使う方式)。オン:明るい = 遠い。"
+      }
+    }
+  },
+  "LCMOSSControl": {
+    "description": "MOSS Image 用の ControlNet:画像はカラー領域マップまたは depth マップ(あるいはその両方)に従います(darask0 の Color-Depth Control アダプター)。どちらのマップも省略できます。",
+    "inputs": {
+      "model": {
+        "tooltip": "MOSS Image SFT (または Base)。8-step ターボ LoRA と併用できます。"
+      },
+      "vae": {
+        "tooltip": "Flux.2 VAE：マップはこれでエンコードされます。"
+      },
+      "control_file": {
+        "tooltip": "darask0 の moss-control.safetensors (models/model_patches 内)。"
+      },
+      "strength": {
+        "tooltip": "アダプターの LoRA の強さです。入力レイヤーは常にフルで適用されます。"
+      },
+      "color_end": {
+        "tooltip": "ステップ全体のこの割合でカラーマップを止めます。先にレイアウトを決め、その後モデルが表面を仕上げます。実写から作ったマップ: 1.0。マネキンや描いたマップ: 0.4 - 0.5。"
+      },
+      "depth_end": {
+        "tooltip": "ステップ全体のこの割合で深度マップを止めます。実写: 1.0。マネキン: 0.15 (8-step ターボ LoRA では 0.25)、または深度を使わない。遅らせるとマネキンが透けて見えます。"
+      },
+      "color_map": {
+        "tooltip": "単色のフラットカラー。オブジェクトまたは領域ごとに1色（色は ID にすぎません）。黒 = 未指定。画像と同じサイズ。各色を領域プロンプトとペアにします。"
+      },
+      "depth_map": {
+        "tooltip": "グレースケールの深度。手前 = 白 (LC Depth Anything V2 はこの形式)。画像と同じサイズです。"
+      }
+    }
+  },
+  "LCNormalBAE": {
+    "description": "BAE サーフェス法線マップ (RGB = XYZ)。ControlNet の normal_bae と同じスタイルです。任意のぼかし (blur_radius, sigma) には ComfyUI の Blur Image を使います。",
+    "inputs": {
+      "image": {
+        "tooltip": "サーフェスの法線を推定する画像です。"
+      },
+      "model": {
+        "tooltip": "BAE の重み(scannet.pt)。ScanNet で学習されており、その利用規約は商用に適していません。重みの Hugging Face カードも 'other' としか書かれていません。商用利用の前に確認してください。\nすでにお持ちのコピー(models/normalbae または comfyui_controlnet_aux)を使い、なければ初回実行時にダウンロードします。"
+      },
+      "resolution": {
+        "tooltip": "短辺を処理するサイズ。512 は ControlNet が使う値で、高くすると遅くなりますが、ディテールが増えることがあります。"
+      },
+      "flip_y": {
+        "tooltip": "グリーンチャンネルを反転します(OpenGL 式と DirectX 式のノーマルマップ)。"
+      },
+      "blur_radius": {
+        "tooltip": "完成した法線マップを ComfyUI の Blur Image でぼかします。半径はピクセル単位で、ぼかしカーネルの幅は 2 x 半径 + 1 です。BAE が平らな面に残す細かいノイズをなめらかにします。0 = ぼかしなし。"
+      },
+      "sigma": {
+        "tooltip": "ぼかしが半径内にどれだけ均等に広がるかです(Blur Image と同じ意味)。高いほど強く、単純なボックスブラーに近づきます。低いほど穏やかで、中心寄りに重みが付きます。blur_radius が 0 より大きいときだけ使われます。"
+      }
+    }
+  },
+  "LCFaceCrop": {
+    "description": "単純な中央クロップではなく、顔を適切な位置に置いて、フォーマット（LC Aspect Ratio Simplifier のプリセット）にクロップします。widest はフォーマットが許す限り多くの画像を残します。upper body、head & shoulders、face は顔のサイズを基準にさらにタイトに切り出します（キャラクターデータセット向け）。顔は SAM 3 が検出するか、マスクを接続して任意のものをフレーミングできます。",
+    "inputs": {
+      "aspect_ratio": {
+        "tooltip": "クロップするフォーマット(LC Aspect Ratio Simplifier と同じリスト)。"
+      },
+      "custom_width": {
+        "tooltip": "aspect_ratio が custom のときに使われます。"
+      },
+      "custom_height": {
+        "tooltip": "aspect_ratio が custom のときに使われます。"
+      },
+      "framing": {
+        "tooltip": "widest: フォーマットが許す限り広い範囲で、顔をうまく配置します。upper body / head & shoulders / face: よりタイトで、顔を基準にサイズが決まります (データセット向け)。"
+      },
+      "faces": {
+        "tooltip": "all:見つかったすべての顔がクロップに残ります。largest:メインの顔だけをフレームに入れます。"
+      },
+      "output_size": {
+        "tooltip": "preset size: フォーマットのサイズ（例：1080x1350）にリサイズします。keep pixels: 画像自身の解像度でのクロップ。"
+      },
+      "sam3_model": {
+        "tooltip": "顔を検出する SAM 3 モデル。"
+      },
+      "threshold": {
+        "tooltip": "SAM 3 が顔だと判断するのに必要な確信度。"
+      },
+      "mask": {
+        "tooltip": "任意。顔を探す代わりに、このマスクをフレーミングします（車、製品、ペットなど任意の被写体）。"
+      }
+    }
+  },
+  "LCVOSRUpscale": {
+    "description": "VOSR 2.0 のワンステップアップスケールを内蔵しています。モデルで画像を描き直さずにシャープにして細部を加えるので、ディテーラーの結果がそのまま活きます。ディテーラーの後に実行してください。重みは初回実行時にダウンロードされます（CSWRY/VOSR、Apache-2.0）。",
+    "inputs": {
+      "upscale_by": {
+        "tooltip": "最終サイズです。1.5x〜4x は1パスです(1.5x は 2x より約3分の1速い)。6x と 8x は2パスで実行されます(3x + 2x、4x + 2x):1回の大きなパスでは肌がまだらに崩れるためです。"
+      },
+      "seed": {
+        "tooltip": "VOSR2 はノイズからのワンステップです：seed が変えるのは最も細かい粒子だけです。"
+      },
+      "color_alignment": {
+        "tooltip": "結果の色を入力の色に合わせます。wavelet = 最もよく一致します。"
+      },
+      "tile_size": {
+        "tooltip": "アップスケールモデル用のピクセルタイル。VOSR2 は 512 で学習されているので、そのままにしてください。"
+      },
+      "vae_tile_size": {
+        "tooltip": "VAE のピクセルタイル。低いほど VRAM を節約でき、少し遅くなります。"
+      },
+      "protect_mask": {
+        "tooltip": "任意。LC Smart Detailer のマスク（複数の場合は max で結合）。新しいサイズで 'protected' として出力されます。"
+      }
+    }
+  },
+  "LCVOSRUpscalePipe": {
+    "description": "pipe 上の LC VOSR2 Upscale:pipe 内の画像(ディテーラーが残したもの)をアップスケールし、結果を pipe に戻します。ディテーラーの領域もそれに合わせてリサイズされます('protected' 出力)。",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe: 画像は pipe の image から取得されます。"
+      },
+      "upscale_by": {
+        "tooltip": "最終サイズです。1.5x〜4x は1パスです(1.5x は 2x より約3分の1速い)。6x と 8x は2パスで実行されます(3x + 2x、4x + 2x):1回の大きなパスでは肌がまだらに崩れるためです。"
+      },
+      "seed": {
+        "tooltip": "VOSR2 はノイズからのワンステップです：seed が変えるのは最も細かい粒子だけです。"
+      },
+      "color_alignment": {
+        "tooltip": "結果の色を入力の色に合わせます。wavelet = 最もよく一致します。"
+      },
+      "tile_size": {
+        "tooltip": "アップスケールモデル用のピクセルタイル。VOSR2 は 512 で学習されているので、そのままにしてください。"
+      },
+      "vae_tile_size": {
+        "tooltip": "VAE のピクセルタイル。低いほど VRAM を節約でき、少し遅くなります。"
+      },
+      "image": {
+        "tooltip": "任意。空 = pipe の画像。pipe を持たないノードが途中で画像を変更した場合につないでください。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "アップスケールした画像と、それに合わせてリサイズされたディテーラーの領域を含むパイプ。"
+      },
+      "1": {
+        "tooltip": "アップスケールした画像。"
+      },
+      "2": {
+        "tooltip": "ディテーラーが描き直した顔と手を、新しいサイズで表します。LC Skin Texture / LC Skin Upscale の protect_mask につなぐと、ディテーラーの仕事の上に肌のディテールが重ねられるのを防げます。"
+      }
+    }
+  }
+}

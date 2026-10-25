@@ -1,0 +1,1224 @@
+{
+  "LCImageOutpaint": {
+    "description": "인터랙티브 outpaint 준비: 노드에서 캔버스 가장자리를 바깥으로 드래그합니다. 원본은 회색 캔버스 위에 놓이고, 마스크는 새 영역이 흰색입니다. 선택적 비율 고정(free / original / 일반 비율). block을 if_empty_mask로 설정하면 가장자리를 끌어낼 때까지 이후 모든 것이 멈춥니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "확장할 원본 이미지."
+      },
+      "block": {
+        "tooltip": "if_empty_mask: 가장자리를 하나라도 끌어내기 전까지(네 방향의 확장이 모두 0) 이 노드 이후의 모든 것이 중지되므로, 캔버스를 설정한 뒤 다시 큐에 넣으세요.\nnever: 캔버스와 마스크를 항상 통과시킵니다."
+      },
+      "hold_mask": {
+        "tooltip": "held: 설정한 캔버스(아래의 확장 값)를 유지하고, 실행할 때마다 이미지를 그 캔버스와 함께 내보냅니다.\nsnap_to_image: 아무것도 당기지 않았다면 이미지는 그대로 통과합니다(block이 if_empty_mask면 여기서 실행이 멈춤). 가장자리를 바깥으로 당기고 다시 실행하세요: 그 실행에서는 당긴 값을 사용한 뒤 박스가 이미지로 되돌아가므로, 새 이미지는 항상 깨끗한 박스에서 시작합니다."
+      },
+      "left": {
+        "tooltip": "왼쪽 확장량, 원본 width의 %."
+      },
+      "top": {
+        "tooltip": "위쪽 확장, 원본 높이의 %."
+      },
+      "right": {
+        "tooltip": "오른쪽 확장, 원본 너비의 %."
+      },
+      "bottom": {
+        "tooltip": "아래쪽 확장, 원본 높이의 %."
+      },
+      "aspect": {
+        "tooltip": "최종 캔버스 비율을 고정합니다. 'original'은 원본 이미지와 같게 맞춥니다."
+      },
+      "snap_to": {
+        "tooltip": "최종 width/height를 이 값의 배수로 올림합니다(남는 부분은 오른쪽/아래). 1 = off."
+      },
+      "max_megapixels": {
+        "tooltip": "가장자리를 이 캔버스 크기 이상으로 끌 수 없게 하여, 모델이 잘 처리하는 크기보다 캔버스가 커지지 않게 합니다(Krea 2와 AnyPaint는 약 2 정도를 선호). 드래그만 제한하며 실행 자체는 리사이즈되지 않습니다. 0 = 제한 없음."
+      }
+    }
+  },
+  "LCImageRotatePad": {
+    "description": "노드에서 드래그해 이미지를 회전, 크롭, 패딩합니다: 둥근 핸들은 회전, 프레임 가장자리는 패딩(바깥으로 드래그) 또는 크롭(안으로 드래그). 마스크는 새 영역과 회전으로 생기는 모서리를 덮습니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "회전, 크롭, 패딩할 이미지."
+      },
+      "keep_frame": {
+        "tooltip": "keep: 회전과 프레임이 실행할 때마다 설정한 그대로 유지됩니다. 같은 이미지를 다시 실행할 때(후처리, 같은 seed) 사용하세요.\nsnap back after run: 실행이 끝나면 회전과 프레임이 원래 이미지로 돌아가 다음 이미지가 깨끗하게 시작됩니다."
+      },
+      "angle": {
+        "tooltip": "시계 방향 회전 각도(도). 또는 노드의 둥근 핸들을 드래그하세요(Shift를 누르면 15° 단위)."
+      },
+      "fit": {
+        "tooltip": "expand: 프레임이 회전된 그림 전체를 둘러싸며 시작하고, 빈 모서리는 모델이 칠하도록 마스크됩니다.\ncrop: 프레임이 빈 모서리가 없는 가장 큰 박스에서 시작합니다."
+      },
+      "fill": {
+        "tooltip": "모델이 칠하기 전에 새 영역에 채워 넣는 내용입니다. gray는 Krea 2와 AnyPaint가 기대하는 값입니다. edge는 바깥쪽 픽셀을 늘려 채웁니다(본 것을 그대로 복사하는 모델용)."
+      },
+      "left": {
+        "tooltip": "프레임 왼쪽 가장자리, 원본 너비의 %. 양수는 패딩, 음수는 크롭."
+      },
+      "top": {
+        "tooltip": "프레임 위쪽 가장자리, 원본 높이의 %입니다. 양수는 pad, 음수는 crop."
+      },
+      "right": {
+        "tooltip": "프레임 오른쪽 가장자리, 원본 너비의 %. 양수는 패딩, 음수는 크롭."
+      },
+      "bottom": {
+        "tooltip": "프레임 아래쪽 가장자리, 원본 높이의 %. 양수는 패딩, 음수는 크롭."
+      },
+      "aspect": {
+        "tooltip": "출력 형태를 고정합니다. 'original'은 원본 이미지에 맞춥니다."
+      },
+      "snap_to": {
+        "tooltip": "출력 width와 height를 이 값의 배수로 올림합니다(남는 부분은 오른쪽과 아래). 1 = off."
+      },
+      "block": {
+        "tooltip": "until turned or framed: 이미지를 건드리지 않은 동안(회전, crop, pad 없음) 이 노드 뒤에서 실행이 멈춥니다. 한 번 실행해 여기서 이미지를 확인하고, 설정한 뒤 다시 실행하세요.\nnever: 건드리지 않았더라도 항상 이미지를 넘깁니다."
+      },
+      "max_megapixels": {
+        "tooltip": "가장자리를 이 캔버스 크기 이상으로 끌 수 없게 하여, 모델이 잘 처리하는 크기보다 캔버스가 커지지 않게 합니다(Krea 2와 AnyPaint는 약 2 정도를 선호). 드래그만 제한하며 실행 자체는 리사이즈되지 않습니다. 0 = 제한 없음."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "회전, crop, pad가 적용된 그림."
+      },
+      "1": {
+        "tooltip": "모델이 칠하는 곳이 흰색: 패딩과 회전으로 생기는 모서리."
+      },
+      "2": {
+        "tooltip": "출력 width."
+      },
+      "3": {
+        "tooltip": "출력 height."
+      }
+    }
+  },
+  "LCSplineMask": {
+    "description": "노드 위에 마스크를 그립니다: 클릭해서 점을 추가(제한 없음), 드래그로 모양 변경, 또는 연필로 자유롭게 그리기. 페더, 반전, 불투명도가 내장되어 있습니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "마스크를 그릴 이미지."
+      },
+      "block": {
+        "tooltip": "if_empty_mask: 아무것도 그려지지 않았을 때(도형 없음 또는 전체가 검은 마스크) 이 노드 이후의 모든 것이 중단되므로, 그린 다음 다시 queue하세요.\nnever: 이미지와 마스크를 항상 통과시킵니다."
+      },
+      "pencil": {
+        "tooltip": "points: 클릭해 추가, 드래그해 이동, shift+클릭으로 제거. pencil: 자유롭게 그리기."
+      },
+      "smooth": {
+        "tooltip": "smooth는 직선 대신 점들을 지나는 곡선을 만듭니다."
+      },
+      "invert": {
+        "tooltip": "마스크를 뒤집습니다(바깥쪽이 흰색이 됨)."
+      },
+      "feather": {
+        "tooltip": "픽셀 단위의 가장자리 부드러움(가우시안 블러 반경)."
+      },
+      "opacity": {
+        "tooltip": "마스크 강도. 마스크 값을 스케일합니다(1.0 = 단단함)."
+      },
+      "overlay_opacity": {
+        "tooltip": "노드의 미리보기 위에 마스크가 얼마나 진하게 보이는지. 표시 전용."
+      },
+      "points": {
+        "tooltip": "내부용: 정규화된 점 목록."
+      }
+    }
+  },
+  "LCMaskRefine": {
+    "description": "trimap으로 마스크를 조입니다. edge_erode와 edge_dilate가 unknown 대역의 폭을 정하고, guided filter나 VITMatte가 그 대역만 결정합니다. 노드에서 before/after wipe와 trimap 보기를 제공합니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "마스크가 속한 이미지. 가이드로 사용됩니다."
+      },
+      "mask": {
+        "tooltip": "보정할 마스크. 크기는 상관없으며 이미지에 맞춰 리사이즈됩니다."
+      },
+      "method": {
+        "tooltip": "vitmatte: matting 모델, 머리카락과 섬세한 디테일에 최적.\nguided_filter: 빠르고 모델이 필요 없으며, unknown 대역을 이미지 에지에 맞춥니다.\nnone: matting을 건너뛰고 grow, 틈 메우기, levels, feather만 적용."
+      },
+      "vitmatte_model": {
+        "tooltip": "vitmatte에서만 사용됩니다. 'Download'로 표시된 항목은 처음 실행할 때 받아 옵니다."
+      },
+      "grow": {
+        "tooltip": "trimap을 만들기 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수입니다."
+      },
+      "fix_gap": {
+        "tooltip": "이 픽셀 폭까지의 작은 구멍과 틈을 메웁니다. 0 = off."
+      },
+      "fix_threshold": {
+        "tooltip": "틈을 메울 때 마스크 픽셀이 단단하다고 칠 만큼 얼마나 흰색이어야 하는지."
+      },
+      "edge_erode": {
+        "tooltip": "TRIMAP. 확실한 전경 영역이 마스크 가장자리에서 안쪽으로 얼마나 들어가는지(픽셀)입니다.\n이 안쪽은 모두 흰색으로 고정됩니다. 작을수록 타이트하고 판단할 영역이 줄어듭니다."
+      },
+      "edge_dilate": {
+        "tooltip": "TRIMAP. 알 수 없음 영역이 마스크 가장자리 밖으로 얼마나 뻗는지(픽셀)입니다.\n이 범위를 넘는 부분은 검정으로 고정됩니다. 작을수록 타이트하고 판단할 부분이 적습니다."
+      },
+      "softness": {
+        "tooltip": "guided_filter 전용. 낮을수록 이미지 가장자리를 더 타이트하게 따르고, 높을수록 부드럽습니다."
+      },
+      "threshold": {
+        "tooltip": "trimap을 만들 때 입력 마스크를 안쪽과 바깥쪽으로 나누는 위치입니다. 1.0 쪽으로 올리면 부드러운 마스크의 단단한 중심부만 사용합니다."
+      },
+      "black_point": {
+        "tooltip": "이 값 이하의 마스크 값은 0이 됩니다. 옅은 안개를 지웁니다."
+      },
+      "white_point": {
+        "tooltip": "이 값 이상의 마스크 값은 1이 됩니다. 피사체를 단단하게 만듭니다."
+      },
+      "feather": {
+        "tooltip": "최종 가장자리 부드러움(픽셀)."
+      },
+      "edge_color_spread": {
+        "tooltip": "Cutout 전용. 배경 halo를 없애기 위해 피사체의 단색을 이 픽셀 수만큼 바깥으로 밀어냅니다. 0 = off."
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte 전용. 이보다 큰 이미지는 이 크기로 matting한 뒤 다시 확대됩니다."
+      },
+      "detail_erode": {
+        "tooltip": "edge_erode와 같지만 detail_region 영역(머리카락)용입니다. 넓을수록 가는 머리카락에 여유가 생깁니다."
+      },
+      "detail_dilate": {
+        "tooltip": "edge_dilate와 같지만 detail_region 영역용입니다."
+      },
+      "detail_blur": {
+        "tooltip": "detail_region 결과가 나머지와 만나는 이음새를 부드럽게 합니다."
+      },
+      "preview_view": {
+        "tooltip": "노드의 wipe가 보여주는 것입니다.\ntrimap: 왼쪽은 trimap(검정 = 확실한 배경, 회색 = 알 수 없음, 흰색 = 확실한 전경), 오른쪽은 결과입니다."
+      },
+      "detail_region": {
+        "tooltip": "선택 사항. 흰색 영역(예: 머리카락)은 edge_erode / edge_dilate 대신 detail_erode / detail_dilate를 사용합니다."
+      }
+    }
+  },
+  "LCRemBG": {
+    "description": "BiRefNet으로 배경을 제거합니다. RGBA 컷아웃, 마스크, 단색 배경 위의 피사체를 출력합니다. guided filter 또는 VITMatte 보정은 선택 사항입니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "피사체를 잘라낼 이미지."
+      },
+      "model": {
+        "tooltip": "배경 제거 모델입니다. 라이선스는 라벨에 표시됩니다.\n'Download'로 표시된 항목은 처음 실행할 때 받아 옵니다."
+      },
+      "refine": {
+        "tooltip": "none: 모델의 마스크를 그대로 사용.\nguided_filter: 빠르고, 에지를 이미지에 맞춥니다.\nvitmatte: 머리카락과 섬세한 디테일용 matting 모델."
+      },
+      "vitmatte_model": {
+        "tooltip": "refine이 vitmatte일 때만 사용."
+      },
+      "grow": {
+        "tooltip": "보정 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수."
+      },
+      "edge_erode": {
+        "tooltip": "Refine trimap: 확실한 전경 영역을 마스크 가장자리에서 얼마나 안쪽으로 당기는지. 작을수록 타이트합니다."
+      },
+      "edge_dilate": {
+        "tooltip": "Refine trimap: unknown 대역이 마스크 가장자리 너머로 얼마나 뻗는지. 작을수록 타이트합니다."
+      },
+      "black_point": {
+        "tooltip": "이 값 이하의 마스크 값은 0이 됩니다. 옅은 배경 안개를 지우려면 올리세요."
+      },
+      "white_point": {
+        "tooltip": "이 값 이상의 마스크 값은 1이 됩니다. 낮추면 피사체가 더 단단해집니다."
+      },
+      "feather": {
+        "tooltip": "최종 가장자리 부드러움(픽셀)."
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte 전용. 이보다 큰 이미지는 이 크기로 matting한 뒤 다시 확대됩니다."
+      },
+      "background": {
+        "tooltip": "on_background 출력에서 피사체 뒤의 색."
+      }
+    }
+  },
+  "LCSegmentAnything": {
+    "description": "설명으로 대상을 선택합니다. GroundingDINO + SAM(Apache-2.0, 필요할 때 다운로드) 또는 SAM 3를 사용하고, 선택적으로 guided filter / VITMatte 보정을 거치며, 노드에서 전/후 와이프를 제공합니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "대상을 잘라낼 이미지."
+      },
+      "prompt": {
+        "tooltip": "선택할 대상을 쉼표로 구분한 간단한 단어로 입력합니다: hair, eyes, bikini.\n각 단어를 따로 찾아 결과를 합칩니다."
+      },
+      "engine": {
+        "tooltip": "grounding_dino + sam: GroundingDINO가 box를 찾고 SAM이 마스크를 만듭니다. Apache-2.0 모델이며 처음 사용할 때 다운로드됩니다.\nsam3: SAM 3이 둘을 한 번에 처리합니다(SAM License). SAM 3.1 다운로드를 고르거나, models/sam3의 sam3.safetensors를 직접 사용하세요."
+      },
+      "dino_model": {
+        "tooltip": "grounding_dino + sam에서 사용됩니다. 'Download'로 표시된 항목은 처음 실행할 때 가져옵니다."
+      },
+      "sam_model": {
+        "tooltip": "grounding_dino + sam에서 사용됩니다. base가 가장 빠르고 huge가 가장 정확합니다."
+      },
+      "sam3_model": {
+        "tooltip": "sam3 엔진에서 사용됩니다."
+      },
+      "threshold": {
+        "tooltip": "grounding_dino + sam: 검출 confidence. 낮으면 더 많이 찾고(오검출도 늘고), 높으면 더 까다롭습니다."
+      },
+      "sam3_threshold": {
+        "tooltip": "sam3: 감지 신뢰도입니다. SAM 3 점수는 더 높게 나오므로 0.5가 좋은 시작점입니다. 0.3 정도에서는 이미지에 없는 단어에도 일치 대상을 만들어 내기 시작합니다."
+      },
+      "max_objects": {
+        "tooltip": "grounding_dino + sam 전용. 단어당 박스를 최대 이만큼만 유지합니다(좋은 것부터). 0 = 전체."
+      },
+      "refine": {
+        "tooltip": "원본 마스크의 에지 보정. vitmatte는 머리카락에 최적, guided_filter는 빠름, none은 원본 마스크 유지."
+      },
+      "vitmatte_model": {
+        "tooltip": "refine이 vitmatte일 때만 사용."
+      },
+      "edge_erode": {
+        "tooltip": "Trimap: 확실한 전경을 마스크 가장자리에서 안쪽으로 당기는 거리(픽셀)."
+      },
+      "edge_dilate": {
+        "tooltip": "Trimap: 알 수 없음 영역이 마스크 가장자리 밖으로 뻗는 거리(픽셀)."
+      },
+      "black_point": {
+        "tooltip": "이 값 이하의 마스크 값은 0이 됩니다."
+      },
+      "white_point": {
+        "tooltip": "이 값 이상의 마스크 값은 1이 됩니다."
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte 전용. 이보다 큰 이미지는 이 크기로 matting한 뒤 다시 확대됩니다."
+      },
+      "preview_view": {
+        "tooltip": "노드의 wipe가 보여주는 것. Before는 원본 마스크."
+      }
+    }
+  },
+  "LCSmartInpaint": {
+    "description": "설명한 대상(손, 얼굴, 눈 등)을 찾아 최대 디테일로 다시 그립니다. 손과 얼굴마다 각자의 크롭을 만들어 inpaint_resolution까지 확대해 다시 그린 뒤 원본에 블렌딩합니다. 아무것도 못 찾았나요? 이미지는 그대로 통과하고 노드가 알려줍니다.\nnegative 미연결: Flux, Krea 2, Anima 등 cfg 1 모델에는 괜찮습니다. SDXL은 연결하세요.",
+    "inputs": {
+      "positive": {
+        "tooltip": "이미지의 prompt입니다. 장면 전체를 묘사하는 prompt는 denoise 0.3 이상에서 모든 crop에 끌려 들어갈 수 있습니다(얼굴 안에 작은 장면 전체가 생김). 이를 막으려면 inpaint_positive를 연결하세요."
+      },
+      "prompt": {
+        "tooltip": "디테일을 넣을 대상을 쉼표로 구분한 간단한 단어로 입력합니다: hands, face.\n모든 match를 찾습니다(양손, 모든 얼굴). :N을 붙여 개수를 제한하세요. 예: face:1."
+      },
+      "sam3_model": {
+        "tooltip": "찾기를 수행하는 SAM 3 모델입니다. SAM 3.1 다운로드를 고르거나, models/sam3의 sam3.pt / sam3.safetensors를 사용하세요."
+      },
+      "threshold": {
+        "tooltip": "SAM 3가 얼마나 확신해야 하는지. 낮추면 더 많이 찾고(잘못된 것도 더 많이), 높이면 더 까다롭습니다. 0.5가 시작점으로 좋습니다.\n색은 힌트일 뿐입니다: 'red dress'가 초록색 드레스를 고를 수도 있습니다. 없는 것은 찾지 못합니다."
+      },
+      "grow": {
+        "tooltip": "인페인트 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수. 조금 키우면 가장자리를 덮어줍니다."
+      },
+      "feather": {
+        "tooltip": "마스크 가장자리의 부드러움(픽셀). 다시 그린 영역이 나머지와 어우러지게 합니다. 0 = 딱딱한 가장자리."
+      },
+      "blend": {
+        "tooltip": "다시 그린 부분을 얼마나 붙여 넣을지 정합니다: 1 = 전부. 1 미만에서는 기존 픽셀과 새 픽셀이 섞이며, 다시 그리면서 조금 움직인 특징(속눈썹, 눈꺼풀)이 두 번 보일 수 있습니다. 더 가볍게 다시 그리려면 denoise를 낮추세요."
+      },
+      "padding": {
+        "tooltip": "각 크롭에 포함되는 주변 이미지의 픽셀 수로, 모델이 맥락을 볼 수 있게 합니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "각 크롭은 모양과 상관없이 약 이 픽셀 수의 제곱으로 다시 그려집니다(1024 = 1메가픽셀). 높을수록 디테일이 많고 느립니다."
+      },
+      "sampler_name": {
+        "tooltip": "Sampler."
+      },
+      "scheduler": {
+        "tooltip": "Scheduler."
+      },
+      "steps": {
+        "tooltip": "샘플링 steps."
+      },
+      "cfg": {
+        "tooltip": "다시 그리기용 CFG입니다. 1은 Krea 2, Flux, Z-Image, Anima에서 작동하고, detailer denoise(약 0.4까지)에서는 SDXL에서도 작동합니다(테스트: SDXL은 cfg 1부터 7까지 똑같아 보였음). 1 아래로는 내려가지 않습니다. 1 미만이면 다시 그린 결과에 얼룩이 생깁니다."
+      },
+      "denoise": {
+        "tooltip": "다시 그리는 정도. 낮으면 형태를 유지하고 디테일을 고치며, 높으면 처음부터 다시 그립니다."
+      },
+      "seed": {
+        "tooltip": "다시 그리기용 seed."
+      },
+      "inpaint_positive": {
+        "tooltip": "선택 사항. 크롭 전용 프롬프트입니다. 예: 'close-up of a woman's face, natural skin'. 다시 그릴 때 positive 대신 사용됩니다. positive가 장면 전체를 설명하는 경우에는 항상 권장합니다."
+      },
+      "negative": {
+        "tooltip": "선택 사항. cfg 1 모델에서는 비워 두세요. negative를 쓰는 SDXL 등의 모델에서는 연결하세요."
+      },
+      "tone_match": {
+        "tooltip": "On: 다시 그린 부분을 붙여 넣는 위치에서 원본의 밝기, 대비, 색을 되돌리면서 새 디테일은 유지합니다. 이게 없으면 가볍게 다시 그린 결과가 약간 밋밋하고 칙칙하게 나옵니다. 다시 그리는 목적이 색을 바꾸는 것(새 셔츠 색, 다른 물체)일 때는 끄세요."
+      }
+    }
+  },
+  "LCSmartInpaintPipe": {
+    "description": "설명한 대상(손, 얼굴, 눈 등)을 찾아 최대 디테일로 다시 그립니다. 손과 얼굴마다 각자의 크롭을 만들어 inpaint_resolution까지 확대해 다시 그린 뒤 원본에 블렌딩합니다. 아무것도 못 찾았나요? 이미지는 그대로 통과하고 노드가 알려줍니다.\nnegative 미연결: Flux, Krea 2, Anima 등 cfg 1 모델에는 괜찮습니다. SDXL은 연결하세요.",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe: model, VAE, seed, steps, cfg, sampler, scheduler를 여기서 가져옵니다."
+      },
+      "prompt": {
+        "tooltip": "디테일을 넣을 대상을 쉼표로 구분한 간단한 단어로 입력합니다: hands, face.\n모든 match를 찾습니다(양손, 모든 얼굴). :N을 붙여 개수를 제한하세요. 예: face:1."
+      },
+      "sam3_model": {
+        "tooltip": "찾기를 수행하는 SAM 3 모델입니다. SAM 3.1 다운로드를 고르거나, models/sam3의 sam3.pt / sam3.safetensors를 사용하세요."
+      },
+      "threshold": {
+        "tooltip": "SAM 3가 얼마나 확신해야 하는지. 낮추면 더 많이 찾고(잘못된 것도 더 많이), 높이면 더 까다롭습니다. 0.5가 시작점으로 좋습니다.\n색은 힌트일 뿐입니다: 'red dress'가 초록색 드레스를 고를 수도 있습니다. 없는 것은 찾지 못합니다."
+      },
+      "grow": {
+        "tooltip": "인페인트 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수. 조금 키우면 가장자리를 덮어줍니다."
+      },
+      "feather": {
+        "tooltip": "마스크 가장자리의 부드러움(픽셀). 다시 그린 영역이 나머지와 어우러지게 합니다. 0 = 딱딱한 가장자리."
+      },
+      "blend": {
+        "tooltip": "다시 그린 부분을 얼마나 붙여 넣을지 정합니다: 1 = 전부. 1 미만에서는 기존 픽셀과 새 픽셀이 섞이며, 다시 그리면서 조금 움직인 특징(속눈썹, 눈꺼풀)이 두 번 보일 수 있습니다. 더 가볍게 다시 그리려면 denoise를 낮추세요."
+      },
+      "padding": {
+        "tooltip": "각 크롭에 포함되는 주변 이미지의 픽셀 수로, 모델이 맥락을 볼 수 있게 합니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "각 크롭은 모양과 상관없이 약 이 픽셀 수의 제곱으로 다시 그려집니다(1024 = 1메가픽셀). 높을수록 디테일이 많고 느립니다."
+      },
+      "denoise": {
+        "tooltip": "다시 그리는 정도. 낮으면 형태를 유지하고 디테일을 고치며, 높으면 처음부터 다시 그립니다."
+      },
+      "image": {
+        "tooltip": "선택 사항. 비어 있으면 pipe의 이미지. pipe가 없는 노드가 중간에 그림을 바꿨을 때 연결하세요."
+      },
+      "model": {
+        "tooltip": "선택 사항. pipe의 모델 대신 사용할 모델을 여기에 연결합니다(LoRA가 적용된 모델이나 다른 모델)."
+      },
+      "vae": {
+        "tooltip": "선택 사항. pipe의 VAE 대신 사용할 VAE를 여기에 연결합니다."
+      },
+      "positive": {
+        "tooltip": "이미지의 prompt입니다. 장면 전체를 묘사하는 prompt는 denoise 0.3 이상에서 모든 crop에 끌려 들어갈 수 있습니다(얼굴 안에 작은 장면 전체가 생김). 이를 막으려면 inpaint_positive를 연결하세요."
+      },
+      "inpaint_positive": {
+        "tooltip": "선택 사항. 크롭 전용 프롬프트입니다. 예: 'close-up of a woman's face, natural skin'. 다시 그릴 때 positive 대신 사용됩니다. positive가 장면 전체를 설명하는 경우에는 항상 권장합니다."
+      },
+      "negative": {
+        "tooltip": "선택 사항. cfg 1 모델에서는 비워 두세요. negative를 쓰는 SDXL 등의 모델에서는 연결하세요."
+      },
+      "tone_match": {
+        "tooltip": "On: 다시 그린 부분을 붙여 넣는 위치에서 원본의 밝기, 대비, 색을 되돌리면서 새 디테일은 유지합니다. 이게 없으면 가볍게 다시 그린 결과가 약간 밋밋하고 칙칙하게 나옵니다. 다시 그리는 목적이 색을 바꾸는 것(새 셔츠 색, 다른 물체)일 때는 끄세요."
+      },
+      "cfg": {
+        "tooltip": "다시 그리기용 CFG입니다. 1은 Krea 2, Flux, Z-Image에서 잘 작동하고, 디테일러 denoise(약 0.4까지)에서는 SDXL에서도 잘 작동합니다(테스트 결과 SDXL은 cfg 1~7에서 동일해 보임). 보통 메인 샘플러의 값인 pipe의 cfg_1 대신 사용됩니다."
+      }
+    }
+  },
+  "LCKrea2AnyPaint": {
+    "description": "yijunwang2의 AnyPaint LoRA로 Krea 2용 인페인트와 아웃페인트를 학습된 방식 그대로 수행합니다: 캔버스 전체 참조, 매 스텝 후 다시 덮어쓰는 유지 픽셀, 모델이 블렌딩하는 경계. 마스크 바깥의 이미지는 그대로 돌아옵니다. 프롬프트에는 완성된 이미지 전체를 설명하세요.\n아웃페인트: LC Outpaint의 control_image와 control_mask를 연결하세요.",
+    "inputs": {
+      "model": {
+        "tooltip": "Krea 2 (Turbo). LoRA와 패치는 이 노드에만 적용됩니다."
+      },
+      "clip": {
+        "tooltip": "Krea 2 텍스트 인코더(Qwen3-VL 4B, CLIP type krea2)."
+      },
+      "mask": {
+        "tooltip": "흰색 = 칠하기, 검정 = 유지. 선택 사항: LC Outpaint의 캔버스와 함께 마스크 없이 쓰면 그 마스크를 사용합니다. outpaint하려면 LC Outpaint의 control_image를 이미지로, control_mask를 마스크로 연결하세요."
+      },
+      "prompt": {
+        "tooltip": "변경 부분만이 아니라 완성된 이미지 전체를 설명하세요: \"a woman in a red coat on a snowy street\". 제거만 요청하는 프롬프트(\"remove the car\")는 밋밋한 덩어리를 남기기 쉽습니다."
+      },
+      "lora": {
+        "tooltip": "yijunwang2의 krea2_anypaint_rank32(models/loras). 이 노드에서만 lora_strength로 적용됩니다."
+      },
+      "lora_strength": {
+        "tooltip": "1.0이 학습된 값입니다."
+      },
+      "steps": {
+        "tooltip": "8 (Krea 2 Turbo). euler에서는 keep이 정확합니다."
+      },
+      "sampler_name": {
+        "tooltip": "euler는 AnyPaint가 학습되고 테스트된 방식입니다. keep 스텝은 euler에서만 정확합니다."
+      },
+      "scheduler": {
+        "tooltip": "simple, 레퍼런스와 동일."
+      },
+      "crop_to_mask": {
+        "tooltip": "On: 작은 마스크는 자체 크롭에서 inpaint_resolution까지 확대해 다시 그립니다(더 많은 디테일). Off: 이미지 전체를 inpaint_resolution으로 처리합니다."
+      },
+      "padding": {
+        "tooltip": "crop할 때 마스크 주변의 context(px)입니다. 클수록 모델이 장면을 더 많이 봅니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "다시 그리는 크기(면적 기준: 1024 = 약 1 MP). AusBoss에 따르면 약 1.6 MP를 넘으면 Krea 2가 팔다리를 구기고 하늘을 어둡게 하기 시작합니다."
+      },
+      "boundary_px": {
+        "tooltip": "이음매를 섞기 위해 모델이 다시 그리는 마스크 주변 테두리(다시 그리기 픽셀 단위). 32 = 기준값."
+      },
+      "vlm_reference": {
+        "tooltip": "참조를 텍스트 인코더에도 보여 줍니다. On = 참조 레시피."
+      },
+      "composite": {
+        "tooltip": "keep original = 칠한 영역(부드러운 가장자리, 색 보정됨)만 다시 붙여넣어 나머지는 원본 그대로입니다. raw = 크롭에 대한 모델의 전체 재생성 결과."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "마스크 영역이 칠해진 이미지."
+      },
+      "1": {
+        "tooltip": "다시 붙여넣은 위치(부드러운 가장자리)."
+      }
+    }
+  },
+  "LCZImageAnyPaint": {
+    "description": "Alibaba의 Z-Image Fun ControlNet Union 2.1을 inpaint 모드로 사용하는 Z-Image(Turbo / Base)용 인페인트 및 아웃페인트: 유지할 픽셀은 매 스텝 후 다시 적용되고 경계는 모델이 블렌딩합니다. 마스크 밖의 이미지는 그대로 돌아옵니다. 프롬프트에는 완성된 전체 이미지를 설명하세요.\n아웃페인트: LC Outpaint 또는 LC Outpaint, Rotate, & Pad의 control_image와 control_mask를 연결하세요.",
+    "inputs": {
+      "model": {
+        "tooltip": "Z-Image(Turbo / Base). ControlNet 패치는 이 노드에만 적용됩니다."
+      },
+      "clip": {
+        "tooltip": "Z-Image의 text encoder (Qwen3 4B, CLIP type lumina2)."
+      },
+      "mask": {
+        "tooltip": "흰색 = 칠하기, 검정 = 유지. 선택 사항: LC Outpaint의 캔버스와 함께 마스크 없이 쓰면 그 마스크를 사용합니다. outpaint하려면 LC Outpaint의 control_image를 이미지로, control_mask를 마스크로 연결하세요."
+      },
+      "prompt": {
+        "tooltip": "변경 부분만이 아니라 완성된 이미지 전체를 설명하세요: \"a woman in a red coat on a snowy street\". 제거만 요청하는 프롬프트(\"remove the car\")는 밋밋한 덩어리를 남기기 쉽습니다."
+      },
+      "control": {
+        "tooltip": "Alibaba의 Z-Image Fun ControlNet Union 2.1(models/model_patches)을 인페인트 모드로 사용합니다. 8steps 버전은 Z-Image Turbo용입니다."
+      },
+      "control_strength": {
+        "tooltip": "ControlNet이 그림을 입력 이미지에 얼마나 강하게 묶어 두는지. 1 = 학습된 대로."
+      },
+      "steps": {
+        "tooltip": "8 (Krea 2 Turbo). euler에서는 keep이 정확합니다."
+      },
+      "sampler_name": {
+        "tooltip": "euler는 AnyPaint가 학습되고 테스트된 방식입니다. keep 스텝은 euler에서만 정확합니다."
+      },
+      "scheduler": {
+        "tooltip": "simple, 레퍼런스와 동일."
+      },
+      "crop_to_mask": {
+        "tooltip": "On: 작은 마스크는 자체 크롭에서 inpaint_resolution까지 확대해 다시 그립니다(더 많은 디테일). Off: 이미지 전체를 inpaint_resolution으로 처리합니다."
+      },
+      "padding": {
+        "tooltip": "crop할 때 마스크 주변의 context(px)입니다. 클수록 모델이 장면을 더 많이 봅니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "다시 그리는 크기(면적 기준: 1024 = 약 1 MP). AusBoss에 따르면 약 1.6 MP를 넘으면 Krea 2가 팔다리를 구기고 하늘을 어둡게 하기 시작합니다."
+      },
+      "boundary_px": {
+        "tooltip": "이음매를 섞기 위해 모델이 다시 그리는 마스크 주변 테두리(다시 그리기 픽셀 단위). 32 = 기준값."
+      },
+      "composite": {
+        "tooltip": "keep original = 칠한 영역(부드러운 가장자리, 색 보정됨)만 다시 붙여넣어 나머지는 원본 그대로입니다. raw = 크롭에 대한 모델의 전체 재생성 결과."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "마스크 영역이 칠해진 이미지."
+      },
+      "1": {
+        "tooltip": "다시 붙여넣은 위치(부드러운 가장자리)."
+      }
+    }
+  },
+  "LCSDXLAnyPaint": {
+    "description": "모든 SDXL 체크포인트(SDXL, Pony, Illustrious, 직접 만든 finetune)용 inpaint와 outpaint입니다. xinsir의 ControlNet Union ProMax를 repaint 모드로 쓰며, 선택적으로 Fooocus의 inpaint patch도 사용합니다. 유지되는 픽셀은 매 스텝 후 다시 덮어씌우고 경계는 블렌딩합니다. 마스크 밖의 그림은 변하지 않고 그대로 돌아옵니다. LoRA는 필요 없습니다. 마스크에 들어갈 내용을 짧은 prompt로 설명하세요.\nOutpaint: LC Outpaint 또는 LC Outpaint, Rotate, & Pad의 control_image와 control_mask를 연결하세요.",
+    "inputs": {
+      "model": {
+        "tooltip": "아무 SDXL 체크포인트. inpaint 패치는 이 노드에서만 추가됩니다."
+      },
+      "clip": {
+        "tooltip": "체크포인트의 CLIP."
+      },
+      "mask": {
+        "tooltip": "흰색 = 칠하기, 검정 = 유지. 선택 사항: LC Outpaint의 캔버스와 함께 마스크 없이 쓰면 그 마스크를 사용합니다. outpaint하려면 LC Outpaint의 control_image를 이미지로, control_mask를 마스크로 연결하세요."
+      },
+      "prompt": {
+        "tooltip": "마스크 안에 들어갈 것을 짧게 설명하세요: \"a red bucket full of fish on the pier\". 무언가를 지우려면 대신 그 자리에 있어야 할 것을 설명하세요(\"empty wooden planks\"). 비워 둬도 됩니다: 마스크 주변 이미지에서 채워 넣습니다."
+      },
+      "negative": {
+        "tooltip": "원하지 않는 것. SDXL은 실제 negative prompt를 사용합니다."
+      },
+      "control": {
+        "tooltip": "xinsir의 ControlNet Union SDXL ProMax(models/controlnet)를 repaint 모드로 사용합니다: 에지, 빛, 원근을 이미지에 맞게 유지합니다. off = Fooocus inpaint만 사용."
+      },
+      "control_strength": {
+        "tooltip": "ControlNet이 그림을 당신의 이미지에 얼마나 강하게 붙잡는지 정합니다. 낮을수록 마스크 안에서 더 자유롭습니다."
+      },
+      "fooocus_inpaint": {
+        "tooltip": "선택 사항. lllyasviel의 Fooocus inpaint patch입니다(models/inpaint, 옆에 fooocus_inpaint_head.pth 필요). 가장 자연스럽게 섞이고 주변 색과 맞지만, 새로운 것을 추가하기보다 원래 있던 것을 다시 만드는 쪽에 가깝습니다. outpaint와 채우기에 좋습니다. ControlNet도 함께 켤 때는 control_strength를 약 0.5로 낮추세요(Pony / Illustrious는 1에서 노이즈가 됩니다). Acly의 comfyui-inpaint-nodes가 필요합니다."
+      },
+      "steps": {
+        "tooltip": "일반 SDXL 체크포인트는 25 - 30, Lightning / DMD 계열은 더 적게(그때는 cfg 1 - 2)."
+      },
+      "cfg": {
+        "tooltip": "SDXL cfg. 대부분의 체크포인트는 4 - 6."
+      },
+      "crop_to_mask": {
+        "tooltip": "On: 작은 마스크는 자체 크롭에서 inpaint_resolution까지 확대해 다시 그립니다(더 많은 디테일). Off: 이미지 전체를 inpaint_resolution으로 처리합니다."
+      },
+      "padding": {
+        "tooltip": "crop할 때 마스크 주변의 context(px)입니다. 클수록 모델이 장면을 더 많이 봅니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "다시 그리는 크기(면적 기준: 1024 = 약 1 MP). AusBoss에 따르면 약 1.6 MP를 넘으면 Krea 2가 팔다리를 구기고 하늘을 어둡게 하기 시작합니다."
+      },
+      "boundary_px": {
+        "tooltip": "이음매를 섞기 위해 모델이 다시 그리는 마스크 주변 테두리(다시 그리기 픽셀 단위). 32 = 기준값."
+      },
+      "composite": {
+        "tooltip": "keep original = 칠한 영역(부드러운 가장자리, 색 보정됨)만 다시 붙여넣어 나머지는 원본 그대로입니다. raw = 크롭에 대한 모델의 전체 재생성 결과."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "마스크 영역이 칠해진 이미지."
+      },
+      "1": {
+        "tooltip": "다시 붙여넣은 위치(부드러운 가장자리)."
+      }
+    }
+  },
+  "LCFlux3AnyPaint": {
+    "description": "AusBoss의 outpaint LoRA로 Flux 3 Klein (Distilled)용 인페인트와 아웃페인트를 edit 모드로 수행합니다. 칠할 영역을 단색 회색으로 채우면 모델이 그 회색을 채웁니다. 유지되는 픽셀은 매 스텝마다 다시 덮어쓰고 경계는 블렌딩합니다. 마스크 바깥의 이미지는 그대로 돌아옵니다. 프롬프트에는 완성된 이미지 전체를 설명하세요.\n아웃페인트: LC Outpaint 또는 LC Outpaint, Rotate, & Pad의 control_image와 control_mask를 연결하세요.",
+    "inputs": {
+      "model": {
+        "tooltip": "Flux 3 Klein (Distilled). LoRA는 이 노드에만 추가됩니다."
+      },
+      "clip": {
+        "tooltip": "Flux 3 Klein의 텍스트 인코더(Qwen3-VL 4B, CLIP type flux3)."
+      },
+      "mask": {
+        "tooltip": "흰색 = 칠하기, 검정 = 유지. 선택 사항: LC Outpaint의 캔버스와 함께 마스크 없이 쓰면 그 마스크를 사용합니다. outpaint하려면 LC Outpaint의 control_image를 이미지로, control_mask를 마스크로 연결하세요."
+      },
+      "prompt": {
+        "tooltip": "완성된 전체 이미지를 설명하세요: \"a woman in a red coat on a snowy street\". 노드가 LoRA의 fill 지시문을 앞에 자동으로 붙입니다."
+      },
+      "lora": {
+        "tooltip": "AusBoss의 flux-3-image-klein-outpaint(models/loras)입니다. 나머지는 그대로 둔 채 평평한 회색 영역을 채웁니다. 이 노드에서만 lora_strength로 적용됩니다. off = noise mask를 쓴 일반 Flux 3 Klein(그림이 밀리거나 확대되는 경향이 있음)."
+      },
+      "lora_strength": {
+        "tooltip": "1.5는 AusBoss의 선택: 큰 확장에서 1.0보다 그림이 제자리에 더 자주 유지됩니다."
+      },
+      "steps": {
+        "tooltip": "Flux 3 Klein(Distilled)은 16. Base의 cfg 3.5에 50은 여기서 지원되지 않습니다: Distilled 모델을 사용하세요."
+      },
+      "sampler_name": {
+        "tooltip": "euler는 AnyPaint가 학습되고 테스트된 방식입니다. keep 스텝은 euler에서만 정확합니다."
+      },
+      "scheduler": {
+        "tooltip": "simple, 레퍼런스와 동일."
+      },
+      "crop_to_mask": {
+        "tooltip": "On: 작은 마스크는 자체 크롭에서 inpaint_resolution까지 확대해 다시 그립니다(더 많은 디테일). Off: 이미지 전체를 inpaint_resolution으로 처리합니다."
+      },
+      "padding": {
+        "tooltip": "crop할 때 마스크 주변의 context(px)입니다. 클수록 모델이 장면을 더 많이 봅니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "다시 그리는 크기(면적 기준: 1024 = 약 1 MP). AusBoss에 따르면 약 1.6 MP를 넘으면 Krea 2가 팔다리를 구기고 하늘을 어둡게 하기 시작합니다."
+      },
+      "boundary_px": {
+        "tooltip": "이음매를 섞기 위해 모델이 다시 그리는 마스크 주변 테두리(다시 그리기 픽셀 단위). 32 = 기준값."
+      },
+      "composite": {
+        "tooltip": "keep original = 칠한 영역(부드러운 가장자리, 색 보정됨)만 다시 붙여넣어 나머지는 원본 그대로입니다. raw = 크롭에 대한 모델의 전체 재생성 결과."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "마스크 영역이 칠해진 이미지."
+      },
+      "1": {
+        "tooltip": "다시 붙여넣은 위치(부드러운 가장자리)."
+      }
+    }
+  },
+  "LCCharacterDetailer": {
+    "description": "캐릭터 한 명용 LC Smart Detailer입니다. SAM 3가 일치하는 대상을 모두(모든 얼굴, 모든 사람) 찾고, 그중 하나만 다시 그립니다: 왼쪽, 오른쪽 또는 위에서 N번째, N번째로 큰 것, 또는 LC Bounding Boxes의 박스 안에 있는 것. 캐릭터마다 따로 지정하세요: 모델을 분기하고, 그 캐릭터의 LoRA를 추가한 다음, 여기서 그 캐릭터의 얼굴을 고릅니다. 설정과 엔진은 LC Smart Detailer와 같습니다.",
+    "inputs": {
+      "positive": {
+        "tooltip": "이미지의 prompt입니다. 장면 전체를 묘사하는 prompt는 denoise 0.3 이상에서 모든 crop에 끌려 들어갈 수 있습니다(얼굴 안에 작은 장면 전체가 생김). 이를 막으려면 inpaint_positive를 연결하세요."
+      },
+      "prompt": {
+        "tooltip": "디테일을 넣을 대상을 쉼표로 구분한 간단한 단어로 입력합니다: hands, face.\n모든 match를 찾습니다(양손, 모든 얼굴). :N을 붙여 개수를 제한하세요. 예: face:1."
+      },
+      "sam3_model": {
+        "tooltip": "찾기를 수행하는 SAM 3 모델입니다. SAM 3.1 다운로드를 고르거나, models/sam3의 sam3.pt / sam3.safetensors를 사용하세요."
+      },
+      "threshold": {
+        "tooltip": "SAM 3가 얼마나 확신해야 하는지. 낮추면 더 많이 찾고(잘못된 것도 더 많이), 높이면 더 까다롭습니다. 0.5가 시작점으로 좋습니다.\n색은 힌트일 뿐입니다: 'red dress'가 초록색 드레스를 고를 수도 있습니다. 없는 것은 찾지 못합니다."
+      },
+      "pick": {
+        "tooltip": "이 detailer가 다시 그릴 대상입니다(SAM 3이 전부 찾아냅니다). 단어가 여러 개(face, hair)이면 첫 번째가 사람을 고르고, 나머지는 그 사람에게 속할 때 함께 따라옵니다.\nleft to right / right to left / top to bottom: number 1 = 해당 방향에서 첫 번째.\nlargest first: number 1 = 가장 큰 것.\nin box: LC Bounding Boxes의 box 'number' 안에 있는 것(elements를 연결하세요). 포즈가 바뀌어도 얼굴이 캐릭터와 함께 유지됩니다."
+      },
+      "number": {
+        "tooltip": "몇 번째인지: 1 = 첫 번째. pick이 in box이면 LC Bounding Boxes에 표시된 박스 번호."
+      },
+      "grow": {
+        "tooltip": "인페인트 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수. 조금 키우면 가장자리를 덮어줍니다."
+      },
+      "feather": {
+        "tooltip": "마스크 가장자리의 부드러움(픽셀). 다시 그린 영역이 나머지와 어우러지게 합니다. 0 = 딱딱한 가장자리."
+      },
+      "blend": {
+        "tooltip": "다시 그린 부분을 얼마나 붙여 넣을지 정합니다: 1 = 전부. 1 미만에서는 기존 픽셀과 새 픽셀이 섞이며, 다시 그리면서 조금 움직인 특징(속눈썹, 눈꺼풀)이 두 번 보일 수 있습니다. 더 가볍게 다시 그리려면 denoise를 낮추세요."
+      },
+      "padding": {
+        "tooltip": "각 크롭에 포함되는 주변 이미지의 픽셀 수로, 모델이 맥락을 볼 수 있게 합니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "각 크롭은 모양과 상관없이 약 이 픽셀 수의 제곱으로 다시 그려집니다(1024 = 1메가픽셀). 높을수록 디테일이 많고 느립니다."
+      },
+      "sampler_name": {
+        "tooltip": "Sampler."
+      },
+      "scheduler": {
+        "tooltip": "Scheduler."
+      },
+      "steps": {
+        "tooltip": "샘플링 steps."
+      },
+      "cfg": {
+        "tooltip": "다시 그리기용 CFG입니다. 1은 Krea 2, Flux, Z-Image, Anima에서 작동하고, detailer denoise(약 0.4까지)에서는 SDXL에서도 작동합니다(테스트: SDXL은 cfg 1부터 7까지 똑같아 보였음). 1 아래로는 내려가지 않습니다. 1 미만이면 다시 그린 결과에 얼룩이 생깁니다."
+      },
+      "denoise": {
+        "tooltip": "다시 그리는 정도. 낮으면 형태를 유지하고 디테일을 고치며, 높으면 처음부터 다시 그립니다."
+      },
+      "seed": {
+        "tooltip": "다시 그리기용 seed."
+      },
+      "inpaint_positive": {
+        "tooltip": "선택 사항. 크롭 전용 프롬프트입니다. 예: 'close-up of a woman's face, natural skin'. 다시 그릴 때 positive 대신 사용됩니다. positive가 장면 전체를 설명하는 경우에는 항상 권장합니다."
+      },
+      "negative": {
+        "tooltip": "선택 사항. cfg 1 모델에서는 비워 두세요. negative를 쓰는 SDXL 등의 모델에서는 연결하세요."
+      },
+      "tone_match": {
+        "tooltip": "On: 다시 그린 부분을 붙여 넣는 위치에서 원본의 밝기, 대비, 색을 되돌리면서 새 디테일은 유지합니다. 이게 없으면 가볍게 다시 그린 결과가 약간 밋밋하고 칙칙하게 나옵니다. 다시 그리는 목적이 색을 바꾸는 것(새 셔츠 색, 다른 물체)일 때는 끄세요."
+      },
+      "elements": {
+        "tooltip": "pick = in box용 LC Bounding Boxes의 elements."
+      }
+    }
+  },
+  "LCCharacterDetailerPipe": {
+    "description": "캐릭터 한 명용 LC Smart Detailer입니다. SAM 3가 일치하는 대상을 모두(모든 얼굴, 모든 사람) 찾고, 그중 하나만 다시 그립니다: 왼쪽, 오른쪽 또는 위에서 N번째, N번째로 큰 것, 또는 LC Bounding Boxes의 박스 안에 있는 것. 캐릭터마다 따로 지정하세요: 모델을 분기하고, 그 캐릭터의 LoRA를 추가한 다음, 여기서 그 캐릭터의 얼굴을 고릅니다. 설정과 엔진은 LC Smart Detailer와 같습니다.",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe: model, VAE, seed, steps, cfg, sampler, scheduler를 여기서 가져옵니다."
+      },
+      "prompt": {
+        "tooltip": "디테일을 넣을 대상을 쉼표로 구분한 간단한 단어로 입력합니다: hands, face.\n모든 match를 찾습니다(양손, 모든 얼굴). :N을 붙여 개수를 제한하세요. 예: face:1."
+      },
+      "sam3_model": {
+        "tooltip": "찾기를 수행하는 SAM 3 모델입니다. SAM 3.1 다운로드를 고르거나, models/sam3의 sam3.pt / sam3.safetensors를 사용하세요."
+      },
+      "threshold": {
+        "tooltip": "SAM 3가 얼마나 확신해야 하는지. 낮추면 더 많이 찾고(잘못된 것도 더 많이), 높이면 더 까다롭습니다. 0.5가 시작점으로 좋습니다.\n색은 힌트일 뿐입니다: 'red dress'가 초록색 드레스를 고를 수도 있습니다. 없는 것은 찾지 못합니다."
+      },
+      "pick": {
+        "tooltip": "이 detailer가 다시 그릴 대상입니다(SAM 3이 전부 찾아냅니다). 단어가 여러 개(face, hair)이면 첫 번째가 사람을 고르고, 나머지는 그 사람에게 속할 때 함께 따라옵니다.\nleft to right / right to left / top to bottom: number 1 = 해당 방향에서 첫 번째.\nlargest first: number 1 = 가장 큰 것.\nin box: LC Bounding Boxes의 box 'number' 안에 있는 것(elements를 연결하세요). 포즈가 바뀌어도 얼굴이 캐릭터와 함께 유지됩니다."
+      },
+      "number": {
+        "tooltip": "몇 번째인지: 1 = 첫 번째. pick이 in box이면 LC Bounding Boxes에 표시된 박스 번호."
+      },
+      "grow": {
+        "tooltip": "인페인트 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수. 조금 키우면 가장자리를 덮어줍니다."
+      },
+      "feather": {
+        "tooltip": "마스크 가장자리의 부드러움(픽셀). 다시 그린 영역이 나머지와 어우러지게 합니다. 0 = 딱딱한 가장자리."
+      },
+      "blend": {
+        "tooltip": "다시 그린 부분을 얼마나 붙여 넣을지 정합니다: 1 = 전부. 1 미만에서는 기존 픽셀과 새 픽셀이 섞이며, 다시 그리면서 조금 움직인 특징(속눈썹, 눈꺼풀)이 두 번 보일 수 있습니다. 더 가볍게 다시 그리려면 denoise를 낮추세요."
+      },
+      "padding": {
+        "tooltip": "각 크롭에 포함되는 주변 이미지의 픽셀 수로, 모델이 맥락을 볼 수 있게 합니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "각 크롭은 모양과 상관없이 약 이 픽셀 수의 제곱으로 다시 그려집니다(1024 = 1메가픽셀). 높을수록 디테일이 많고 느립니다."
+      },
+      "denoise": {
+        "tooltip": "다시 그리는 정도. 낮으면 형태를 유지하고 디테일을 고치며, 높으면 처음부터 다시 그립니다."
+      },
+      "image": {
+        "tooltip": "선택 사항. 비어 있으면 pipe의 이미지. pipe가 없는 노드가 중간에 그림을 바꿨을 때 연결하세요."
+      },
+      "model": {
+        "tooltip": "선택 사항. pipe의 모델 대신 사용할 모델을 여기에 연결합니다(LoRA가 적용된 모델이나 다른 모델)."
+      },
+      "vae": {
+        "tooltip": "선택 사항. pipe의 VAE 대신 사용할 VAE를 여기에 연결합니다."
+      },
+      "positive": {
+        "tooltip": "이미지의 prompt입니다. 장면 전체를 묘사하는 prompt는 denoise 0.3 이상에서 모든 crop에 끌려 들어갈 수 있습니다(얼굴 안에 작은 장면 전체가 생김). 이를 막으려면 inpaint_positive를 연결하세요."
+      },
+      "inpaint_positive": {
+        "tooltip": "선택 사항. 크롭 전용 프롬프트입니다. 예: 'close-up of a woman's face, natural skin'. 다시 그릴 때 positive 대신 사용됩니다. positive가 장면 전체를 설명하는 경우에는 항상 권장합니다."
+      },
+      "negative": {
+        "tooltip": "선택 사항. cfg 1 모델에서는 비워 두세요. negative를 쓰는 SDXL 등의 모델에서는 연결하세요."
+      },
+      "tone_match": {
+        "tooltip": "On: 다시 그린 부분을 붙여 넣는 위치에서 원본의 밝기, 대비, 색을 되돌리면서 새 디테일은 유지합니다. 이게 없으면 가볍게 다시 그린 결과가 약간 밋밋하고 칙칙하게 나옵니다. 다시 그리는 목적이 색을 바꾸는 것(새 셔츠 색, 다른 물체)일 때는 끄세요."
+      },
+      "cfg": {
+        "tooltip": "다시 그리기용 CFG입니다. 1은 Krea 2, Flux, Z-Image에서 잘 작동하고, 디테일러 denoise(약 0.4까지)에서는 SDXL에서도 잘 작동합니다(테스트 결과 SDXL은 cfg 1~7에서 동일해 보임). 보통 메인 샘플러의 값인 pipe의 cfg_1 대신 사용됩니다."
+      },
+      "elements": {
+        "tooltip": "pick = in box용 LC Bounding Boxes의 elements."
+      }
+    }
+  },
+  "LCDetailFinder": {
+    "description": "캐릭터별 디테일러를 위해 SAM 3로 일치하는 대상(모든 얼굴)을 한 번에 모두 찾습니다. 그런 다음 LC Detail Sorter가 순서대로 정렬해 분리하며, 캐릭터마다 LC Detailer For Each 하나씩 연결됩니다.",
+    "inputs": {
+      "prompt": {
+        "tooltip": "찾을 대상, 예: face. 단어가 여러 개(face, hair)면 첫 번째 단어를 개수로 세고 나머지는 소속된 매치에 합쳐집니다: 얼굴마다 자기 머리카락을 갖습니다."
+      },
+      "sam3_model": {
+        "tooltip": "찾기를 수행하는 SAM 3 모델입니다. SAM 3.1 다운로드를 고르거나, models/sam3의 sam3.pt / sam3.safetensors를 사용하세요."
+      },
+      "threshold": {
+        "tooltip": "SAM 3가 얼마나 확신해야 하는지. 낮추면 더 많이 찾고(잘못된 것도 더 많이), 높이면 더 까다롭습니다. 0.5가 시작점으로 좋습니다.\n색은 힌트일 뿐입니다: 'red dress'가 초록색 드레스를 고를 수도 있습니다. 없는 것은 찾지 못합니다."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "모든 매치의 SAM 3 마스크. LC Detail Sorter용(또는 LC Detailer For Each에 바로 연결해 전부 다시 그리기)."
+      },
+      "1": {
+        "tooltip": "찾은 개수(첫 번째 이미지)."
+      }
+    }
+  },
+  "LCDetailSorter": {
+    "description": "LC Detail Finder의 일치 대상을 순서대로 정렬해 분리합니다: 출력 1 = 첫 번째, 2 = 두 번째. 미리보기도 같은 방식으로 번호를 매깁니다.",
+    "inputs": {
+      "sam3_masks": {
+        "tooltip": "LC Detail Finder에서."
+      },
+      "pick": {
+        "tooltip": "출력이 번호 매겨지는 순서입니다. left to right: 1 = 가장 왼쪽. largest first: 1 = 가장 큰 것(보통 가장 가까운 것)."
+      },
+      "image": {
+        "tooltip": "선택 사항: 번호가 붙은 미리보기용 이미지."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "선택한 순서에서 match 1의 SAM 3 마스크(없으면 비어 있음). 해당 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "1": {
+        "tooltip": "선택한 순서에서 2번째 일치 대상의 SAM 3 마스크입니다(더 적으면 비어 있음). 그 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "2": {
+        "tooltip": "선택한 순서에서 match 3의 SAM 3 마스크(없으면 비어 있음). 해당 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "3": {
+        "tooltip": "선택한 순서에서 4번째 match의 SAM 3 마스크입니다(더 적으면 비어 있음). 그 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "4": {
+        "tooltip": "선택한 순서에서 5번째 match의 SAM 3 마스크입니다(더 적으면 비어 있음). 그 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "5": {
+        "tooltip": "선택한 순서에서 match 6의 SAM 3 마스크(없으면 비어 있음). 해당 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "6": {
+        "tooltip": "선택한 순서에서 7번째 일치 대상의 SAM 3 마스크입니다(더 적으면 비어 있음). 그 캐릭터의 LC Detailer For Each에 연결하세요."
+      },
+      "7": {
+        "tooltip": "선택한 순서에서 8번째 일치 대상의 SAM 3 마스크입니다(더 적으면 비어 있음). 그 캐릭터의 LC Detailer For Each에 연결하세요."
+      }
+    }
+  },
+  "LCDetailerForEach": {
+    "description": "받은 것(LC Detail Sorter의 캐릭터 하나, 또는 LC Detail Finder의 전체)을 그 캐릭터의 model(LoRA 분기), 고유 조건 프롬프트, 고유 seed로 다시 그립니다. 단독으로, 또는 LC pipe와 함께 작동합니다: pipe를 연결하면 model, VAE, 프롬프트, 이미지가 채워지며 여기에 직접 연결한 값이 우선합니다. LC Smart Detailer와 같은 엔진입니다.",
+    "inputs": {
+      "sam3_mask": {
+        "tooltip": "다시 그릴 대상: LC Detail Sorter의 출력 하나(캐릭터 한 명) 또는 LC Detail Finder의 sam3_masks(전부)."
+      },
+      "grow": {
+        "tooltip": "인페인트 전에 마스크를 키우거나(양수) 줄이는(음수) 픽셀 수. 조금 키우면 가장자리를 덮어줍니다."
+      },
+      "feather": {
+        "tooltip": "마스크 가장자리의 부드러움(픽셀). 다시 그린 영역이 나머지와 어우러지게 합니다. 0 = 딱딱한 가장자리."
+      },
+      "padding": {
+        "tooltip": "각 크롭에 포함되는 주변 이미지의 픽셀 수로, 모델이 맥락을 볼 수 있게 합니다."
+      },
+      "inpaint_resolution": {
+        "tooltip": "각 크롭은 모양과 상관없이 약 이 픽셀 수의 제곱으로 다시 그려집니다(1024 = 1메가픽셀). 높을수록 디테일이 많고 느립니다."
+      },
+      "sampler_name": {
+        "tooltip": "Sampler.\npipe가 연결되어 있으면, 여기에 뭔가 연결하지 않는 한 pipe의 값을 사용합니다."
+      },
+      "scheduler": {
+        "tooltip": "Scheduler.\npipe를 연결하면 여기에 직접 연결하지 않는 한 pipe의 값이 사용됩니다."
+      },
+      "steps": {
+        "tooltip": "샘플링 steps입니다.\npipe가 연결되어 있으면 여기에 무언가 연결하지 않는 한 pipe의 값이 사용됩니다."
+      },
+      "cfg": {
+        "tooltip": "다시 그리기용 CFG입니다. 1은 Krea 2, Flux, Z-Image, Anima에서 작동하고, detailer denoise(약 0.4까지)에서는 SDXL에서도 작동합니다(테스트: SDXL은 cfg 1부터 7까지 똑같아 보였음). 1 아래로는 내려가지 않습니다. 1 미만이면 다시 그린 결과에 얼룩이 생깁니다."
+      },
+      "denoise": {
+        "tooltip": "다시 그리는 정도. 낮으면 형태를 유지하고 디테일을 고치며, 높으면 처음부터 다시 그립니다."
+      },
+      "seed": {
+        "tooltip": "다시 그리기용 seed입니다.\npipe가 연결되어 있으면 여기에 무언가 연결하지 않는 한 pipe의 값이 사용됩니다."
+      },
+      "pipe": {
+        "tooltip": "선택적 LC pipe: 이 노드에서 직접 연결하지 않은 model, VAE, positive, negative, 이미지는 여기서 가져옵니다. detailer들을 이 pipe로 이어 붙이세요."
+      },
+      "image": {
+        "tooltip": "이미지. 비어 있으면 pipe의 이미지."
+      },
+      "model": {
+        "tooltip": "선택 사항. pipe의 모델 대신 사용할 모델을 여기에 연결합니다(LoRA가 적용된 모델이나 다른 모델)."
+      },
+      "vae": {
+        "tooltip": "선택 사항. pipe의 VAE 대신 사용할 VAE를 여기에 연결합니다."
+      },
+      "positive": {
+        "tooltip": "이미지의 prompt입니다. 장면 전체를 묘사하는 prompt는 denoise 0.3 이상에서 모든 crop에 끌려 들어갈 수 있습니다(얼굴 안에 작은 장면 전체가 생김). 이를 막으려면 inpaint_positive를 연결하세요."
+      },
+      "inpaint_positive": {
+        "tooltip": "선택 사항. 크롭 전용 프롬프트입니다. 예: 'close-up of a woman's face, natural skin'. 다시 그릴 때 positive 대신 사용됩니다. positive가 장면 전체를 설명하는 경우에는 항상 권장합니다."
+      },
+      "negative": {
+        "tooltip": "선택 사항. cfg 1 모델에서는 비워 두세요. negative를 쓰는 SDXL 등의 모델에서는 연결하세요."
+      },
+      "tone_match": {
+        "tooltip": "On: 다시 그린 부분을 붙여 넣는 위치에서 원본의 밝기, 대비, 색을 되돌리면서 새 디테일은 유지합니다. 이게 없으면 가볍게 다시 그린 결과가 약간 밋밋하고 칙칙하게 나옵니다. 다시 그리는 목적이 색을 바꾸는 것(새 셔츠 색, 다른 물체)일 때는 끄세요."
+      }
+    }
+  },
+  "LCPersonMask": {
+    "description": "사람의 부위를 선택합니다: face, hair, body, clothes, accessories, background. Segformer 또는 MediaPipe, guided filter / VITMatte 보정은 선택. 피부만: mediapipe, face + body, remove_features 켜기(SAM 3로 눈, 눈썹, 입술, 치아 제거).",
+    "inputs": {
+      "image": {
+        "tooltip": "사람이 있는 이미지."
+      },
+      "engine": {
+        "tooltip": "segformer: 더 높은 해상도. Body = 팔과 다리만(맨 몸통과 목은 옷으로 인식).\nmediapipe: body에 몸통과 목 피부 포함. mediapipe 패키지가 필요합니다."
+      },
+      "segformer_model": {
+        "tooltip": "segformer 엔진에서 사용됩니다. 'Download'로 표시된 항목은 처음 실행할 때 받아 옵니다."
+      },
+      "body": {
+        "tooltip": "얼굴 아래의 피부. 범위는 engine을 참고하세요."
+      },
+      "accessories": {
+        "tooltip": "모자, 안경, 신발, 가방(그 밖에 모델이 액세서리라고 부르는 것 포함)."
+      },
+      "confidence": {
+        "tooltip": "모델이 얼마나 확신해야 하는지. 낮추면 선택이 커지고, 높이면 줄어듭니다."
+      },
+      "refine": {
+        "tooltip": "원본 마스크의 에지 보정. vitmatte는 머리카락에 최적, guided_filter는 빠름, none은 원본 마스크 유지."
+      },
+      "vitmatte_model": {
+        "tooltip": "refine이 vitmatte일 때만 사용."
+      },
+      "edge_erode": {
+        "tooltip": "Trimap: 확실한 전경을 마스크 가장자리에서 안쪽으로 당기는 거리(픽셀)."
+      },
+      "edge_dilate": {
+        "tooltip": "Trimap: 알 수 없음 영역이 마스크 가장자리 밖으로 뻗는 거리(픽셀)."
+      },
+      "black_point": {
+        "tooltip": "이 값 이하의 마스크 값은 0이 됩니다."
+      },
+      "white_point": {
+        "tooltip": "이 값 이상의 마스크 값은 1이 됩니다."
+      },
+      "max_megapixels": {
+        "tooltip": "vitmatte 전용. 이보다 큰 이미지는 이 크기로 matting한 뒤 다시 확대됩니다."
+      },
+      "remove_features": {
+        "tooltip": "SAM 3(LC Segment Anything과 LC Smart Detailer가 쓰는 모델)로 얼굴에서 눈, 눈썹, 입술, 치아를 잘라냅니다. engine을 mediapipe로, face + body를 켜면 LC Skin Beauty, LC Skin Upscale, LC Sharpen Pro용 피부 전용 마스크가 됩니다. face가 켜져 있을 때만 실행됩니다."
+      }
+    }
+  },
+  "LCTouchMask": {
+    "description": "하나만 정확하게 마스킹합니다: 주위를 그리면 SAM 3가 가장자리를 찾습니다. 탭하면 다음으로 큰 대상으로 확장되고(얼굴, + 머리카락, 머리, 사람), 더블탭하면 한 단계 돌아갑니다. Ctrl + 그리기는 잘라냅니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "마스크를 만들 그림입니다. 앞단의 Load Image는 바로 표시되고, 다른 것은 한 번 실행한 뒤에 나타납니다."
+      },
+      "sam3_model": {
+        "tooltip": "가장자리를 찾습니다. LC Segment Anything과 LC Smart Detailer가 쓰는 것과 같은 SAM 3 모델."
+      },
+      "person_parts": {
+        "tooltip": "사람에게는 LC Person Mask가 쓰는 Segformer 모델로 부위별(face, hair, head, clothes, person) tap이 늘어납니다. off: SAM 3가 매 스텝 결정합니다."
+      },
+      "block": {
+        "tooltip": "if_empty_mask: 아무것도 선택되지 않으면 이후의 모든 것이 중단되므로, 선택한 다음 다시 queue하세요."
+      },
+      "grow": {
+        "tooltip": "완성된 마스크를 이 픽셀 수만큼 키웁니다(0 미만이면 줄임)."
+      },
+      "feather": {
+        "tooltip": "가장자리 부드러움(픽셀)."
+      },
+      "invert": {
+        "tooltip": "마스크 반전(선택 영역을 제외한 모든 곳)."
+      },
+      "selections": {
+        "tooltip": "내부용: 그리고 탭한 내용."
+      },
+      "threshold": {
+        "tooltip": "픽셀이 포함되려면 얼마나 확실해야 하는지. 낮으면 더 많이 포함하고(가는 머리카락, 부드러운 가장자리), 높으면 더 타이트합니다."
+      },
+      "smooth": {
+        "tooltip": "가장자리를 정리합니다. 작은 구멍을 메우고, 떨어진 점을 지우고, 들쭉날쭉한 가장자리를 둥글게 하되 선택 영역은 줄이지 않습니다. 0 = raw."
+      },
+      "refine": {
+        "tooltip": "실행 시 가장자리 마감입니다(미리보기는 그 전의 선택 영역을 보여줍니다). guided_filter: 빠르고 그림의 가장자리를 따라갑니다. vitmatte: 머리카락에 최적, 더 느림. none: 하드 선택 영역."
+      }
+    }
+  },
+  "LCImageBlendAdvance": {
+    "description": "배경 위에 레이어를 배치하고(위치, 스케일, 비율, 회전, 반전) 선택적 마스크를 통해 29가지 블렌드 모드 중 하나로 합성합니다.",
+    "inputs": {
+      "layer_image": {
+        "tooltip": "레이어. alpha 채널이 있으면 사용됩니다."
+      },
+      "blend_mode": {
+        "tooltip": "표준 블렌드 모드입니다. overlay는 배경을 기준으로 하고, hard_light는 레이어를 기준으로 합니다.\nLayerStyle의 이전 ImageBlend 노드는 이 둘이 서로 바뀌어 있었습니다. swap_roles를 참고하세요."
+      },
+      "opacity": {
+        "tooltip": "퍼센트 단위의 레이어 강도."
+      },
+      "swap_roles": {
+        "tooltip": "모드 공식에서 어느 이미지가 base이고 어느 것이 blend인지 서로 바꿉니다.\nOn + overlay는 LayerStyle ImageBlend의 이전 'overlay'(표준 hard_light)를 재현합니다."
+      },
+      "invert_mask": {
+        "tooltip": "layer_mask를 뒤집습니다(검정이 보이게 됨)."
+      },
+      "x_percent": {
+        "tooltip": "배경 너비 대비 퍼센트로 본 레이어 중심. 50 = 가운데."
+      },
+      "y_percent": {
+        "tooltip": "배경 height의 퍼센트로 나타낸 레이어 중심. 50 = 가운데."
+      },
+      "scale": {
+        "tooltip": "레이어 크기 배율."
+      },
+      "aspect_ratio": {
+        "tooltip": "레이어 높이를 늘립니다. 1 = 비율 유지."
+      },
+      "rotate": {
+        "tooltip": "도 단위, 반시계 방향."
+      },
+      "transform_method": {
+        "tooltip": "크기 조절이나 회전 시 레이어를 리샘플링하는 방식입니다. lanczos는 리사이즈에서 가장 선명하고, nvidia_rtx_vsr은 RTX Video Super Resolution으로 확대합니다(RTX 카드 전용, 축소는 lanczos 사용). 회전 자체는 PIL처럼 항상 bicubic으로 샘플링합니다."
+      },
+      "anti_aliasing": {
+        "tooltip": "회전된 가장자리를 더 크게 그렸다가 줄여서 부드럽게 합니다. 0 = 끔. 높을수록 느립니다."
+      },
+      "background_image": {
+        "tooltip": "레이어를 올려놓을 이미지입니다. 연결하지 않으면 레이어 크기의 투명 캔버스에 올려 놓습니다(출력은 RGBA이고 마스크가 알파가 됩니다)."
+      },
+      "layer_mask": {
+        "tooltip": "흰색 = 레이어가 보임. 레이어에 alpha가 있으면 곱해집니다."
+      }
+    }
+  },
+  "LCAutoAdjust": {
+    "description": "자동 레벨(채널별, 휘도, 채도 또는 모노)과 balance, brightness, contrast, saturation 미세 조정, strength 블렌드, 선택적 마스크.",
+    "inputs": {
+      "image": {
+        "tooltip": "알파 채널이 있으면 유지되며, 연결된 마스크가 없을 때 마스크로 사용됩니다."
+      },
+      "mode": {
+        "tooltip": "RGB: 각 색상 채널을 따로 늘립니다(색 캐스트도 제거).\nlum + sat: 채도를 먼저, 그다음 휘도를 늘립니다.\nluminance: 밝기만 늘리고 색은 그대로 둡니다.\nsaturation: 채도만 늘립니다.\nmono: 흑백 버전을 늘립니다."
+      },
+      "strength": {
+        "tooltip": "결과를 얼마나 사용할지, 퍼센트."
+      },
+      "brightness": {
+        "tooltip": "자동 레벨 이후의 트림."
+      },
+      "contrast": {
+        "tooltip": "자동 레벨 이후의 트림."
+      },
+      "saturation": {
+        "tooltip": "자동 레벨 이후의 트림."
+      },
+      "red": {
+        "tooltip": "컬러 밸런스: 양수는 red 채널을 밝게, 음수는 어둡게 합니다. mono 모드에서는 사용되지 않습니다."
+      },
+      "green": {
+        "tooltip": "green 채널의 컬러 밸런스."
+      },
+      "blue": {
+        "tooltip": "blue 채널 컬러 밸런스."
+      },
+      "mask": {
+        "tooltip": "레벨을 측정하는 곳과 결과를 적용하는 곳을 모두 제한합니다."
+      }
+    }
+  },
+  "LCDepthAnythingV2": {
+    "description": "Depth Anything V2 depth 맵, 이미지별 0-1로 정규화. invert를 켜지 않으면 밝을수록 가깝습니다. 3채널 이미지와 같은 맵의 MASK를 출력합니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "depth를 추정할 이미지."
+      },
+      "model": {
+        "tooltip": "Depth Anything V2 가중치입니다. 라이선스는 라벨에 표시됩니다: Small은 Apache-2.0, Base / Large / Giant는 CC-BY-NC-4.0(비상업적).\n이미 있는 파일(models/depthanything 또는 comfyui_controlnet_aux)을 사용하거나, 처음 실행할 때 다운로드합니다."
+      },
+      "resolution": {
+        "tooltip": "짧은 변을 처리하는 크기(14의 배수로 반올림). 518이 모델이 학습된 크기이며, 큰 이미지에서는 더 높이면 디테일이 늘 수 있습니다."
+      },
+      "invert": {
+        "tooltip": "Off: 밝음 = 가까움(Depth Anything과 depth ControlNet이 쓰는 방식). On: 밝음 = 멂."
+      }
+    }
+  },
+  "LCMOSSControl": {
+    "description": "MOSS Image용 ControlNet: 이미지가 색 영역 맵 및/또는 depth 맵을 따릅니다(darask0의 Color-Depth Control adapter). 둘 중 하나는 생략해도 됩니다.",
+    "inputs": {
+      "model": {
+        "tooltip": "MOSS Image SFT (또는 Base). 8-step turbo LoRA와 함께 작동합니다."
+      },
+      "vae": {
+        "tooltip": "Flux.2 VAE: 맵은 이것으로 인코딩됩니다."
+      },
+      "control_file": {
+        "tooltip": "darask0의 moss-control.safetensors, models/model_patches 안에 있음."
+      },
+      "strength": {
+        "tooltip": "어댑터 LoRA의 강도. 입력 레이어는 항상 전체로 적용됩니다."
+      },
+      "color_end": {
+        "tooltip": "스텝의 이 비율까지만 color map을 적용하고 멈춥니다. 먼저 레이아웃을 잡고, 이후 모델이 표면을 마무리합니다. 실제 사진으로 만든 맵: 1.0. 마네킹과 그려 만든 맵: 0.4 - 0.5."
+      },
+      "depth_end": {
+        "tooltip": "스텝의 이 비율까지만 depth map을 적용하고 멈춥니다. 실제 사진: 1.0. 마네킹: 0.15(8-step turbo LoRA에서는 0.25), 또는 depth를 쓰지 마세요. 더 늦추면 마네킹이 비쳐 보입니다."
+      },
+      "color_map": {
+        "tooltip": "객체 또는 영역마다 하나씩의 단색(색은 ID일 뿐). 검정 = 지정 안 됨. 이미지와 같은 크기. 각 색을 영역 프롬프트와 짝지으세요."
+      },
+      "depth_map": {
+        "tooltip": "회색조 depth, 가까울수록 흰색(LC Depth Anything V2가 이렇게 출력). 그림과 같은 크기."
+      }
+    }
+  },
+  "LCNormalBAE": {
+    "description": "BAE 표면 normal map (RGB = XYZ)으로, ControlNet의 normal_bae가 만드는 것과 같은 스타일입니다. 선택적 blur(blur_radius, sigma)는 ComfyUI의 Blur Image를 사용합니다.",
+    "inputs": {
+      "image": {
+        "tooltip": "표면 normal을 추정할 이미지."
+      },
+      "model": {
+        "tooltip": "BAE 가중치(scannet.pt). ScanNet으로 학습되었으며 ScanNet의 약관은 상업적 사용에 우호적이지 않고, 가중치의 Hugging Face 카드에는 'other'라고만 적혀 있습니다. 상업적 사용 전에 확인하세요.\n이미 가진 사본(models/normalbae 또는 comfyui_controlnet_aux)을 사용하거나, 처음 실행할 때 다운로드합니다."
+      },
+      "resolution": {
+        "tooltip": "짧은 변이 처리되는 크기입니다. 512는 ControlNet이 쓰는 값이며, 높을수록 느리고 디테일이 더해질 수 있습니다."
+      },
+      "flip_y": {
+        "tooltip": "green 채널을 뒤집습니다(OpenGL vs DirectX 스타일 normal map)."
+      },
+      "blur_radius": {
+        "tooltip": "완성된 normal map을 ComfyUI의 Blur Image로 흐리게 합니다. radius는 픽셀 단위이고 blur 커널 폭은 2 x radius + 1입니다. BAE가 평평한 면에 남기는 미세한 노이즈를 매끄럽게 합니다. 0 = blur 없음."
+      },
+      "sigma": {
+        "tooltip": "블러가 반경 전체에 얼마나 고르게 퍼지는지(Blur Image와 같은 의미). 높을수록 강해지고 단순 box blur에 가까워집니다. 낮을수록 약하고 중심에 가중치가 실립니다. blur_radius가 0보다 클 때만 사용됩니다."
+      }
+    }
+  },
+  "LCFaceCrop": {
+    "description": "무작정 가운데를 자르는 대신 얼굴 위치를 잘 잡아 포맷(LC Aspect Ratio Simplifier의 프리셋)에 맞게 자릅니다. widest는 포맷이 허용하는 만큼 최대한 많은 영역을 남기고, upper body, head & shoulders, face는 얼굴 크기를 기준으로 더 타이트하게 프레이밍합니다(캐릭터 데이터셋용). SAM 3가 얼굴을 찾으며, 마스크를 연결하면 무엇이든 프레이밍할 수 있습니다.",
+    "inputs": {
+      "aspect_ratio": {
+        "tooltip": "크롭할 포맷(LC Aspect Ratio Simplifier와 같은 목록)."
+      },
+      "custom_width": {
+        "tooltip": "aspect_ratio가 custom일 때 사용."
+      },
+      "custom_height": {
+        "tooltip": "aspect_ratio가 custom일 때 사용."
+      },
+      "framing": {
+        "tooltip": "widest: 포맷이 허용하는 최대한의 그림, 얼굴이 잘 배치됨. upper body / head & shoulders / face: 더 타이트하게, 얼굴 기준으로 크기 결정(데이터셋용)."
+      },
+      "faces": {
+        "tooltip": "all: 찾은 모든 얼굴이 크롭에 남습니다. largest: 주 얼굴만 프레이밍."
+      },
+      "output_size": {
+        "tooltip": "preset size: 포맷의 크기로 리사이즈(예: 1080x1350). keep pixels: 이미지 자체 해상도로 크롭."
+      },
+      "sam3_model": {
+        "tooltip": "얼굴을 찾는 SAM 3 모델."
+      },
+      "threshold": {
+        "tooltip": "SAM 3가 얼굴이라고 얼마나 확신해야 하는지."
+      },
+      "mask": {
+        "tooltip": "선택 사항. 얼굴을 찾는 대신 이 마스크를 프레이밍합니다(자동차, 제품, 반려동물 등 어떤 피사체든)."
+      }
+    }
+  },
+  "LCVOSRUpscale": {
+    "description": "내장된 VOSR 2.0 원스텝 업스케일입니다. 모델로 이미지를 다시 그리지 않고 선명하게 하고 미세한 디테일을 더하므로 디테일러의 작업이 그대로 살아납니다. 디테일러 뒤에 실행하세요. 가중치는 첫 실행 때 다운로드됩니다(CSWRY/VOSR, Apache-2.0).",
+    "inputs": {
+      "upscale_by": {
+        "tooltip": "최종 크기. 1.5x~4x는 한 번의 패스입니다(1.5x는 2x보다 약 3분의 1 빠름). 6x와 8x는 두 번의 패스(3x + 2x, 4x + 2x)로 실행됩니다: 한 번에 크게 하면 피부가 얼룩덜룩하게 깨집니다."
+      },
+      "seed": {
+        "tooltip": "VOSR2는 노이즈에서 한 스텝으로 끝납니다: seed는 가장 미세한 그레인만 바꿉니다."
+      },
+      "color_alignment": {
+        "tooltip": "결과의 색을 입력의 색에 맞춥니다. wavelet = 가장 잘 일치."
+      },
+      "tile_size": {
+        "tooltip": "업스케일 모델용 픽셀 타일입니다. VOSR2는 512로 학습되었으니 그대로 두세요."
+      },
+      "vae_tile_size": {
+        "tooltip": "VAE의 픽셀 타일. 낮을수록 VRAM을 덜 쓰고 약간 느립니다."
+      },
+      "protect_mask": {
+        "tooltip": "선택 사항. LC Smart Detailer의 마스크입니다(여러 개는 max로 합침). 새 크기로 'protected'로 출력됩니다."
+      }
+    }
+  },
+  "LCVOSRUpscalePipe": {
+    "description": "LC pipe 위의 LC VOSR2 Upscale: pipe의 이미지(detailer가 남긴 결과)를 업스케일해 결과를 pipe에 다시 넣고, detailer 영역도 그에 맞게 리사이즈합니다('protected' 출력).",
+    "inputs": {
+      "pipe": {
+        "tooltip": "LC pipe: 그림은 그 image에서 가져옵니다."
+      },
+      "upscale_by": {
+        "tooltip": "최종 크기. 1.5x~4x는 한 번의 패스입니다(1.5x는 2x보다 약 3분의 1 빠름). 6x와 8x는 두 번의 패스(3x + 2x, 4x + 2x)로 실행됩니다: 한 번에 크게 하면 피부가 얼룩덜룩하게 깨집니다."
+      },
+      "seed": {
+        "tooltip": "VOSR2는 노이즈에서 한 스텝으로 끝납니다: seed는 가장 미세한 그레인만 바꿉니다."
+      },
+      "color_alignment": {
+        "tooltip": "결과의 색을 입력의 색에 맞춥니다. wavelet = 가장 잘 일치."
+      },
+      "tile_size": {
+        "tooltip": "업스케일 모델용 픽셀 타일입니다. VOSR2는 512로 학습되었으니 그대로 두세요."
+      },
+      "vae_tile_size": {
+        "tooltip": "VAE의 픽셀 타일. 낮을수록 VRAM을 덜 쓰고 약간 느립니다."
+      },
+      "image": {
+        "tooltip": "선택 사항. 비어 있으면 pipe의 이미지. pipe가 없는 노드가 중간에 그림을 바꿨을 때 연결하세요."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "업스케일된 이미지와, 그에 맞춰 크기가 조정된 디테일러 영역이 담긴 pipe."
+      },
+      "1": {
+        "tooltip": "업스케일된 이미지."
+      },
+      "2": {
+        "tooltip": "detailer가 다시 그린 얼굴과 손을 새 크기로 보여줍니다. LC Skin Texture / LC Skin Upscale의 protect_mask에 연결하면 detailer가 작업한 위에 피부 디테일이 중복으로 더해지지 않습니다."
+      }
+    }
+  }
+}
