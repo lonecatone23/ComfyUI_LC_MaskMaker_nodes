@@ -1220,5 +1220,54 @@
         "tooltip": "detailer가 다시 그린 얼굴과 손을 새 크기로 보여줍니다. LC Skin Texture / LC Skin Upscale의 protect_mask에 연결하면 detailer가 작업한 위에 피부 디테일이 중복으로 더해지지 않습니다."
       }
     }
+  },
+  "LCMOSSBoxEdit": {
+    "description": "그림 위에 그린 박스만 MOSS Image로 다시 그립니다. 작업하는 동안 그림 전체를 봅니다. 박스 밖은 픽셀 하나까지 그대로 남습니다. LC Bounding Boxes로 박스를 그리고 안에 들어갈 것을 설명하세요. 프롬프트에는 바뀐 뒤의 그림 전체를 적습니다.",
+    "inputs": {
+      "model": {
+        "tooltip": "MOSS Image(SFT 또는 그 병합 모델), LoRA 적용됨."
+      },
+      "vae": {
+        "tooltip": "FLUX.2 VAE (flux2-vae)."
+      },
+      "image": {
+        "tooltip": "편집할 그림(박스를 그린 바로 그 그림)."
+      },
+      "elements": {
+        "tooltip": "LC Bounding Boxes에서 온 박스: 마스크를 만듭니다(프롬프트가 일반 문장이면 레이아웃도 만듭니다)."
+      },
+      "prompt": {
+        "tooltip": "LC MOSS Layout Prompt의 prompt를 연결하거나(같은 박스 입력), 바뀐 뒤의 그림 전체 모습(장면, 인물, 빛)을 적으세요. 지시가 아니라 결과를 적습니다: \"창가에서 빨간 패딩을 입은 여자\"라고 쓰고, \"재킷을 빨갛게 해 줘\"라고 쓰지 않습니다."
+      },
+      "negative": {
+        "tooltip": "MOSS에는 진짜 네거티브가 있습니다."
+      },
+      "steps": {
+        "tooltip": "MOSS SFT는 25, DMD 8-step LoRA는 8."
+      },
+      "cfg": {
+        "tooltip": "MOSS SFT는 2.5, DMD 8-step LoRA는 1."
+      },
+      "grow": {
+        "tooltip": "다시 그리는 범위가 박스 밖으로 넓어지는 픽셀 수."
+      },
+      "feather": {
+        "tooltip": "넓힌 박스 밖 부드러운 경계의 픽셀 폭. 0 = 딱딱한 경계(이음매가 보임)."
+      },
+      "keep": {
+        "tooltip": "박스 안 원래 내용을 얼마나 남길지. 0 = 완전히 새로 그림(새 물건). 0.3 - 0.5 = 모양과 자세는 두고 겉모습만 바꿈."
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "편집된 그림: 박스 밖은 픽셀 단위로 그대로입니다."
+      },
+      "1": {
+        "tooltip": "다시 그린 부드러운 마스크."
+      },
+      "2": {
+        "tooltip": "MOSS가 받은 레이아웃 프롬프트."
+      }
+    }
   }
 }

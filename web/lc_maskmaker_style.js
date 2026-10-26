@@ -42,6 +42,8 @@ const PLAIN = new Set([
   "LCVOSRUpscalePipe",
   "LCDetailFinder",
   "LCDetailSorter",
+  "LCMOSSControl",
+  "LCMOSSBoxEdit",
 ]);
 
 app.registerExtension({

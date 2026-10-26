@@ -20,3 +20,4 @@
 - `LCAutoAdjust`: LC Auto Adjust 🔆
 - `LCDepthAnythingV2`: LC Depth Anything V2 🌊
 - `LCNormalBAE`: LC Normal Map (BAE) 🗺️
+- `LCMOSSBoxEdit`: LC MOSS Box Edit 🖌️ (BETA)

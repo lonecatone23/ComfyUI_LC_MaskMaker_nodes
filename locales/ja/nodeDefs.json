@@ -1220,5 +1220,54 @@
         "tooltip": "ディテーラーが描き直した顔と手を、新しいサイズで表します。LC Skin Texture / LC Skin Upscale の protect_mask につなぐと、ディテーラーの仕事の上に肌のディテールが重ねられるのを防げます。"
       }
     }
+  },
+  "LCMOSSBoxEdit": {
+    "description": "画像に描いたボックスだけを MOSS Image で描き直します。作業中は画像全体を見ています。ボックスの外はピクセル単位でそのまま残ります。LC Bounding Boxes でボックスを描いて中身を説明し、プロンプトには変更後の画像全体を書きます。",
+    "inputs": {
+      "model": {
+        "tooltip": "MOSS Image(SFT またはそのマージ)、LoRA 適用済み。"
+      },
+      "vae": {
+        "tooltip": "FLUX.2 VAE (flux2-vae)。"
+      },
+      "image": {
+        "tooltip": "編集する画像(ボックスを描いたのと同じ画像)。"
+      },
+      "elements": {
+        "tooltip": "LC Bounding Boxes からのボックス：マスクを作ります(プロンプトが普通の文のときはレイアウトも作ります)。"
+      },
+      "prompt": {
+        "tooltip": "LC MOSS Layout Prompt の prompt をつなぐ(同じボックスを入力)か、変更後の画像全体の姿(場面、人物、光)を書きます。指示ではなく結果を書きます：「窓辺で赤いダウンジャケットを着た女性」と書き、「ジャケットを赤くして」とは書きません。"
+      },
+      "negative": {
+        "tooltip": "MOSS には本物のネガティブがあります。"
+      },
+      "steps": {
+        "tooltip": "MOSS SFT は 25。DMD 8-step LoRA なら 8。"
+      },
+      "cfg": {
+        "tooltip": "MOSS SFT は 2.5。DMD 8-step LoRA なら 1。"
+      },
+      "grow": {
+        "tooltip": "描き直す範囲がボックスの外に広がるピクセル数。"
+      },
+      "feather": {
+        "tooltip": "広げたボックスの外の柔らかい境目のピクセル幅。0 = くっきりした境目(継ぎ目が見えます)。"
+      },
+      "keep": {
+        "tooltip": "ボックス内の元の内容をどれだけ残すか。0 = 完全に描き直す(新しいもの)。0.3 - 0.5 = 形とポーズを残して見た目を変える。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "編集後の画像：ボックスの外はピクセル単位で同じです。"
+      },
+      "1": {
+        "tooltip": "描き直した柔らかいマスク。"
+      },
+      "2": {
+        "tooltip": "MOSS が受け取ったレイアウトプロンプト。"
+      }
+    }
   }
 }

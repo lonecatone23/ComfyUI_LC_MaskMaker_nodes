@@ -1220,5 +1220,54 @@
         "tooltip": "detailer 重绘的脸和手，按新尺寸。接入 LC Skin Texture / LC Skin Upscale 的 protect_mask，这样它们就不会在 detailer 的成果上再叠加皮肤细节。"
       }
     }
+  },
+  "LCMOSSBoxEdit": {
+    "description": "用 MOSS Image 只重绘你在图片上画的框，工作时能看到整张图片；框外的一切逐像素保持不变。用 LC Bounding Boxes 画框并描述每个框里放什么；提示词描述改完之后的整张图片。",
+    "inputs": {
+      "model": {
+        "tooltip": "MOSS Image(SFT 或其融合模型)，LoRA 已加载。"
+      },
+      "vae": {
+        "tooltip": "FLUX.2 VAE (flux2-vae)。"
+      },
+      "image": {
+        "tooltip": "要编辑的图片(画框用的同一张图片)。"
+      },
+      "elements": {
+        "tooltip": "来自 LC Bounding Boxes 的框：用来生成遮罩(提示词是普通句子时也用来生成布局)。"
+      },
+      "prompt": {
+        "tooltip": "接 LC MOSS Layout Prompt 的 prompt(输入同样的框)，或者直接写改完之后整张图片应有的样子(场景、人物、光线)。描述结果，而不是指令：写“窗边穿红色羽绒服的女子”，不写“把她的外套改成红色”。"
+      },
+      "negative": {
+        "tooltip": "MOSS 有真正的负面提示词。"
+      },
+      "steps": {
+        "tooltip": "MOSS SFT 用 25；配合 DMD 8-step LoRA 用 8。"
+      },
+      "cfg": {
+        "tooltip": "MOSS SFT 用 2.5；配合 DMD 8-step LoRA 用 1。"
+      },
+      "grow": {
+        "tooltip": "重绘区域超出每个框的像素数。"
+      },
+      "feather": {
+        "tooltip": "扩展后的框外柔和边缘的像素宽度。0 = 硬边(会看到接缝)。"
+      },
+      "keep": {
+        "tooltip": "保留框内原内容的程度。0 = 完全重绘(新东西)。0.3 - 0.5 = 保留形状和姿势，改变外观。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "编辑后的图片：框外逐像素不变。"
+      },
+      "1": {
+        "tooltip": "被重绘的柔和遮罩。"
+      },
+      "2": {
+        "tooltip": "MOSS 收到的布局提示词。"
+      }
+    }
   }
 }
