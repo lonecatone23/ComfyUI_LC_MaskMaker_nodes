@@ -17,6 +17,8 @@ import torch
 import torch.nn.functional as F
 from nodes import PreviewImage
 
+from . import lc_hold
+
 ASPECT_OPTIONS = ["free", "original", "1:1", "4:3", "3:2", "16:9", "3:4", "2:3", "9:16"]
 SNAP_OPTIONS = ["1", "8", "16", "32", "64"]
 FIT_OPTIONS = ["expand", "crop"]
@@ -111,8 +113,9 @@ class LCImageRotatePad(PreviewImage):
                     "label_on": "until turned or framed",
                     "label_off": "never",
                     "tooltip": (
-                        "until turned or framed: while the picture is untouched (no turn, no crop, no pad), the run "
-                        "stops after this node. Run once to see the picture here, set it up, then run again." + "\n"
+                        "until turned or framed: while the picture is untouched (no turn, no crop, no pad), or a new "
+                        "picture comes in, the run stops after this node. Set it up on the picture shown here, then "
+                        "Run: with LC123 it carries on with the same seeds, so only what comes after runs." + "\n"
                         "never: always passes the picture on, even untouched."
                     ),
                 }),
@@ -121,7 +124,12 @@ class LCImageRotatePad(PreviewImage):
                     "tooltip": "Stops the edges from being dragged past this canvas size, so the canvas never grows bigger than the model handles well (Krea 2 and AnyPaint like about 2). Only limits dragging: the run itself is never resized. 0 = no limit.",
                 }),
             },
+            "hidden": {"unique_id": "UNIQUE_ID"},
         }
+
+    @classmethod
+    def IS_CHANGED(cls, unique_id=None, **kwargs):
+        return lc_hold.changed(unique_id)
 
     RETURN_TYPES = ("IMAGE", "MASK", "INT", "INT")
     RETURN_NAMES = ("control_image", "control_mask", "width", "height")
@@ -139,7 +147,7 @@ class LCImageRotatePad(PreviewImage):
         "(drag out) or crop (drag in). The mask covers the new area and the corners a turn opens up."
     )
 
-    def rotate_pad(self, image, angle, fit, fill, left, top, right, bottom, aspect="free", snap_to="16", keep_frame=True, block=True, max_megapixels=2.0):
+    def rotate_pad(self, image, angle, fit, fill, left, top, right, bottom, aspect="free", snap_to="16", keep_frame=True, block=True, max_megapixels=2.0, unique_id=None):
         b, h, w, c = image.shape
         angle = float(angle)
         clamp = lambda v: max(MIN_PCT, min(MAX_PCT, float(v)))
@@ -164,9 +172,15 @@ class LCImageRotatePad(PreviewImage):
         # snap back: the browser resets the turn and frame once the whole run has finished
         outputs = (out, mask, int(out_w), int(out_h))
         untouched = angle % 360 == 0 and all(float(v) == 0 for v in (left, top, right, bottom))
-        if block and untouched:
+        new_picture = lc_hold.new_picture(unique_id, image)  # the frame was set on the last picture
+        held = block and (untouched or new_picture)
+        if held:
             outputs = self._blocked(outputs)
+            if new_picture and not untouched:
+                print("[LC Outpaint, Rotate, & Pad] New picture: stopped so you can set the frame on it, then Run.")
         result = {"ui": {} if keep_frame else {"lc_reset_after": [True]}, "result": outputs}
+        if held:
+            lc_hold.hold(unique_id, result["ui"])
         try:
             saved = self.save_images(image[:1], filename_prefix="lc_rotate_pad_src")
             result["ui"]["lc_preview"] = saved["ui"]["images"]

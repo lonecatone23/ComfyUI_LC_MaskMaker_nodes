@@ -32,7 +32,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from . import lc_cache, lc_models
+from . import lc_cache, lc_hold, lc_models
 from .lc_matting import METHODS
 
 DECIDE_MAX = 768  # longer side the growth steps are decided at (the same at preview and run)
@@ -484,7 +484,9 @@ class LCTouchMask:
                                "model LC Person Mask uses. off: SAM 3 decides every step."}),
                 "block": ("BOOLEAN", {
                     "default": False, "label_on": "if_empty_mask", "label_off": "never",
-                    "tooltip": "if_empty_mask: when nothing is selected, everything downstream stops so you can select, then queue again."}),
+                    "tooltip": "if_empty_mask: when nothing is selected, or a new picture comes in from a run, everything "
+                               "downstream stops so you can select on the picture shown, then Run (with LC123 it carries "
+                               "on with the same seeds). A new picture in a Load Image shows here right away, so it doesn't stop."}),
                 "grow": ("INT", {"default": 0, "min": -256, "max": 256, "step": 1,
                                  "tooltip": "Grow (or shrink, below 0) the finished mask by this many pixels."}),
                 "feather": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 200.0, "step": 0.5,
@@ -500,7 +502,12 @@ class LCTouchMask:
                     "Edge finish on the run (the preview shows the selection before it). guided_filter: fast, follows "
                     "the picture's edges. vitmatte: best for hair, slower. none: the hard selection.")}),
             },
+            "hidden": {"unique_id": "UNIQUE_ID", "prompt": "PROMPT"},
         }
+
+    @classmethod
+    def IS_CHANGED(cls, unique_id=None, **kwargs):
+        return lc_hold.changed(unique_id)
 
     @classmethod
     def VALIDATE_INPUTS(cls, person_parts=None):
@@ -519,9 +526,14 @@ class LCTouchMask:
     )
 
     def make(self, image, sam3_model, person_parts, block, grow, feather, invert, selections, threshold=0.5, smooth=2,
-             refine="guided_filter"):
+             refine="guided_filter", unique_id=None, prompt=None):
         b, h, w, _c = image.shape
         sels = _parse(selections)
+        # the selections were made on the last picture (a Load Image's new picture shows on the node before the run)
+        new_picture = lc_hold.new_picture(unique_id, image, prompt)
+        if block and new_picture and sels:
+            print("[LC Touch Mask] New picture: stopped so you can select on it, then Run.")
+            sels = []  # blocked either way: skip SAM
         use_person = person_parts != "off"
         frame = _quantize(image[0, ..., :3].cpu().float())
         mask = torch.zeros(h, w)
@@ -539,11 +551,12 @@ class LCTouchMask:
             mask = 1.0 - mask
         mask_b = mask[None].repeat(b, 1, 1)
         out = (image, mask_b)
-        if block and empty:
+        ui = {"src_size": [{"width": int(w), "height": int(h)}]}
+        if block and (empty or new_picture):
             from comfy_execution.graph import ExecutionBlocker
 
             out = (ExecutionBlocker(None),) * 2
-        ui = {"src_size": [{"width": int(w), "height": int(h)}]}
+            lc_hold.hold(unique_id, ui)
         try:
             from nodes import PreviewImage
 

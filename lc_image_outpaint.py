@@ -10,6 +10,8 @@ left/top/right/bottom store the expansion as a percentage of the source
 import torch
 from nodes import PreviewImage
 
+from . import lc_hold
+
 ASPECT_OPTIONS = [
     "free",
     "original",
@@ -50,8 +52,9 @@ class LCImageOutpaint(PreviewImage):
                     "label_on": "if_empty_mask",
                     "label_off": "never",
                     "tooltip": (
-                        "if_empty_mask: until you have pulled at least one edge out (all four expansions are 0), everything "
-                        "downstream of this node is stopped so you can set up the canvas, then queue again.\n"
+                        "if_empty_mask: until you have pulled at least one edge out (all four expansions are 0), or when a "
+                        "new picture comes in, everything downstream of this node is stopped so you can set up the canvas "
+                        "on the picture shown, then Run (with LC123 it carries on with the same seeds).\n"
                         "never: always passes the canvas and mask through."
                     ),
                 }),
@@ -88,6 +91,10 @@ class LCImageOutpaint(PreviewImage):
             },
         }
 
+    @classmethod
+    def IS_CHANGED(cls, unique_id=None, **kwargs):
+        return lc_hold.changed(unique_id)
+
     RETURN_TYPES = ("IMAGE", "MASK", "IMAGE", "INT", "INT")
     RETURN_NAMES = ("control_image", "control_mask", "mask_image", "width", "height")
     FUNCTION = "outpaint"
@@ -109,14 +116,16 @@ class LCImageOutpaint(PreviewImage):
         bt = int(round(h * _clamp(float(bottom), 0.0, MAX_PCT) / 100.0))
 
         is_empty = l == 0 and r == 0 and t == 0 and bt == 0
+        new_picture = lc_hold.new_picture(unique_id, image)  # the edges were pulled on the last picture
 
         if not hold_mask and is_empty:
             # Not held and nothing pulled out: the canvas is the image, passed through as is.
             mask = torch.zeros((b, h, w), dtype=torch.float32, device=image.device)
             out = (image, mask, mask.unsqueeze(-1).repeat(1, 1, 1, 3), int(w), int(h))
-            if block:
-                out = self._blocked(out)
             result = {"ui": {"lc_reset": [True]}, "result": out}
+            if block:
+                result["result"] = self._blocked(out)
+                lc_hold.hold(unique_id, result["ui"])
             self._add_preview(result, image, w, h, w, h)
             return result
 
@@ -141,11 +150,16 @@ class LCImageOutpaint(PreviewImage):
         mask_image = mask.unsqueeze(-1).repeat(1, 1, 1, 3)
 
         out = (canvas, mask, mask_image, int(out_w), int(out_h))
-        if block and is_empty:
+        held = block and (is_empty or new_picture)
+        if held:
             out = self._blocked(out)
+            if new_picture and not is_empty:
+                print("[LC Outpaint] New picture: stopped so you can set the edges on it, then Run.")
 
         # Not held: this run uses the edges you pulled out; the box snaps back to the image once the whole run has finished.
         result = {"ui": {} if hold_mask else {"lc_reset_after": [True]}, "result": out}
+        if held:
+            lc_hold.hold(unique_id, result["ui"])
         self._add_preview(result, image, w, h, out_w, out_h)
         return result
 

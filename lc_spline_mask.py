@@ -14,6 +14,8 @@ import torch
 from nodes import PreviewImage
 from PIL import Image, ImageDraw, ImageFilter
 
+from . import lc_hold
+
 
 def _parse_points(text):
     try:
@@ -84,8 +86,9 @@ class LCSplineMask(PreviewImage):
                     "label_on": "if_empty_mask",
                     "label_off": "never",
                     "tooltip": (
-                        "if_empty_mask: when nothing is drawn (no shape, or an all-black mask), everything "
-                        "downstream of this node is stopped so you can draw, then queue again.\n"
+                        "if_empty_mask: when nothing is drawn (no shape, or an all-black mask), or a new picture "
+                        "comes in, everything downstream of this node is stopped so you can draw on the picture "
+                        "shown, then Run (with LC123 it carries on with the same seeds).\n"
                         "never: always passes the image and mask through."
                     ),
                 }),
@@ -116,7 +119,12 @@ class LCSplineMask(PreviewImage):
                 }),
                 "points": ("STRING", {"default": "[]", "tooltip": "Internal: normalized point list."}),
             },
+            "hidden": {"unique_id": "UNIQUE_ID"},
         }
+
+    @classmethod
+    def IS_CHANGED(cls, unique_id=None, **kwargs):
+        return lc_hold.changed(unique_id)
 
     RETURN_TYPES = ("IMAGE", "MASK")
     RETURN_NAMES = ("control_image", "control_mask")
@@ -129,7 +137,7 @@ class LCSplineMask(PreviewImage):
     )
 
     def make(self, image, block=False, pencil=False, smooth=False, invert=False, feather=0.0,
-             opacity=1.0, overlay_opacity=0.45, points="[]"):
+             opacity=1.0, overlay_opacity=0.45, points="[]", unique_id=None):
         b, h, w, _c = image.shape
         pts = _parse_points(points)
         mask = _render_mask(pts, w, h, bool(smooth), float(feather))
@@ -140,15 +148,22 @@ class LCSplineMask(PreviewImage):
 
         out = (image, mask_t)
         is_empty = len(pts) < 3 or not bool(mask.any())
-        if block and is_empty:
+        new_picture = lc_hold.new_picture(unique_id, image)  # the mask was drawn on the last picture
+        held = False
+        if block and (is_empty or new_picture):
             try:
                 from comfy_execution.graph import ExecutionBlocker
 
                 out = (ExecutionBlocker(None), ExecutionBlocker(None))
+                held = True
+                if new_picture and not is_empty:
+                    print("[LC Create Mask] New picture: stopped so you can draw on it, then Run.")
             except ImportError:
                 print("[LC Create Mask] ComfyUI is too old for ExecutionBlocker - block is disabled.")
 
         result = {"ui": {}, "result": out}
+        if held:
+            lc_hold.hold(unique_id, result["ui"])
         try:
             saved = self.save_images(image[:1], filename_prefix="lc_spline_src")
             result["ui"]["lc_preview"] = saved["ui"]["images"]
