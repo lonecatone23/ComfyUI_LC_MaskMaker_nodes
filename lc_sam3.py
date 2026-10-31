@@ -23,7 +23,7 @@ def load(path):
         import comfy.utils
         import folder_paths
 
-        sd = comfy.utils.load_torch_file(path)
+        sd = comfy.utils.load_torch_file(path, safe_load=True)
         for k in [k for k in sd if k.endswith("language_backbone.encoder.text_projection")]:
             sd.pop(k)
         out = comfy.sd.load_state_dict_guess_config(

@@ -674,7 +674,15 @@ try:
 
     @PromptServer.instance.routes.post("/lc_maskmaker/touch_mask")
     async def _touch_mask_route(request):
-        body = await request.json()
+        try:
+            body = await request.json()
+        except Exception:
+            return web.json_response({"error": "bad request"}, status=400)
+        person = body.get("person_parts") or "off"
+        if body.get("sam3_model") not in lc_models._sam3_local() or (
+                person != "off" and person not in lc_models.scan_hf_models("segformer_b2_clothes")):
+            return web.json_response({"error": "Run the node once first: the live preview only uses models that are already "
+                                               "downloaded."}, status=400)
 
         def work():
             with _lock:
