@@ -216,15 +216,8 @@ def ensure_vosr2_files(model_name: str) -> None:
     if not (dit_missing or vae_missing or vision_missing):
         return
 
-    try:
-        from huggingface_hub import hf_hub_download
-    except ImportError as exc:
-        raise VOSR2LoadError(
-            "VOSR 2.0 model files are missing and huggingface_hub is not available "
-            "to download them. Install huggingface_hub (it normally ships with "
-            "ComfyUI), or place the files manually -- see the README 'Model files' "
-            "section."
-        ) from exc
+    # LC change: downloads go through the pack's lc_first_download (toast, node progress, Stop cancels cleanly)
+    from ...lc_first_download import download, hf_url
 
     # LC change: a manually downloaded DINOv2 .pth dropped into the bundle folder is converted in place
     manual_pth = bundle / Path(_DINOV2_HF_FILE).name
@@ -238,6 +231,12 @@ def ensure_vosr2_files(model_name: str) -> None:
     # does), so nothing is left in the Hugging Face cache on C:, and the DiT files land in the bundle that is
     # actually used (a partly copied shared bundle is completed in place instead of a second copy in models/vosr2).
     tmp_dir = bundle / ".lc_tmp"
+    announce = [True]  # one toast for the whole bundle
+
+    def fetch(f, dest):
+        download(hf_url(HF_REPO_ID, f), str(dest), "VOSR2 upscaler", "", announce=announce[0])
+        announce[0] = False
+
     try:
         if dit_missing:
             logging.info("[VOSR2] downloading DiT bundle from %s ...", HF_REPO_ID)
@@ -248,23 +247,23 @@ def ensure_vosr2_files(model_name: str) -> None:
                     continue
                 if f.endswith(".safetensors") and _find_dit_weight(bundle) is not None:
                     continue
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                src = hf_hub_download(HF_REPO_ID, f, local_dir=str(tmp_dir))
-                os.replace(src, dest)
+                fetch(f, dest)
         if vae_missing:
             logging.info("[VOSR2] downloading Qwen-Image 2D VAE from %s ...", HF_REPO_ID)
-            vae_dir.mkdir(parents=True, exist_ok=True)
             for f in _VAE_HF_FILES:
-                hf_hub_download(HF_REPO_ID, f, local_dir=str(bundle))
+                if not (bundle / f).is_file():
+                    fetch(f, bundle / f)
         if vision_missing:
             logging.info("[VOSR2] downloading + converting DINOv2-L encoder from %s ...", HF_REPO_ID)
-            src = hf_hub_download(HF_REPO_ID, _DINOV2_HF_FILE, local_dir=str(tmp_dir))
-            _convert_dinov2_pth_to_safetensors(Path(src), bundle / _VISION_FILENAME)
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-    except Exception as exc:  # LC change: explain a failed download instead of a raw huggingface_hub error
-        if isinstance(exc, VOSR2LoadError):
-            raise
+            src = tmp_dir / Path(_DINOV2_HF_FILE).name
+            fetch(_DINOV2_HF_FILE, src)
+            _convert_dinov2_pth_to_safetensors(src, bundle / _VISION_FILENAME)
+    except Exception as exc:  # LC change: explain a failed download instead of a raw urllib error
+        if isinstance(exc, (VOSR2LoadError, comfy.model_management.InterruptProcessingException)):
+            raise  # Stop stays a Stop
         raise VOSR2LoadError(_download_help(bundle, exc)) from exc
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
 def _download_help(bundle: Path, exc: Exception) -> str:

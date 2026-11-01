@@ -4,10 +4,12 @@ Models are never bundled or redistributed: each dropdown lists what is already
 on disk plus a curated "⬇ Download" list, labelled with the license.
 """
 
+import fnmatch
 import os
-import shutil
 
 import folder_paths
+
+from .lc_first_download import download, hf_url
 
 DOWNLOAD_PREFIX = "⬇ Download: "
 
@@ -110,14 +112,22 @@ def resolve_vitmatte(choice):
 
 def download_hf(repo_id, target_dir):
     """Download the weights + config files of a HF repo into target_dir."""
-    from huggingface_hub import list_repo_files, snapshot_download
+    from huggingface_hub import list_repo_files
 
     print(f"[LC MaskMaker] downloading {repo_id} -> {target_dir}")
     files = list_repo_files(repo_id)
-    patterns = ["config.json", "preprocessor_config.json", "*.txt", "*.json"]
-    patterns.append("model.safetensors" if "model.safetensors" in files else "pytorch_model.bin")
+    weights = "model.safetensors" if "model.safetensors" in files else "pytorch_model.bin"
+    patterns = ["config.json", "preprocessor_config.json", "*.txt", "*.json", weights]
+    wanted = [f for f in files if any(fnmatch.fnmatch(f, p) for p in patterns)]
+    wanted.sort(key=lambda f: f != weights)  # weights first, so the one toast shows the real size
     os.makedirs(target_dir, exist_ok=True)
-    snapshot_download(repo_id=repo_id, local_dir=target_dir, allow_patterns=patterns)
+    first = True
+    for f in wanted:
+        dest = os.path.join(target_dir, *f.split("/"))
+        if os.path.isfile(dest):
+            continue
+        download(hf_url(repo_id, f), dest, repo_id.split("/")[-1], announce=first)
+        first = False
     print(f"[LC MaskMaker] finished {repo_id}")
     return target_dir
 
@@ -178,14 +188,7 @@ def resolve_bgremoval(choice):
     os.makedirs(target_dir, exist_ok=True)
     dest = os.path.join(target_dir, fname)
     if not os.path.isfile(dest):
-        from huggingface_hub import hf_hub_download
-
-        print(f"[LC MaskMaker] downloading {repo} -> {dest}")
-        tmp_dir = os.path.join(target_dir, ".lc_tmp")
-        tmp = hf_hub_download(repo_id=repo, filename="model.safetensors", local_dir=tmp_dir)
-        os.replace(tmp, dest)
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        print(f"[LC MaskMaker] finished {repo}")
+        download(hf_url(repo, "model.safetensors"), dest, label.split(" (")[0])
     return dest, size
 
 
@@ -304,15 +307,7 @@ def resolve_sam3(choice):
     if label == SAM3_DOWNLOAD_LABEL:
         dest = os.path.join(models_dir("sam3"), SAM3_DOWNLOAD_FILE)
         if not os.path.isfile(dest):
-            from huggingface_hub import hf_hub_download
-
-            os.makedirs(os.path.dirname(dest), exist_ok=True)
-            print(f"[LC MaskMaker] downloading Comfy-Org/sam3.1 -> {dest} (1.7 GB)")
-            tmp_dir = os.path.join(models_dir("sam3"), ".lc_tmp")
-            tmp = hf_hub_download(repo_id="Comfy-Org/sam3.1", filename="checkpoints/" + SAM3_DOWNLOAD_FILE, local_dir=tmp_dir)
-            os.replace(tmp, dest)
-            shutil.rmtree(tmp_dir, ignore_errors=True)
-            print("[LC MaskMaker] finished sam3.1")
+            download(hf_url("Comfy-Org/sam3.1", "checkpoints/" + SAM3_DOWNLOAD_FILE), dest, "SAM 3.1", "1.7 GB")
         return dest
     raise RuntimeError(
         "[LC Segment Anything] No SAM 3 file found. Choose the SAM 3.1 download, or put your own "
@@ -336,13 +331,7 @@ def resolve_mediapipe():
             return _shared(os.path.join(root, MEDIAPIPE_FILE))
     path = os.path.join(models_dir("mediapipe"), MEDIAPIPE_FILE)
     if not os.path.isfile(path):
-        import urllib.request
-
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        print(f"[LC MaskMaker] downloading {MEDIAPIPE_FILE} -> {path}")
-        tmp = path + ".part"
-        urllib.request.urlretrieve(MEDIAPIPE_URL, tmp)
-        os.replace(tmp, path)
+        download(MEDIAPIPE_URL, path, "MediaPipe selfie multiclass")
     return path
 
 
@@ -439,15 +428,7 @@ def resolve_depth(choice):
             continue
         dest = os.path.join(models_dir("depthanything"), f)
         if not os.path.isfile(dest):
-            from huggingface_hub import hf_hub_download
-
-            os.makedirs(os.path.dirname(dest), exist_ok=True)
-            print(f"[LC MaskMaker] downloading {repo}/{f} -> {dest}")
-            tmp_dir = os.path.join(models_dir("depthanything"), ".lc_tmp")
-            tmp = hf_hub_download(repo_id=repo, filename=f, local_dir=tmp_dir)
-            os.replace(tmp, dest)
-            shutil.rmtree(tmp_dir, ignore_errors=True)
-            print(f"[LC MaskMaker] finished {repo}")
+            download(hf_url(repo, f), dest, f"Depth Anything V2 ({enc})")
         return dest, enc
     raise ValueError(f"[LC MaskMaker] {choice} is not on this machine and has no public download.")
 
@@ -478,13 +459,4 @@ def resolve_bae(choice):
     if local:
         return _shared(next(iter(local.values())))  # models/normalbae wins over the controlnet_aux copy
     dest = os.path.join(models_dir("normalbae"), BAE_FILE)
-    from huggingface_hub import hf_hub_download
-
-    os.makedirs(os.path.dirname(dest), exist_ok=True)
-    print(f"[LC MaskMaker] downloading lllyasviel/Annotators/{BAE_FILE} -> {dest}")
-    tmp_dir = os.path.join(models_dir("normalbae"), ".lc_tmp")
-    tmp = hf_hub_download(repo_id="lllyasviel/Annotators", filename=BAE_FILE, local_dir=tmp_dir)
-    os.replace(tmp, dest)
-    shutil.rmtree(tmp_dir, ignore_errors=True)
-    print("[LC MaskMaker] finished scannet.pt")
-    return dest
+    return download(hf_url("lllyasviel/Annotators", BAE_FILE), dest, "BAE normals (scannet.pt)")
