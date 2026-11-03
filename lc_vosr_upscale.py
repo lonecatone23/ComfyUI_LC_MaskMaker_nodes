@@ -27,7 +27,7 @@ def _bundle(dtype):
 
 # Tested on the bench: one pass up to 4x is clean; a single 6x / 8x pass breaks the skin up into patches, while
 # 3x + 2x and 4x + 2x stay clean.
-SCALES = {"1.5x": (1.5,), "2x": (2,), "3x": (3,), "4x": (4,), "6x (3x + 2x)": (3, 2), "8x (4x + 2x)": (4, 2)}
+SCALES = {"1.25x": (1.25,), "1.5x": (1.5,), "1.75x": (1.75,), "2x": (2,), "3x": (3,), "4x": (4,), "6x (3x + 2x)": (3, 2), "8x (4x + 2x)": (4, 2)}
 
 
 def upscale(image, scale, seed, color_alignment, tile_size, vae_tile_size, dtype="default"):
@@ -56,7 +56,7 @@ PROTECT_TIP = ("The faces and hands the detailers redrew, at the new size. Wire 
 def _inputs():
     return {
         "upscale_by": (list(SCALES), {"default": "2x",
-                       "tooltip": "Final size. 1.5x to 4x are one pass (1.5x is about a third faster than 2x). 6x and 8x run "
+                       "tooltip": "Final size. 1.25x to 4x are one pass: smaller is lighter (1.5x is about a third faster than 2x). 6x and 8x run "
                                   "two passes (3x + 2x, 4x + 2x): one big pass breaks the skin up into patches."}),
         "seed": ("INT", {"default": 42, "min": 0, "max": 0xFFFFFFFFFFFFFFFF, "control_after_generate": "fixed",
                          "tooltip": "VOSR2 is one step from noise: the seed only changes the finest grain."}),
