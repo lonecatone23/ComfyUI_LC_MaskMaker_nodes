@@ -1295,5 +1295,25 @@
         "tooltip": "融合全景图的左右两边，用于两端没有完全接上的图。"
       }
     }
+  },
+  "LCRelayVSRUpscale": {
+    "description": "一个节点搞定 RelayVSR 放大（需 ComfyUI 0.44 或更新）。快速锐利，补充细致的皮肤和头发细节。视频用 2x，图片用 4x。模型首次使用时下载（Comfy-Org/RelayVSR，Apache-2.0）。在 8 GB 显卡上 VRAM 保持平稳。",
+    "inputs": {
+      "image": {
+        "tooltip": "一张图片、一批图片，或一段视频的帧（见 source）。"
+      },
+      "source": {
+        "tooltip": "video：帧与帧互相对齐，所以保持稳定。image：每张图片单独放大，彼此之间不会互相影响。"
+      },
+      "upscale": {
+        "tooltip": "视频用 2x，图片用 4x。每个都是独立的 5.2 GB 模型，首次使用时下载。"
+      },
+      "seed": {
+        "tooltip": "从噪声出发的一步：seed 只会改变最细的颗粒。"
+      },
+      "detail": {
+        "tooltip": "保留多少新增细节。1.0 = 模型完整输出，越低越接近普通 bicubic 放大。"
+      }
+    }
   }
 }

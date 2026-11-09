@@ -62,6 +62,7 @@ _load("lc_360_view")
 _load("lc_normal_bae")
 _load("lc_face_crop")
 _load("lc_vosr_upscale")
+_load("lc_relay_vsr")
 _load("lc_moss_box_edit")
 
 WEB_DIRECTORY = "./web"
