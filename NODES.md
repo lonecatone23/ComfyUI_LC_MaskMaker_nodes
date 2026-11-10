@@ -5,20 +5,28 @@
 - `LC360View`: LC 360 View 🧭
 - `LCFaceCrop`: LC Face Crop 📐
 - `LCSplineMask`: LC Create Mask 🖼️✏️
+- `LCTouchMask`: LC Touch Mask (BETA) 👆
 - `LCMaskRefine`: LC Mask Refine ✨
 - `LCRemBG`: LC Remove Background ✂️
 - `LCImageBlendAdvance`: LC Image Blend Advance 🎚️
 - `LCSegmentAnything`: LC Segment Anything 🎯
 - `LCSmartInpaint`: LC Smart Detailer 🩹
 - `LCSmartInpaintPipe`: LC Smart Detailer (pipe) 🩹
+- `LCCharacterDetailer`: LC Character Detailer (BETA) 🩹
+- `LCCharacterDetailerPipe`: LC Character Detailer (pipe) (BETA) 🩹
+- `LCDetailFinder`: LC Detail Finder (BETA) 🎯
+- `LCDetailSorter`: LC Detail Sorter (BETA) 🔢
+- `LCDetailerForEach`: LC Detailer For Each (BETA) 🩹
 - `LCVOSRUpscale`: LC VOSR2 Upscale 🧩
 - `LCVOSRUpscalePipe`: LC VOSR2 Upscale (pipe) 🧩
+- `LCRelayVSRUpscale`: LC Relay VSR Upscale 🧩
 - `LCKrea2AnyPaint`: LC Krea2 AnyPaint 🩹
 - `LCZImageAnyPaint`: LC Z-Image AnyPaint 🩹
 - `LCSDXLAnyPaint`: LC SDXL AnyPaint 🩹
 - `LCFlux3AnyPaint`: LC Flux 3 Klein AnyPaint 🩹
+- `LCMOSSControl`: LC MOSS Control 🕹️
+- `LCMOSSBoxEdit`: LC MOSS Box Edit 🖌️ (BETA)
 - `LCPersonMask`: LC Person Mask 🧍
 - `LCAutoAdjust`: LC Auto Adjust 🔆
 - `LCDepthAnythingV2`: LC Depth Anything V2 🌊
 - `LCNormalBAE`: LC Normal Map (BAE) 🗺️
-- `LCMOSSBoxEdit`: LC MOSS Box Edit 🖌️ (BETA)

@@ -1297,7 +1297,7 @@
     }
   },
   "LCRelayVSRUpscale": {
-    "description": "RelayVSR 업스케일을 노드 하나에 (ComfyUI 0.44 이상). 빠르고 선명하며, 피부와 머리카락의 미세한 디테일을 더합니다. 영상은 2x, 사진은 4x. 모델은 처음 사용할 때 다운로드됩니다 (Comfy-Org/RelayVSR, Apache-2.0). 8 GB 카드에서도 VRAM을 일정하게 유지합니다.",
+    "description": "RelayVSR 업스케일을 노드 하나에 (ComfyUI nightly(2026년 11월 5일 이후) 또는 다음 안정판 필요). 빠르고 선명하며, 피부와 머리카락의 미세한 디테일을 더합니다. 영상은 2x, 사진은 4x. 모델은 처음 사용할 때 다운로드됩니다 (Comfy-Org/RelayVSR, Apache-2.0). 8 GB 카드에서도 VRAM을 일정하게 유지합니다.",
     "inputs": {
       "image": {
         "tooltip": "사진 한 장, 사진 묶음, 또는 영상 하나의 프레임 (source 참고)."

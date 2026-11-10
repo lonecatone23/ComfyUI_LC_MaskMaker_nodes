@@ -4,6 +4,7 @@ Same graph as RelayVSRConditioning -> KSampler -> VSRDecode. On top of it:
 - the 2x / 4x model and Flash VAE are built in: found wherever they already are, else downloaded on first use
   (Comfy-Org/RelayVSR, Apache-2.0) into models/diffusion_models and models/vae, with the LC toast,
 - the model and VAE stay cached between runs,
+- the detail the model adds is softened (brightness only, soft cap of 12 levels): no inked hair or halos,
 - keyframes always go through in small chunks with the model's own cache. The native shortcut runs a short clip in
   one pass, which overflows 8 GB cards at 4x (5 s clip on an RTX 5060 8 GB: 22.6 min native, 104 s here). Output
   differs from the one-pass result by a mean 0.2/255, and it is no slower on a 5090.
@@ -24,7 +25,7 @@ from .lc_first_download import download, hf_url
 
 try:
     import comfy.ldm.wan.model_vsr as _vsr
-except Exception:  # ComfyUI older than 0.44 has no RelayVSR
+except Exception:  # stable ComfyUI 0.44.x has no RelayVSR: it is on nightly from 2026-11-05 (2f89433)
     _vsr = None
 
 REPO = "Comfy-Org/RelayVSR"
@@ -33,6 +34,12 @@ FILES = {  # factor: (model, vae, model size)
     "4x": ("relayvsr_x4_int8_convrot.safetensors", "relayvsr_flash_vae_x4_fp32.safetensors", "5.2 GB"),
 }
 CHUNK_TOKENS = 8192  # about one 4x keyframe of a 960x544 clip per chunk
+# What the model adds on top of the bicubic upscale (its residual) is softened before `detail` scales it:
+# brightness only (its colour shifts were most of Relay's colour drift) and a soft cap of 12 levels (tanh), which
+# stops the inked lashes / brows and their halos and keeps fine skin texture. Bench 2026-11-10 (6 pictures, 6 clips):
+# edge halo about a quarter, texture 80-90 %, colour drift halved, a little less flicker, no time or VRAM cost.
+SOFT_CLIP = 12.0 / 127.5  # 12 of 255 levels, in the decoder's -1..1 range
+LUMA = (0.299, 0.587, 0.114)
 _CACHE = {"model": (None, None), "vae": (None, None)}
 
 
@@ -101,7 +108,7 @@ class LCRelayVSRUpscale:
                        "in RAM. With only this output connected, the full-size image is never built.")
     FUNCTION = "run"
     CATEGORY = "LC MaskMaker/upscale"
-    DESCRIPTION = ("RelayVSR upscale in one node (ComfyUI 0.44 or newer). Fast and sharp, adds fine skin and hair detail. "
+    DESCRIPTION = ("RelayVSR upscale in one node (needs ComfyUI nightly from Nov 5, 2026, or the next stable release). Fast and sharp, adds fine skin and hair detail. "
                    "2x for video, 4x for pictures. Models download on first use (Comfy-Org/RelayVSR, Apache-2.0). "
                    "Keeps VRAM flat on 8 GB cards.")
 
@@ -116,7 +123,8 @@ class LCRelayVSRUpscale:
 
     def run(self, image, source, upscale, seed, detail, prompt=None, unique_id=None):
         if _vsr is None:
-            raise RuntimeError("[LC Relay VSR] Needs ComfyUI 0.44 or newer (RelayVSR is built into ComfyUI from 0.44).")
+            raise RuntimeError("[LC Relay VSR] Needs ComfyUI nightly from Nov 5, 2026 or later (RelayVSR is not in the 0.44.x stable releases). "
+                               "Update ComfyUI itself to nightly, or wait for the next stable release.")
         model_file, vae_file, size = FILES[upscale]
         m = _model(_ensure("diffusion_models", "diffusion_models", model_file, f"Relay VSR {upscale} model", size))
         v = _vae(_ensure("vae", "vae", vae_file, f"Relay VSR {upscale} VAE", "128 MB"))
@@ -132,7 +140,8 @@ class LCRelayVSRUpscale:
 
         out = None
         for k, (samples, p) in enumerate(jobs):  # pictures go straight into one buffer, no second copy at the end
-            dec = VSRDecode.execute(v, samples, p, detail).result[0]
+            with _softened(v):
+                dec = VSRDecode.execute(v, samples, p, detail).result[0]
             if len(jobs) == 1:
                 return (dec, relay)
             if out is None:
@@ -153,6 +162,35 @@ class LCRelayVSRUpscale:
             return nodes.common_ksampler(m, seed, 1, 1.0, "euler", "simple", positive, positive, latent, denoise=1.0)[0]
         finally:
             _vsr.RELAY_WAN_CACHE_KEYFRAMES, _vsr.RELAY_WAN_CHUNK_TOKENS = old
+
+
+def _soft_frame(fsm, lr, dtype, freqs, freqs_past, condition, history, detail):
+    """fsm.decode_frame with the residual softened (see SOFT_CLIP). The decoder's history comes from its blocks before
+    the residual is formed, so this changes only the frame itself, never the frames after it."""
+    import torch.nn.functional as F
+
+    decoded, history = type(fsm).decode_frame(fsm, lr, dtype, freqs, freqs_past, condition, history, 1.0)
+    base = F.interpolate(lr, scale_factor=fsm.upscale_factor, mode="bicubic", align_corners=False)
+    res = (decoded - base).float()
+    y = res[:, 0:1] * LUMA[0] + res[:, 1:2] * LUMA[1] + res[:, 2:3] * LUMA[2]
+    y = torch.tanh(y / SOFT_CLIP).mul_(SOFT_CLIP * detail)
+    return (base.float() + y).to(decoded.dtype), history
+
+
+class _softened:
+    """Routes the native VSRDecode through _soft_frame for the length of a `with` block."""
+
+    def __init__(self, vae):
+        self.fsm = vae.first_stage_model
+
+    def __enter__(self):
+        fsm = self.fsm
+        fsm.decode_frame = lambda *a: _soft_frame(fsm, *a)  # instance attribute shadows the class method
+        return self
+
+    def __exit__(self, *exc):
+        self.fsm.__dict__.pop("decode_frame", None)
+        return False
 
 
 def _decode_frames(vae, samples, lq_images, detail):
@@ -187,7 +225,7 @@ def _decode_frames(vae, samples, lq_images, detail):
             lr = F.pad(lr, (0, width * fsm.latent_stride - lq_w, 0, height * fsm.latent_stride - lq_h), mode="replicate")
         for i, frame in enumerate(range(first, last + 1)):
             with torch.inference_mode():
-                decoded, history = fsm.decode_frame(lr[i:i + 1], x.dtype, freqs, freqs_past, condition, history, detail)
+                decoded, history = _soft_frame(fsm, lr[i:i + 1], x.dtype, freqs, freqs_past, condition, history, detail)
                 px = None
                 if window == 0 or frame > first:  # the shared keyframe was already output by the previous window
                     px = decoded[0, :, :out_h, :out_w].add_(1.0).mul_(127.5).clamp_(0.0, 255.0).round_().to(torch.uint8).permute(1, 2, 0)

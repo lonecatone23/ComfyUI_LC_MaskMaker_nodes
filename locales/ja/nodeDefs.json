@@ -1297,7 +1297,7 @@
     }
   },
   "LCRelayVSRUpscale": {
-    "description": "RelayVSR のアップスケールを 1 つのノードに（ComfyUI 0.44 以降）。速くてシャープ、肌や髪の細かいディテールを加えます。動画は 2x、画像は 4x。モデルは初回使用時にダウンロード（Comfy-Org/RelayVSR、Apache-2.0）。8 GB カードでも VRAM を一定に保ちます。",
+    "description": "RelayVSR のアップスケールを 1 つのノードに（ComfyUI nightly（2026 年 11 月 5 日以降）か次の安定版が必要）。速くてシャープ、肌や髪の細かいディテールを加えます。動画は 2x、画像は 4x。モデルは初回使用時にダウンロード（Comfy-Org/RelayVSR、Apache-2.0）。8 GB カードでも VRAM を一定に保ちます。",
     "inputs": {
       "image": {
         "tooltip": "画像 1 枚、画像のバッチ、または 1 本の動画のフレーム（source を参照）。"
