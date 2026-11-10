@@ -1320,35 +1320,7 @@
         "tooltip": "업스케일된 프레임. 전체 크기로 RAM에 보관됩니다: 5초 클립 4x는 약 12 GB."
       },
       "1": {
-        "tooltip": "LC Relay Video Chunk Save용: 몇 프레임씩 디코딩해서 저장하므로 영상이 RAM에 올라가지 않습니다. 이 출력만 연결하면 전체 크기 이미지는 만들어지지 않습니다."
-      }
-    }
-  },
-  "LCRelayVideoChunkSave": {
-    "description": "LC Relay VSR Upscale의 영상을 몇 프레임씩 저장하므로 업스케일된 영상이 RAM에 올라가지 않습니다. 업스케일러의 relay 출력을 연결하세요. 끝나면 노드에서 영상이 재생됩니다.",
-    "inputs": {
-      "relay": {
-        "tooltip": "LC Relay VSR Upscale의 relay 출력."
-      },
-      "fps": {
-        "tooltip": "저장할 영상의 프레임 레이트."
-      },
-      "crf": {
-        "tooltip": "화질. 낮출수록 화질이 좋아지고 파일이 커집니다. 19면 원본과 구분이 안 됩니다."
-      },
-      "filename_prefix": {
-        "tooltip": "ComfyUI output 폴더 아래의 이름. 하위폴더/이름 도 됩니다."
-      },
-      "audio": {
-        "tooltip": "선택 사항인 오디오 트랙."
-      },
-      "goal": {
-        "tooltip": "Quality = 파일이 가장 작고 저장이 가장 느림. Optimal = 균형. Fast = 저장이 가장 빠르고 파일이 가장 큼. 같은 crf라면 화면은 같습니다."
-      }
-    },
-    "outputs": {
-      "0": {
-        "tooltip": "저장된 영상을 원본 크기(업스케일 크기 아님)로 다시 읽은 것. 미리보기 노드용. 무언가 연결했을 때만 만들어집니다."
+        "tooltip": "LC Save Video의 relay 입력용: 몇 프레임씩 디코딩해서 저장하므로 영상이 RAM에 올라가지 않습니다. 이 출력만 연결하면 전체 크기 이미지는 만들어지지 않습니다."
       }
     }
   }

@@ -1320,35 +1320,7 @@
         "tooltip": "アップスケールしたフレーム。フルサイズのまま RAM に置かれます：5 秒のクリップを 4x で約 12 GB。"
       },
       "1": {
-        "tooltip": "LC Relay Video Chunk Save 用：数フレームずつデコードして保存するので、動画が RAM に載りません。この出力だけをつなぐと、フルサイズの画像は作られません。"
-      }
-    }
-  },
-  "LCRelayVideoChunkSave": {
-    "description": "LC Relay VSR Upscale の動画を数フレームずつ保存するので、アップスケールした動画が RAM に載りません。アップスケーラーの relay 出力をつなぎます。終わると動画がノード上で再生されます。",
-    "inputs": {
-      "relay": {
-        "tooltip": "LC Relay VSR Upscale の relay 出力。"
-      },
-      "fps": {
-        "tooltip": "保存する動画のフレームレート。"
-      },
-      "crf": {
-        "tooltip": "画質。下げるほど高画質でファイルが大きくなります。19 で元の映像と見分けがつきません。"
-      },
-      "filename_prefix": {
-        "tooltip": "ComfyUI の output フォルダ内の名前。サブフォルダ/名前 も使えます。"
-      },
-      "audio": {
-        "tooltip": "任意の音声トラック。"
-      },
-      "goal": {
-        "tooltip": "Quality = ファイルが最小、保存は最も遅い。Optimal = バランス。Fast = 保存が最速、ファイルは最大。同じ crf なら見た目は同じです。"
-      }
-    },
-    "outputs": {
-      "0": {
-        "tooltip": "保存した動画を元のサイズ（アップスケール後ではない）で読み戻したもの。プレビューノード用。何かをつないだときだけ作られます。"
+        "tooltip": "LC Save Video の relay 入力用：数フレームずつデコードして保存するので、動画が RAM に載りません。この出力だけをつなぐと、フルサイズの画像は作られません。"
       }
     }
   }

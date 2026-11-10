@@ -97,7 +97,7 @@ class LCRelayVSRUpscale:
     RETURN_TYPES = ("IMAGE", "LC_RELAY")
     RETURN_NAMES = ("image", "relay")
     OUTPUT_TOOLTIPS = ("The upscaled frames. Held in RAM at full size: a 5 s clip at 4x is about 12 GB.",
-                       "For LC Relay Video Chunk Save: it decodes and saves the video a few frames at a time, so it never sits "
+                       "For LC Save Video's relay input: it decodes and saves the video a few frames at a time, so it never sits "
                        "in RAM. With only this output connected, the full-size image is never built.")
     FUNCTION = "run"
     CATEGORY = "LC MaskMaker/upscale"
@@ -122,9 +122,12 @@ class LCRelayVSRUpscale:
         v = _vae(_ensure("vae", "vae", vae_file, f"Relay VSR {upscale} VAE", "128 MB"))
         parts = [image[i:i + 1] for i in range(image.shape[0])] if source == "image" and image.shape[0] > 1 else [image]
         jobs = [(self._sample(m, p, seed), p) for p in parts]
-        relay = {"vae": v, "jobs": jobs, "detail": detail}
+        up = v.first_stage_model.upscale_factor
+        relay = {"vae": v, "jobs": jobs, "detail": detail, "count": sum(int(p.shape[0]) for p in parts),
+                 "size": (int(image.shape[2]) * up, int(image.shape[1]) * up)}
+        relay["frames"] = lambda batch=8: iter_relay_frames(relay, batch)
         if prompt is not None and unique_id is not None and not linked(prompt, unique_id, 0):
-            return (None, relay)  # only the chunk saver is connected: skip the full-size decode
+            return (None, relay)  # only a relay saver is connected: skip the full-size decode
         from comfy_extras.nodes_wan import VSRDecode
 
         out = None
@@ -150,6 +153,62 @@ class LCRelayVSRUpscale:
             return nodes.common_ksampler(m, seed, 1, 1.0, "euler", "simple", positive, positive, latent, denoise=1.0)[0]
         finally:
             _vsr.RELAY_WAN_CACHE_KEYFRAMES, _vsr.RELAY_WAN_CHUNK_TOKENS = old
+
+
+def _decode_frames(vae, samples, lq_images, detail):
+    """The RelayVSR Flash decoder's own frame loop (comfy/ldm/wan/model_vsr.py, decode()), yielding each finished frame
+    (uint8 H x W x 3 on the GPU) instead of filling a full-size buffer. The decoder's history runs across the frames
+    exactly as in one-pass decoding, so the frames are the same."""
+    import torch.nn.functional as F
+
+    fsm = vae.first_stage_model
+    x = samples["samples"]
+    mm = comfy.model_management
+    mm.load_models_gpu([vae.patcher], memory_required=vae.memory_used_decode(x.shape, vae.vae_dtype),
+                       force_full_load=getattr(vae, "disable_offload", False))
+    x = x.to(device=vae.device, dtype=vae.vae_dtype)
+    _, _, _, height, width = x.shape
+    frames, lq_h, lq_w = lq_images.shape[:3]
+    out_h, out_w = lq_h * fsm.upscale_factor, lq_w * fsm.upscale_factor
+    depth = len(fsm.backbone.blocks)
+    keyframes = _vsr.relay_keyframes(frames)
+    dev = x.device
+    pbar = comfy.utils.ProgressBar(frames)
+    with torch.inference_mode():
+        freqs, freqs_past = fsm.grid_rope(0, height, width, dev), fsm.grid_rope(-1, height, width, dev)
+        start = fsm.prepare_condition(x[:, :, 0], freqs)
+    for window, (first, last) in enumerate(zip(keyframes, keyframes[1:] or keyframes)):
+        mm.throw_exception_if_processing_interrupted()
+        with torch.inference_mode():
+            end = fsm.prepare_condition(x[:, :, min(window + 1, len(keyframes) - 1)], freqs)
+            condition = list(zip(start, end))
+            history = [None] * depth
+            lr = lq_images[first:last + 1].to(device=dev)[..., :3].movedim(-1, 1) * 2.0 - 1.0
+            lr = F.pad(lr, (0, width * fsm.latent_stride - lq_w, 0, height * fsm.latent_stride - lq_h), mode="replicate")
+        for i, frame in enumerate(range(first, last + 1)):
+            with torch.inference_mode():
+                decoded, history = fsm.decode_frame(lr[i:i + 1], x.dtype, freqs, freqs_past, condition, history, detail)
+                px = None
+                if window == 0 or frame > first:  # the shared keyframe was already output by the previous window
+                    px = decoded[0, :, :out_h, :out_w].add_(1.0).mul_(127.5).clamp_(0.0, 255.0).round_().to(torch.uint8).permute(1, 2, 0)
+            if px is not None:
+                pbar.update(1)
+                yield px
+        start = end
+
+
+def iter_relay_frames(relay, batch=8):
+    """The upscaled video of a relay output, a few frames at a time: uint8 numpy arrays [k, H, W, 3]. Used by
+    LC Save Video (LC AV), so the whole video never sits in RAM."""
+    pending = []
+    for samples, lq in relay["jobs"]:
+        for px in _decode_frames(relay["vae"], samples, lq, relay["detail"]):
+            pending.append(px)
+            if len(pending) >= batch:
+                yield torch.stack(pending).cpu().numpy()
+                pending = []
+    if pending:
+        yield torch.stack(pending).cpu().numpy()
 
 
 def _queued_prompt():

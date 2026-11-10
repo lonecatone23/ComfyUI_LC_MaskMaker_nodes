@@ -1,0 +1,2445 @@
+{
+  "id": "d66dedb4-ed78-4b75-b7bf-4814fd4ab600",
+  "revision": 0,
+  "last_node_id": 70,
+  "last_link_id": 98,
+  "nodes": [
+    {
+      "id": 6,
+      "type": "GetNode",
+      "pos": [
+        2140,
+        -2290
+      ],
+      "size": [
+        210,
+        40
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 0,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            73
+          ]
+        }
+      ],
+      "title": "Get_Seed",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Seed"
+      ],
+      "widgets_values_named": {
+        "Constant": "Seed"
+      },
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
+    },
+    {
+      "id": 11,
+      "type": "Fast Groups Bypasser (rgthree)",
+      "pos": [
+        2140,
+        -2390
+      ],
+      "size": [
+        220,
+        60
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "🤫",
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "title": "Relay Bypasser",
+      "properties": {
+        "matchColors": "",
+        "matchTitle": "#Relay Upscale Video",
+        "showNav": false,
+        "showAllGraphs": true,
+        "sort": "position",
+        "customSortAlphabet": "",
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#c3782d",
+      "bgcolor": "#af6419"
+    },
+    {
+      "id": 12,
+      "type": "GetNode",
+      "pos": [
+        2140,
+        -2250
+      ],
+      "size": [
+        210,
+        50
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 2,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            72,
+            95
+          ]
+        }
+      ],
+      "title": "Get_Org Video",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Org Video"
+      ],
+      "widgets_values_named": {
+        "Constant": "Org Video"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 13,
+      "type": "LCLoadVideo",
+      "pos": [
+        1660,
+        -2440
+      ],
+      "size": [
+        270,
+        330
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            55
+          ]
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            53
+          ]
+        },
+        {
+          "name": "fps",
+          "type": "FLOAT",
+          "links": [
+            54
+          ]
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_AV_nodes",
+        "ver": "23ab7e5f491f9d01fe37e024791bcd0bf3f0757b",
+        "Node name for S&R": "LCLoadVideo",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "\"H:\\ComfyUI\\output\\Videos\\Minimax_2026-09-17_00006.mp4\""
+      ],
+      "widgets_values_named": {
+        "path": "\"H:\\ComfyUI\\output\\Videos\\Minimax_2026-09-17_00006.mp4\""
+      },
+      "color": "#1a5a7a",
+      "bgcolor": "#1a5a7a"
+    },
+    {
+      "id": 15,
+      "type": "LoadImage",
+      "pos": [
+        1660,
+        -3110
+      ],
+      "size": [
+        350,
+        510
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            52,
+            84
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.44.0",
+        "Node name for S&R": "LoadImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "MOSS Pro V6.0_00003_.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "MOSS Pro V6.0_00003_.png",
+        "upload": "image"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 20,
+      "type": "LCSeed",
+      "pos": [
+        1200,
+        -2960
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "seed",
+          "type": "INT",
+          "links": [
+            17
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCSeed",
+        "lc_seed_history": [
+          8675309,
+          8675310,
+          8675309
+        ],
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        8675309,
+        "",
+        "",
+        "— last used seeds —"
+      ],
+      "widgets_values_named": {
+        "base_seed": 8675309,
+        "🎲 Randomize Each Time": "",
+        "🎲 New Fixed Random": "",
+        "seed history": "— last used seeds —"
+      },
+      "color": "#822305",
+      "bgcolor": "#822305"
+    },
+    {
+      "id": 21,
+      "type": "SetNode",
+      "pos": [
+        1490,
+        -2960
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "title": "Set_Seed",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Seed",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Seed"
+      ],
+      "widgets_values_named": {
+        "Constant": "Seed"
+      },
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
+    },
+    {
+      "id": 27,
+      "type": "SetNode",
+      "pos": [
+        2030,
+        -3110
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "title": "Set_org image",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "org image",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "org image"
+      ],
+      "widgets_values_named": {
+        "Constant": "org image"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 28,
+      "type": "LCBatchImageComparer",
+      "pos": [
+        2760,
+        -3070
+      ],
+      "size": [
+        340,
+        510
+      ],
+      "flags": {
+        "pinned": false
+      },
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Before",
+          "name": "image_a",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 34
+        },
+        {
+          "label": "After Relay",
+          "name": "image_b",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 71
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCBatchImageComparer",
+        "comparer_mode": "Slide",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 33,
+      "type": "GetNode",
+      "pos": [
+        2200,
+        -2970
+      ],
+      "size": [
+        210,
+        40
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            68
+          ]
+        }
+      ],
+      "title": "Get_Seed",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Seed"
+      ],
+      "widgets_values_named": {
+        "Constant": "Seed"
+      },
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
+    },
+    {
+      "id": 36,
+      "type": "SetNode",
+      "pos": [
+        2200,
+        -2890
+      ],
+      "size": [
+        210,
+        50
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 70
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "title": "Set_Relay Image",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Relay Image",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Relay Image"
+      ],
+      "widgets_values_named": {
+        "Constant": "Relay Image"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 38,
+      "type": "Fast Groups Bypasser (rgthree)",
+      "pos": [
+        2200,
+        -3070
+      ],
+      "size": [
+        220,
+        60
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "🤫",
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "title": "Relay Bypasser",
+      "properties": {
+        "matchColors": "",
+        "matchTitle": "#Relay Upscale Image",
+        "showNav": false,
+        "showAllGraphs": true,
+        "sort": "position",
+        "customSortAlphabet": "",
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#c3782d",
+      "bgcolor": "#af6419"
+    },
+    {
+      "id": 39,
+      "type": "GetNode",
+      "pos": [
+        2200,
+        -2930
+      ],
+      "size": [
+        210,
+        50
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            34,
+            67
+          ]
+        }
+      ],
+      "title": "Get_org image",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "org image"
+      ],
+      "widgets_values_named": {
+        "Constant": "org image"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 40,
+      "type": "SetNode",
+      "pos": [
+        1950,
+        -2390
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 24,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "link": 53
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "title": "Set_Audio",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Audio",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Audio"
+      ],
+      "widgets_values_named": {
+        "Constant": "Audio"
+      }
+    },
+    {
+      "id": 41,
+      "type": "SetNode",
+      "pos": [
+        1960,
+        -2350
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 25,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": []
+        }
+      ],
+      "title": "Set_FPS",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "FPS",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "FPS"
+      ],
+      "widgets_values_named": {
+        "Constant": "FPS"
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 42,
+      "type": "SetNode",
+      "pos": [
+        1960,
+        -2430
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 23,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "title": "Set_Org Video",
+      "properties": {
+        "Node name for S&R": "SetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "previousName": "Org Video",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Org Video"
+      ],
+      "widgets_values_named": {
+        "Constant": "Org Video"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 43,
+      "type": "GetNode",
+      "pos": [
+        2140,
+        -2210
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 9,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            96
+          ]
+        }
+      ],
+      "title": "Get_Audio",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Audio"
+      ],
+      "widgets_values_named": {
+        "Constant": "Audio"
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 44,
+      "type": "GetNode",
+      "pos": [
+        2140,
+        -2170
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 10,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            97
+          ]
+        }
+      ],
+      "title": "Get_FPS",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "FPS"
+      ],
+      "widgets_values_named": {
+        "Constant": "FPS"
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 45,
+      "type": "GetNode",
+      "pos": [
+        3130,
+        -3110
+      ],
+      "size": [
+        210,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            59
+          ]
+        }
+      ],
+      "title": "Get_Relay Image",
+      "properties": {
+        "Node name for S&R": "GetNode",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Relay Image"
+      ],
+      "widgets_values_named": {
+        "Constant": "Relay Image"
+      },
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 46,
+      "type": "LCEasyFolder",
+      "pos": [
+        2720,
+        -2390
+      ],
+      "size": [
+        300,
+        160
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "links": [
+            98
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCEasyFolder",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Relay",
+        "Video Test",
+        "",
+        "none",
+        "auto"
+      ],
+      "widgets_values_named": {
+        "folder": "Relay",
+        "prefix": "Video Test",
+        "suffix": "",
+        "timestamp": "none",
+        "path_separator": "auto"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 47,
+      "type": "LCEasyFolder",
+      "pos": [
+        3120,
+        -3060
+      ],
+      "size": [
+        300,
+        160
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "links": [
+            60,
+            81
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCEasyFolder",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Relay",
+        "Image Test",
+        "",
+        "none",
+        "auto"
+      ],
+      "widgets_values_named": {
+        "folder": "Relay",
+        "prefix": "Image Test",
+        "suffix": "",
+        "timestamp": "none",
+        "path_separator": "auto"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 48,
+      "type": "SaveImage",
+      "pos": [
+        3450,
+        -3110
+      ],
+      "size": [
+        390,
+        560
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 59
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 60
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            85
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.44.0",
+        "Node name for S&R": "SaveImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "ComfyUI"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 49,
+      "type": "Fast Groups Bypasser (rgthree)",
+      "pos": [
+        1200,
+        -3110
+      ],
+      "size": [
+        320,
+        100
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "matchColors": "",
+        "matchTitle": ":",
+        "showNav": false,
+        "showAllGraphs": true,
+        "sort": "position",
+        "customSortAlphabet": "",
+        "toggleRestriction": "always one",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#c87a2c",
+      "bgcolor": "#b46618"
+    },
+    {
+      "id": 50,
+      "type": "LCTimer",
+      "pos": [
+        1200,
+        -2780
+      ],
+      "size": [
+        300,
+        220
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCTimer",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_runs": [
+          {
+            "t": 0.89,
+            "at": "05:49",
+            "ok": true
+          },
+          {
+            "t": 1.02,
+            "at": "05:50",
+            "ok": true
+          },
+          {
+            "t": 0.75,
+            "at": "05:53",
+            "ok": true
+          },
+          {
+            "t": 2.75,
+            "at": "05:53",
+            "ok": true
+          },
+          {
+            "t": 12.64,
+            "at": "15:44",
+            "ok": true
+          },
+          {
+            "t": 1.3,
+            "at": "15:46",
+            "ok": true
+          },
+          {
+            "t": 34.39,
+            "at": "15:47",
+            "ok": false
+          },
+          {
+            "t": 0.8,
+            "at": "15:49",
+            "ok": true
+          },
+          {
+            "t": 5.27,
+            "at": "15:50",
+            "ok": true
+          },
+          {
+            "t": 5.37,
+            "at": "15:50",
+            "ok": true
+          },
+          {
+            "t": 2.05,
+            "at": "15:52",
+            "ok": true
+          },
+          {
+            "t": 2.92,
+            "at": "15:52",
+            "ok": true
+          },
+          {
+            "t": 73.64,
+            "at": "16:12",
+            "ok": true
+          },
+          {
+            "t": 0.78,
+            "at": "16:13",
+            "ok": true
+          },
+          {
+            "t": 74.34,
+            "at": "18:52",
+            "ok": true
+          },
+          {
+            "t": 74.72,
+            "at": "18:59",
+            "ok": true
+          },
+          {
+            "t": 2.85,
+            "at": "19:03",
+            "ok": true
+          },
+          {
+            "t": 16.47,
+            "at": "19:39",
+            "ok": false
+          },
+          {
+            "t": 49.13,
+            "at": "19:42",
+            "ok": true
+          },
+          {
+            "t": 2.93,
+            "at": "19:42",
+            "ok": true
+          }
+        ]
+      },
+      "widgets_values": [
+        ""
+      ],
+      "widgets_values_named": {
+        "lc_rt": ""
+      },
+      "color": "#000000",
+      "bgcolor": "#000000"
+    },
+    {
+      "id": 52,
+      "type": "LCLabel",
+      "pos": [
+        1800,
+        -3340
+      ],
+      "size": [
+        1159,
+        131
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "text": "Relay VSR Upscale Module\n",
+        "font": "Oswald",
+        "size": 107,
+        "bold": true,
+        "italic": false,
+        "color": "#ffffff",
+        "align": "center",
+        "outline": false,
+        "outlineColor": "#000000",
+        "outlineWidth": 4,
+        "shadow": false,
+        "shadowBlur": 10,
+        "bg": false,
+        "bgColor": "#324B4B",
+        "radius": 12,
+        "padding": 8,
+        "angle": 0,
+        "width": 0,
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCLabel",
+        "_w": 1159,
+        "_h": 131,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 53,
+      "type": "LCNote",
+      "pos": [
+        1190,
+        -2480
+      ],
+      "size": [
+        430,
+        790
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Relay Notes",
+      "properties": {
+        "lc_note": {
+          "source": "en",
+          "texts": {
+            "en": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 2x or 4x for images 🖼️\n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
+            },
+            "zh": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**这是什么？**\n\n- 一个节点搞定 Relay VSR。模型、VAE 和采样器都已内置。\n- 图片 🖼️ 用 2x 或 4x\n- 视频 🎞️ 用 2x 或 4x（小机器用 2x）\n- 耗时只有 VOSR2 或 SeedVR2 的一小部分，质量还更高。\n- ✋ **首次运行会下载模型：** 每个模型 5.2 GB，外加 128 MB 的 VAE，分别放进 `models/diffusion_models` 和 `models/vae`。开始下载时会弹出提示，按 Stop 可取消。已经有了？放在哪里都能找到。\n\n**设置 ⚙️**\n\n## ⚠️ 低显存请用 2x\n\n- **source:**\n    - **video:** 帧与帧互相对齐，所以视频保持稳定。凡是来自视频的都用它。\n    - **image:** 每张图片单独放大，彼此之间不会互相影响。用于一批不同的图片。只有一张图片时两种结果相同。\n- **upscale:** 2x 或 4x。每个都是独立的模型。\n- **detail:** 1.0 为模型完整输出。越低越接近普通放大。\n\n**视频 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ 首次运行会下载 2x 模型（5.2 GB）。\n\n**保存视频 💾**\n\n- **LC Save Video** 接收 **relay** 输出，一次几帧地保存视频，所以不会占满内存。详见旁边的说明。\n\n### 尺寸与耗时 ⏱️\n\n| 输入 | 时长 | 2x 输出 | 2x 耗时 | 4x 输出 | 4x 耗时 |\n|---|---|---|---|---|---|\n| 960 x 544 视频 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 视频 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 视频 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 图片 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 笔记本：** 960 x 544 视频 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 未注明的均为 RTX 5090，笔记本为 RTX 5060 8 GB。24 fps，模型已下载，不含首次下载时间。\n- 在 8 GB 笔记本上，5 秒视频的 4x 不到 2 分钟（没错，土豆 🥔 也能跑）\n- 💡 在 8 GB 显卡上 VRAM 保持平稳，所以长片段也不会慢成蜗牛。\n\n### 手动下载 📂（可选）\n\n- 节点会在首次使用时自动下载。如果不想在运行中途等待，可以自己先下载。\n\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
+              "src": "efd9882c",
+              "srcTitle": "Relay Notes"
+            },
+            "zh-TW": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**這是什麼？**\n\n- 一個節點搞定 Relay VSR。模型、VAE 和取樣器都已內建。\n- 圖片 🖼️ 用 2x 或 4x\n- 影片 🎞️ 用 2x 或 4x（小機器用 2x）\n- 耗時只有 VOSR2 或 SeedVR2 的一小部分，品質還更高。\n- ✋ **首次執行會下載模型：** 每個模型 5.2 GB，外加 128 MB 的 VAE，分別放進 `models/diffusion_models` 和 `models/vae`。開始下載時會跳出提示，按 Stop 可取消。已經有了？放在哪裡都找得到。\n\n**設定 ⚙️**\n\n## ⚠️ 低顯存請用 2x\n\n- **source:**\n    - **video:** 影格與影格互相對齊，所以影片保持穩定。凡是來自影片的都用它。\n    - **image:** 每張圖片單獨放大，彼此之間不會互相影響。用於一批不同的圖片。只有一張圖片時兩種結果相同。\n- **upscale:** 2x 或 4x。每個都是獨立的模型。\n- **detail:** 1.0 為模型完整輸出。越低越接近一般放大。\n\n**影片 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ 首次執行會下載 2x 模型（5.2 GB）。\n\n**儲存影片 💾**\n\n- **LC Save Video** 接收 **relay** 輸出，一次幾格地儲存影片，所以不會佔滿記憶體。詳見旁邊的說明。\n\n### 尺寸與耗時 ⏱️\n\n| 輸入 | 長度 | 2x 輸出 | 2x 耗時 | 4x 輸出 | 4x 耗時 |\n|---|---|---|---|---|---|\n| 960 x 544 影片 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 影片 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 影片 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 圖片 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 筆電：** 960 x 544 影片 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 未註明的均為 RTX 5090，筆電為 RTX 5060 8 GB。24 fps，模型已下載，不含首次下載時間。\n- 在 8 GB 筆電上，5 秒影片的 4x 不到 2 分鐘（沒錯，馬鈴薯 🥔 也能跑）\n- 💡 在 8 GB 顯示卡上 VRAM 保持平穩，所以長片段也不會慢成蝸牛。\n\n### 手動下載 📂（選用）\n\n- 節點會在首次使用時自動下載。如果不想在執行中途等待，可以自己先下載。\n\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
+              "src": "efd9882c",
+              "srcTitle": "Relay Notes"
+            },
+            "ja": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**これは何？**\n\n- Relay VSR を 1 つのノードに。モデル、VAE、サンプラーを内蔵しています。\n- 画像 🖼️ には 2x か 4x\n- 動画 🎞️ にも 2x か 4x（小さめのマシンなら 2x）\n- VOSR2 や SeedVR2 のほんの一部の時間で、しかも高品質。\n- ✋ **初回実行でモデルをダウンロードします：** モデル 1 つにつき 5.2 GB と 128 MB の VAE を `models/diffusion_models` と `models/vae` に保存します。開始するとトーストで知らせます。Stop でキャンセル。すでに持っていれば、どこに置いてあっても見つけます。\n\n**設定 ⚙️**\n\n## ⚠️ VRAM が少ないなら 2x\n\n- **source:**\n    - **video:** フレーム同士を合わせるので、動画が安定します。動画から来たものにはこちら。\n    - **image:** 1 枚ずつ個別にアップスケールするので、画像同士で何も引き継ぎません。違う画像をまとめて処理するときに。1 枚だけならどちらでも同じ結果です。\n- **upscale:** 2x か 4x。それぞれ別のモデルです。\n- **detail:** 1.0 でモデルの出力そのまま。下げるほど普通のアップスケールに近づきます。\n\n**動画 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ 初回実行時に 2x モデル（5.2 GB）をダウンロードします。\n\n**動画の保存 💾**\n\n- **LC Save Video** が **relay** 出力を受け取り、数フレームずつ保存するので RAM がいっぱいになりません。詳しくは隣のメモで。\n\n### サイズと時間 ⏱️\n\n| 入力 | 長さ | 2x 出力 | 2x 時間 | 4x 出力 | 4x 時間 |\n|---|---|---|---|---|---|\n| 960 x 544 動画 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 動画 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 動画 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 画像 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB ノートPC：** 960 x 544 動画 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 記載がなければ RTX 5090、ノートPC は RTX 5060 8 GB。24 fps、モデルはダウンロード済み、初回ダウンロードは含みません。\n- 8 GB ノートPC でも 5 秒の動画を 4x で 2 分以内（そう、ポテト 🥔 でも本当に動きます）\n- 💡 8 GB カードでも VRAM が一定なので、長いクリップでも極端に遅くなりません。\n\n### 手動ダウンロード 📂（任意）\n\n- ノードは初回使用時に自動でダウンロードします。実行中に待ちたくなければ先に入れておきましょう。\n\n\n- [Relay 2x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
+              "src": "efd9882c",
+              "srcTitle": "Relay Notes"
+            },
+            "ko": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**이게 뭔가요?**\n\n- Relay VSR을 노드 하나에. 모델, VAE, 샘플러가 내장되어 있습니다.\n- 이미지 🖼️ 는 2x 또는 4x\n- 영상 🎞️ 도 2x 또는 4x (작은 머신에서는 2x)\n- VOSR2나 SeedVR2에 비해 극히 일부의 시간으로, 품질은 더 높습니다.\n- ✋ **첫 실행 시 모델을 다운로드합니다:** 모델당 5.2 GB와 128 MB VAE를 `models/diffusion_models`와 `models/vae`에 저장합니다. 시작되면 토스트로 알려줍니다. Stop을 누르면 취소됩니다. 이미 있다면 어디에 있든 찾아냅니다.\n\n**설정 ⚙️**\n\n## ⚠️ VRAM이 적다면 2x\n\n- **source:**\n    - **video:** 프레임끼리 서로 맞춰서 영상이 안정적으로 유지됩니다. 영상에서 나온 것에는 이걸 쓰세요.\n    - **image:** 사진마다 따로 업스케일하므로 서로 아무것도 이어지지 않습니다. 서로 다른 사진 묶음에 쓰세요. 사진 한 장이면 어느 쪽이든 결과가 같습니다.\n- **upscale:** 2x 또는 4x. 각각 별도의 모델입니다.\n- **detail:** 1.0은 모델 출력 그대로. 낮출수록 일반 업스케일에 가까워집니다.\n\n**영상 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ 첫 실행 시 2x 모델(5.2 GB)을 다운로드합니다.\n\n**영상 저장 💾**\n\n- **LC Save Video**가 **relay** 출력을 받아 몇 프레임씩 저장하므로 RAM이 가득 차지 않습니다. 자세한 내용은 옆 노트에.\n\n### 크기와 시간 ⏱️\n\n| 입력 | 길이 | 2x 출력 | 2x 시간 | 4x 출력 | 4x 시간 |\n|---|---|---|---|---|---|\n| 960 x 544 영상 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 영상 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 영상 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 사진 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 노트북:** 960 x 544 영상 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 별도 표기가 없으면 RTX 5090, 노트북은 RTX 5060 8 GB. 24 fps, 모델은 이미 다운로드됨, 첫 다운로드 시간은 제외.\n- 8 GB 노트북에서도 5초 영상 4x가 2분이 안 걸립니다 (네, 감자 🥔에서도 정말 돌아갑니다)\n- 💡 8 GB 카드에서도 VRAM이 일정하게 유지되어 긴 클립도 느려지지 않습니다.\n\n### 수동 다운로드 📂 (선택)\n\n- 노드가 처음 사용할 때 자동으로 다운로드합니다. 실행 중에 기다리기 싫다면 직접 받아두세요.\n\n\n- [Relay 2x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
+              "src": "efd9882c",
+              "srcTitle": "Relay Notes"
+            }
+          },
+          "titles": {
+            "en": "Relay Notes",
+            "zh": "中继笔记",
+            "zh-TW": "中繼筆記",
+            "ja": "Relay メモ",
+            "ko": "Relay 노트"
+          }
+        },
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "English ✏️",
+        "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 2x or 4x for images 🖼️\n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
+      ],
+      "widgets_values_named": {
+        "language": "English ✏️",
+        "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 2x or 4x for images 🖼️\n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
+      },
+      "color": "#2E3A46",
+      "bgcolor": "#2E3A46"
+    },
+    {
+      "id": 57,
+      "type": "LCRelayVSRUpscale",
+      "pos": [
+        2440,
+        -3030
+      ],
+      "size": [
+        300,
+        180
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 67
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 68
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            70,
+            71
+          ]
+        },
+        {
+          "name": "relay",
+          "type": "LC_RELAY",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_MaskMaker_nodes",
+        "ver": "0.29.8",
+        "Node name for S&R": "LCRelayVSRUpscale",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "seed": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "image",
+        "2x",
+        8675309,
+        "fixed",
+        1
+      ],
+      "widgets_values_named": {
+        "source": "image",
+        "upscale": "2x",
+        "seed": 8675309,
+        "control_after_generate": "fixed",
+        "detail": 1
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 58,
+      "type": "LCRelayVSRUpscale",
+      "pos": [
+        2380,
+        -2350
+      ],
+      "size": [
+        320,
+        180
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 72
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 73
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "relay",
+          "type": "LC_RELAY",
+          "links": [
+            94
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_MaskMaker_nodes",
+        "ver": "0.29.8",
+        "Node name for S&R": "LCRelayVSRUpscale",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "seed": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "video",
+        "2x",
+        8675309,
+        "fixed",
+        1
+      ],
+      "widgets_values_named": {
+        "source": "video",
+        "upscale": "2x",
+        "seed": 8675309,
+        "control_after_generate": "fixed",
+        "detail": 1
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 59,
+      "type": "LCLabel",
+      "pos": [
+        2980,
+        -3330
+      ],
+      "size": [
+        246,
+        121
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "text": "V2.1.2\n",
+        "font": "Oswald",
+        "size": 98,
+        "bold": true,
+        "italic": false,
+        "color": "#4da3ff",
+        "align": "left",
+        "outline": false,
+        "outlineColor": "#000000",
+        "outlineWidth": 4,
+        "shadow": false,
+        "shadowBlur": 10,
+        "bg": false,
+        "bgColor": "#324B4B",
+        "radius": 12,
+        "padding": 8,
+        "angle": 0,
+        "width": 0,
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCLabel",
+        "_w": 246,
+        "_h": 121,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 61,
+      "type": "LCTextOverlay",
+      "pos": [
+        4200,
+        -3110
+      ],
+      "size": [
+        300,
+        640
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 86
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            79
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCTextOverlay",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "lc_overlay_text": "Before         After",
+        "lc_preview_meta": [
+          {
+            "filename": "lc_before_temp_exuuo_00001_.png",
+            "subfolder": "",
+            "type": "temp",
+            "metadata": {
+              "kind": "image",
+              "width": 1072,
+              "height": 1344
+            },
+            "id": "254f3bc2-c3d7-4ca8-9a6c-0a7f10bb118e"
+          }
+        ]
+      },
+      "widgets_values": [
+        "Before         After",
+        "Arial",
+        110,
+        255,
+        255,
+        255,
+        50.3,
+        85.5,
+        "center"
+      ],
+      "widgets_values_named": {
+        "text": "Before         After",
+        "font": "Arial",
+        "font_size": 110,
+        "color_r": 255,
+        "color_g": 255,
+        "color_b": 255,
+        "x_percent": 50.3,
+        "y_percent": 85.5,
+        "alignment": "center"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 62,
+      "type": "SaveImage",
+      "pos": [
+        4520,
+        -3020
+      ],
+      "size": [
+        230,
+        350
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 79
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 82
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.44.0",
+        "Node name for S&R": "SaveImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "ComfyUI"
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 63,
+      "type": "PrimitiveString",
+      "pos": [
+        4510,
+        -3070
+      ],
+      "size": [
+        270,
+        60
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            80
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.44.0",
+        "Node name for S&R": "PrimitiveString",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Stitch"
+      ],
+      "widgets_values_named": {
+        "value": "Stitch"
+      }
+    },
+    {
+      "id": 64,
+      "type": "LCJoinStrings",
+      "pos": [
+        4510,
+        -3110
+      ],
+      "size": [
+        330,
+        130
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_1",
+          "shape": 7,
+          "type": "STRING",
+          "link": 80
+        },
+        {
+          "name": "string_2",
+          "shape": 7,
+          "type": "STRING",
+          "link": 81
+        }
+      ],
+      "outputs": [
+        {
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            82
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCJoinStrings",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        2,
+        " "
+      ],
+      "widgets_values_named": {
+        "inputcount": 2,
+        "delimiter": " "
+      },
+      "color": "#28281E",
+      "bgcolor": "#28281E"
+    },
+    {
+      "id": 65,
+      "type": "LCImageSplit",
+      "pos": [
+        3890,
+        -3110
+      ],
+      "size": [
+        300,
+        500
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "type": "IMAGE",
+          "link": 84
+        },
+        {
+          "name": "image_b",
+          "type": "IMAGE",
+          "link": 85
+        }
+      ],
+      "outputs": [
+        {
+          "name": "split 🖼️",
+          "type": "IMAGE",
+          "links": [
+            86
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCImageSplit",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0.5,
+        true,
+        5,
+        "#FFFFFF"
+      ],
+      "widgets_values_named": {
+        "split_position": 0.5,
+        "show_divider": true,
+        "divider_width": 5,
+        "divider_color": "#FFFFFF"
+      },
+      "color": "#324B4B",
+      "bgcolor": "#324B4B"
+    },
+    {
+      "id": 68,
+      "type": "LCNote",
+      "pos": [
+        2380,
+        -2130
+      ],
+      "size": [
+        320,
+        390
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "lc_note": {
+          "source": "en",
+          "texts": {
+            "en": {
+              "text": "## Save💾\n\n**LC Save Video**\n\n- **relay**: Takes the output and saves the video a few frames at a time, straight to the file. The whole upscaled video never sits in RAM.\n    - 5 s clip at 4x: **0.3 GB** of RAM instead of **12 GB**.\n- Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n\n\n**When bypassing**\n- bypass the Relay group and LC Save Video saves the original video from **images** instead. Same save node, nothing to rewire.\n\n- **save_metadata** puts the workflow in the mp4, so CivitAI can find your resources.\n\n**Settings ⚙️**\n\n- **crf:** 19 looks like the source. Lower = better and bigger.\n- **pingpong** and **loop_count** are skipped for a relay video.\n\n"
+            },
+            "zh": {
+              "text": "## 保存💾\n\n**LC 保存视频**\n\n- **relay**：逐帧将输出直接保存到文件，整个超分辨率视频不会占用内存。\n    - 5秒4倍速视频：仅需 **0.3 GB** 内存，而非 **12 GB**。\n- 若 Relay 节点的 **image** 输出留空，则仍会完整生成整段视频。\n\n---\n\n**当绕过时**\n- 绕过 Relay 组后，LC 保存视频将从 **images** 直接保存原始视频。同一保存节点，无需重新布线。\n\n- **save_metadata** 将工作流嵌入 mp4 文件，以便 CivitAI 能识别你的资源。\n\n---\n\n**设置 ⚙️**\n\n- **crf**：19 看起来与源视频一致。数值越低，画质越好但文件越大。\n- 对于 relay 视频，**pingpong** 和 **loop_count** 设置将被跳过。",
+              "src": "e76fffde",
+              "srcTitle": ""
+            },
+            "zh-TW": {
+              "text": "## 儲存💾\n\n**LC 儲存影片**\n\n- **relay**：將輸出逐幀儲存至檔案，不讓整個上採樣後的影片停留在記憶體中。\n    - 5 秒片段以 4x 上採樣：僅需 **0.3 GB** 記憶體，而非 **12 GB**。\n- 若 Relay 節點的 **image** 輸出留空，則仍會完整建立影片。\n\n---\n\n**當繞過時**\n- 繞過 Relay 群組後，LC 儲存影片將直接從 **images** 儲存原始影片。同一儲存節點，無需重新接線。\n\n- **save_metadata** 會將工作流程嵌入 mp4 檔案，讓 CivitAI 可搜尋到你的資源。\n\n---\n\n**設定 ⚙️**\n\n- **crf**：19 看起來與原始影片相近。數值越低 = 質量越好、檔案越大。\n- 對於 relay 影片，**pingpong** 和 **loop_count** 設定將被跳過。",
+              "src": "e76fffde",
+              "srcTitle": ""
+            },
+            "ja": {
+              "text": "## 保存💾\n\n**LC Save Video**\n\n- **relay**: 出力を受け取り、フレームごとにファイルに直接書き込み。アップスケールされた動画全体がRAMに一時的に残らない。\n    - 4xで5秒のクリップ：**0.3 GB** のRAM（通常は**12 GB**）。\n- リレー・ノードの **image** 出力を空にしないと、動画全体が無条件に作成される。\n\n---\n\n**バイトパス時**\n- リレー・グループをバイパスすると、LC Save Video は **images** から元の動画を保存する。同じ保存ノードで、配線を変更する必要はない。\n\n- **save_metadata** はワークフロー情報をMP4に埋め込み、CivitAIがリソースを検索できるようにする。\n\n---\n\n**設定 ⚙️**\n\n- **crf:** 19は元の動画とほぼ同じ品質。低い値ほど品質は高くなりますが、ファイルサイズも大きくなる。\n- リレー・ビデオでは **pingpong** と **loop_count** は無視される。",
+              "src": "e76fffde",
+              "srcTitle": ""
+            },
+            "ko": {
+              "text": "## 저장💾\n\n**LC Save Video**\n\n- **relay**: 출력을 받아 몇 프레임씩 직접 파일에 저장합니다. 확대된 전체 영상은 RAM에 한 번도 저장되지 않습니다.\n    - 4x 확대 5초 영상: **0.3 GB**의 RAM 대신 **12 GB** 사용.\n- Relay 노드의 **image** 출력을 빈 값으로 두어야만 전체 영상이 생성되지 않습니다.\n\n---\n\n**바이패스 시**\n- Relay 그룹을 우회하면 LC Save Video는 **images**에서 원본 영상을 저장합니다. 동일한 저장 노드이며, 재연결할 필요 없음.\n\n- **save_metadata**: 작업 흐름을 mp4에 포함시켜 CivitAI가 자원을 찾을 수 있도록 합니다.\n\n---\n\n**설정 ⚙️**\n\n- **crf:** 19는 원본과 유사한 품질입니다. 낮을수록 품질은 좋고 파일 크기는 커집니다.\n- **pingpong** 및 **loop_count**는 릴레이 영상에서는 무시됩니다.",
+              "src": "e76fffde",
+              "srcTitle": ""
+            }
+          },
+          "titles": {}
+        },
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "English ✏️",
+        "## Save💾\n\n**LC Save Video**\n\n- **relay**: Takes the output and saves the video a few frames at a time, straight to the file. The whole upscaled video never sits in RAM.\n    - 5 s clip at 4x: **0.3 GB** of RAM instead of **12 GB**.\n- Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n\n\n**When bypassing**\n- bypass the Relay group and LC Save Video saves the original video from **images** instead. Same save node, nothing to rewire.\n\n- **save_metadata** puts the workflow in the mp4, so CivitAI can find your resources.\n\n**Settings ⚙️**\n\n- **crf:** 19 looks like the source. Lower = better and bigger.\n- **pingpong** and **loop_count** are skipped for a relay video.\n\n"
+      ],
+      "widgets_values_named": {
+        "language": "English ✏️",
+        "text": "## Save💾\n\n**LC Save Video**\n\n- **relay**: Takes the output and saves the video a few frames at a time, straight to the file. The whole upscaled video never sits in RAM.\n    - 5 s clip at 4x: **0.3 GB** of RAM instead of **12 GB**.\n- Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n\n\n**When bypassing**\n- bypass the Relay group and LC Save Video saves the original video from **images** instead. Same save node, nothing to rewire.\n\n- **save_metadata** puts the workflow in the mp4, so CivitAI can find your resources.\n\n**Settings ⚙️**\n\n- **crf:** 19 looks like the source. Lower = better and bigger.\n- **pingpong** and **loop_count** are skipped for a relay video.\n\n"
+      },
+      "color": "#2E3A46",
+      "bgcolor": "#2E3A46"
+    },
+    {
+      "id": 69,
+      "type": "LCSaveVideo",
+      "pos": [
+        3030,
+        -2390
+      ],
+      "size": [
+        300,
+        772
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 95
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 96
+        },
+        {
+          "name": "av_pipe",
+          "shape": 7,
+          "type": "LC_AV_PIPE",
+          "link": null
+        },
+        {
+          "name": "metadata",
+          "shape": 7,
+          "type": "LC_SAVE_META,LC_SAVE_VIDEO_META",
+          "link": null
+        },
+        {
+          "name": "relay",
+          "shape": 7,
+          "type": "LC_RELAY",
+          "link": 94
+        },
+        {
+          "name": "frame_rate",
+          "type": "FLOAT",
+          "widget": {
+            "name": "frame_rate"
+          },
+          "link": 97
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 98
+        }
+      ],
+      "outputs": [
+        {
+          "name": "saved_as",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_AV_nodes",
+        "ver": "0.5.21",
+        "Node name for S&R": "LCSaveVideo",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "frame_rate": true,
+            "loop_count": true,
+            "filename_prefix": true,
+            "format": true,
+            "pix_fmt": true,
+            "crf": true,
+            "save_metadata": true,
+            "civitai_still": true,
+            "pingpong": true,
+            "save_output": true,
+            "prune_outputs": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        24,
+        0,
+        "Relay",
+        "video/h264-mp4",
+        "yuv420p",
+        19,
+        false,
+        false,
+        false,
+        true,
+        true,
+        ""
+      ],
+      "widgets_values_named": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "Relay",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": false,
+        "civitai_still": false,
+        "pingpong": false,
+        "save_output": true,
+        "prune_outputs": true,
+        "lc_video_preview": ""
+      },
+      "color": "#1a5a7a",
+      "bgcolor": "#1a5a7a"
+    },
+    {
+      "id": 70,
+      "type": "LCImageLabel",
+      "pos": [
+        1531,
+        -3409
+      ],
+      "size": [
+        221,
+        221
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "imgW": 211,
+        "imgH": 211,
+        "angle": 0,
+        "size": 211,
+        "padding": 5,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0,
+        "backgroundColor": "transparent",
+        "bgTransparent": true,
+        "syncImageRadius": true,
+        "imageRadius": 0,
+        "embeddedData": "data:image/webp;base64,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",
+        "_w": 221,
+        "_h": 221,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "{\"filename\":\"Logo no background_00001_.png\",\"subfolder\":\"\"}"
+      ],
+      "widgets_values_named": {
+        "_image_path": "{\"filename\":\"Logo no background_00001_.png\",\"subfolder\":\"\"}"
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    }
+  ],
+  "links": [
+    [
+      17,
+      20,
+      0,
+      21,
+      0,
+      "INT"
+    ],
+    [
+      34,
+      39,
+      0,
+      28,
+      0,
+      "IMAGE"
+    ],
+    [
+      52,
+      15,
+      0,
+      27,
+      0,
+      "IMAGE"
+    ],
+    [
+      53,
+      13,
+      1,
+      40,
+      0,
+      "AUDIO"
+    ],
+    [
+      54,
+      13,
+      2,
+      41,
+      0,
+      "FLOAT"
+    ],
+    [
+      55,
+      13,
+      0,
+      42,
+      0,
+      "IMAGE"
+    ],
+    [
+      59,
+      45,
+      0,
+      48,
+      0,
+      "IMAGE"
+    ],
+    [
+      60,
+      47,
+      0,
+      48,
+      1,
+      "STRING"
+    ],
+    [
+      67,
+      39,
+      0,
+      57,
+      0,
+      "IMAGE"
+    ],
+    [
+      70,
+      57,
+      0,
+      36,
+      0,
+      "IMAGE"
+    ],
+    [
+      71,
+      57,
+      0,
+      28,
+      1,
+      "IMAGE"
+    ],
+    [
+      72,
+      12,
+      0,
+      58,
+      0,
+      "IMAGE"
+    ],
+    [
+      79,
+      61,
+      0,
+      62,
+      0,
+      "IMAGE"
+    ],
+    [
+      80,
+      63,
+      0,
+      64,
+      0,
+      "STRING"
+    ],
+    [
+      81,
+      47,
+      0,
+      64,
+      1,
+      "STRING"
+    ],
+    [
+      82,
+      64,
+      0,
+      62,
+      1,
+      "STRING"
+    ],
+    [
+      84,
+      15,
+      0,
+      65,
+      0,
+      "IMAGE"
+    ],
+    [
+      85,
+      48,
+      0,
+      65,
+      1,
+      "IMAGE"
+    ],
+    [
+      86,
+      65,
+      0,
+      61,
+      0,
+      "IMAGE"
+    ],
+    [
+      95,
+      12,
+      0,
+      69,
+      0,
+      "IMAGE"
+    ],
+    [
+      96,
+      43,
+      0,
+      69,
+      1,
+      "AUDIO"
+    ],
+    [
+      68,
+      33,
+      0,
+      57,
+      1,
+      "INT"
+    ],
+    [
+      73,
+      6,
+      0,
+      58,
+      1,
+      "INT"
+    ],
+    [
+      97,
+      44,
+      0,
+      69,
+      5,
+      "FLOAT"
+    ],
+    [
+      98,
+      46,
+      0,
+      69,
+      6,
+      "STRING"
+    ],
+    [
+      94,
+      58,
+      1,
+      69,
+      4,
+      "LC_RELAY"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "#Relay Upscale Video",
+      "bounding": [
+        2370,
+        -2420,
+        340,
+        690
+      ],
+      "color": "#8AA",
+      "flags": {}
+    },
+    {
+      "id": 6,
+      "title": "Image:",
+      "bounding": [
+        1650,
+        -3180,
+        2200,
+        640
+      ],
+      "color": "#b58b2a",
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "Relay Upscale",
+      "bounding": [
+        2190,
+        -3140,
+        920,
+        590
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "#Relay Upscale Image",
+      "bounding": [
+        2430,
+        -3100,
+        320,
+        260
+      ],
+      "color": "#8AA",
+      "flags": {}
+    },
+    {
+      "id": 8,
+      "title": "Head End",
+      "bounding": [
+        1190,
+        -3180,
+        430,
+        640
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 10,
+      "title": "Test (Delete if you don't want it)",
+      "bounding": [
+        3880,
+        -3180,
+        880,
+        720
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 15,
+      "title": "Video:",
+      "bounding": [
+        1650,
+        -2510,
+        1700,
+        900
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 14,
+      "title": "Video Upscale",
+      "bounding": [
+        2130,
+        -2460,
+        1210,
+        840
+      ],
+      "color": "#88A",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "k2cf_state_id": "k2cf_1794218693220_m5ffhjq6fo",
+    "ue_links": [],
+    "vision_assistant": {
+      "snapshots": []
+    },
+    "links_added_by_ue": [],
+    "ds": {
+      "scale": 0.35584102738367757,
+      "offset": [
+        60.21358443609178,
+        3598.3409059073188
+      ]
+    },
+    "frontendVersion": "1.58.5",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "extensions": {
+    "seed_widgets": {
+      "57": 2,
+      "58": 2
+    }
+  },
+  "version": 0.4,
+  "seed_widgets": {
+    "57": 2,
+    "58": 2
+  }
+}
