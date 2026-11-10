@@ -1314,6 +1314,42 @@
       "detail": {
         "tooltip": "保留多少新增细节。1.0 = 模型完整输出，越低越接近普通 bicubic 放大。"
       }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "放大后的帧。以完整尺寸存放在内存中：5 秒片段 4x 约 12 GB。"
+      },
+      "1": {
+        "tooltip": "给 LC Relay Video Chunk Save 用：一次解码并保存几帧，视频不会全部占用内存。只接这个输出时，不会生成完整尺寸的图像。"
+      }
+    }
+  },
+  "LCRelayVideoChunkSave": {
+    "description": "一次几帧地保存 LC Relay VSR Upscale 的视频，放大后的视频不会全部占用内存。接上放大节点的 relay 输出。完成后视频会在节点上播放。",
+    "inputs": {
+      "relay": {
+        "tooltip": "LC Relay VSR Upscale 的 relay 输出。"
+      },
+      "fps": {
+        "tooltip": "保存视频的帧率。"
+      },
+      "crf": {
+        "tooltip": "画质。越低 = 越好、文件越大。19 看起来和原片一样。"
+      },
+      "filename_prefix": {
+        "tooltip": "ComfyUI output 文件夹下的名称。可以用 子文件夹/名称。"
+      },
+      "audio": {
+        "tooltip": "可选的音轨。"
+      },
+      "goal": {
+        "tooltip": "Quality = 文件最小，保存最慢。Optimal = 平衡。Fast = 保存最快，文件最大。相同 crf 下画面一样。"
+      }
+    },
+    "outputs": {
+      "0": {
+        "tooltip": "读回的已保存视频，尺寸为原始大小（不是放大后的尺寸），给预览节点用。只有接上东西时才会生成。"
+      }
     }
   }
 }

@@ -40,7 +40,7 @@ const PLAIN = new Set([
   "LCFaceCrop",
   "LCVOSRUpscale",
   "LCVOSRUpscalePipe",
-  "LCRelayVSRUpscale",
+  "LCRelayVSRUpscale", "LCRelayVideoChunkSave",
   "LCDetailFinder",
   "LCDetailSorter",
   "LCMOSSControl",

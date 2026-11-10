@@ -92,39 +92,90 @@ class LCRelayVSRUpscale:
                              "tooltip": "One step from noise: the seed only changes the finest grain."}),
             "detail": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01,
                                  "tooltip": "How much of the added detail is kept. 1.0 = full model output, lower moves toward a plain bicubic upscale."}),
-        }}
+        }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
-    RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("image",)
+    RETURN_TYPES = ("IMAGE", "LC_RELAY")
+    RETURN_NAMES = ("image", "relay")
+    OUTPUT_TOOLTIPS = ("The upscaled frames. Held in RAM at full size: a 5 s clip at 4x is about 12 GB.",
+                       "For LC Relay Video Chunk Save: it decodes and saves the video a few frames at a time, so it never sits "
+                       "in RAM. With only this output connected, the full-size image is never built.")
     FUNCTION = "run"
     CATEGORY = "LC MaskMaker/upscale"
     DESCRIPTION = ("RelayVSR upscale in one node (ComfyUI 0.44 or newer). Fast and sharp, adds fine skin and hair detail. "
                    "2x for video, 4x for pictures. Models download on first use (Comfy-Org/RelayVSR, Apache-2.0). "
                    "Keeps VRAM flat on 8 GB cards.")
 
-    def run(self, image, source, upscale, seed, detail):
+    @classmethod
+    def IS_CHANGED(cls, unique_id=None, **kwargs):
+        # A cached run that skipped the full-size decode has no image: once something is plugged into `image` it must
+        # run again. ComfyUI does not hand the prompt to IS_CHANGED, so read it from the running check.
+        prompt = _queued_prompt()
+        if prompt is None or unique_id is None:
+            return float("nan")
+        return "image linked" if linked(prompt, unique_id, 0) else "relay only"
+
+    def run(self, image, source, upscale, seed, detail, prompt=None, unique_id=None):
         if _vsr is None:
             raise RuntimeError("[LC Relay VSR] Needs ComfyUI 0.44 or newer (RelayVSR is built into ComfyUI from 0.44).")
         model_file, vae_file, size = FILES[upscale]
         m = _model(_ensure("diffusion_models", "diffusion_models", model_file, f"Relay VSR {upscale} model", size))
         v = _vae(_ensure("vae", "vae", vae_file, f"Relay VSR {upscale} VAE", "128 MB"))
-        if source == "image" and image.shape[0] > 1:
-            return (torch.cat([self._upscale(m, v, image[i:i + 1], seed, detail) for i in range(image.shape[0])], dim=0),)
-        return (self._upscale(m, v, image, seed, detail),)
+        parts = [image[i:i + 1] for i in range(image.shape[0])] if source == "image" and image.shape[0] > 1 else [image]
+        jobs = [(self._sample(m, p, seed), p) for p in parts]
+        relay = {"vae": v, "jobs": jobs, "detail": detail}
+        if prompt is not None and unique_id is not None and not linked(prompt, unique_id, 0):
+            return (None, relay)  # only the chunk saver is connected: skip the full-size decode
+        from comfy_extras.nodes_wan import VSRDecode
+
+        out = None
+        for k, (samples, p) in enumerate(jobs):  # pictures go straight into one buffer, no second copy at the end
+            dec = VSRDecode.execute(v, samples, p, detail).result[0]
+            if len(jobs) == 1:
+                return (dec, relay)
+            if out is None:
+                out = torch.empty((len(jobs),) + tuple(dec.shape[1:]), dtype=dec.dtype)
+            out[k:k + 1] = dec
+            del dec
+        return (out, relay)
 
     @staticmethod
-    def _upscale(m, v, image, seed, detail):
-        from comfy_extras.nodes_wan import RelayVSRConditioning, VSRDecode
+    def _sample(m, image, seed):
+        from comfy_extras.nodes_wan import RelayVSRConditioning
 
         old = (_vsr.RELAY_WAN_CACHE_KEYFRAMES, _vsr.RELAY_WAN_CHUNK_TOKENS)
         try:
             _vsr.RELAY_WAN_CACHE_KEYFRAMES = 0
             _vsr.RELAY_WAN_CHUNK_TOKENS = CHUNK_TOKENS
             positive, latent = RelayVSRConditioning.execute(m, image).result
-            samples = nodes.common_ksampler(m, seed, 1, 1.0, "euler", "simple", positive, positive, latent, denoise=1.0)[0]
+            return nodes.common_ksampler(m, seed, 1, 1.0, "euler", "simple", positive, positive, latent, denoise=1.0)[0]
         finally:
             _vsr.RELAY_WAN_CACHE_KEYFRAMES, _vsr.RELAY_WAN_CHUNK_TOKENS = old
-        return VSRDecode.execute(v, samples, image, detail).result[0]
+
+
+def _queued_prompt():
+    """The prompt being checked: ComfyUI's IS_CHANGED cache holds it as dynprompt one or more frames up."""
+    import inspect
+
+    frame = inspect.currentframe()
+    try:
+        while frame is not None:
+            dp = getattr(frame.f_locals.get("self"), "dynprompt", None)
+            if dp is not None and hasattr(dp, "get_original_prompt"):
+                return dp.get_original_prompt()
+            frame = frame.f_back
+    finally:
+        del frame
+    return None
+
+
+def linked(prompt, unique_id, slot):
+    """True when any node in the queued prompt reads output `slot` of node `unique_id`."""
+    uid = str(unique_id)
+    for node in (prompt or {}).values():
+        for v in (node.get("inputs") or {}).values():
+            if isinstance(v, (list, tuple)) and len(v) == 2 and str(v[0]) == uid and v[1] == slot:
+                return True
+    return False
 
 
 NODE_CLASS_MAPPINGS = {"LCRelayVSRUpscale": LCRelayVSRUpscale}
