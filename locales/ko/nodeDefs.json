@@ -1313,6 +1313,12 @@
       },
       "detail": {
         "tooltip": "추가된 디테일을 얼마나 남길지. 1.0 = 모델 출력 그대로, 낮출수록 일반 bicubic 업스케일에 가까워집니다."
+      },
+      "protect_mask": {
+        "tooltip": "선택. LC Smart Detailer의 마스크(여러 개는 max로 합침): 마스크 안에서는 Relay가 디테일을 덜 더해서, 디테일러가 다듬은 얼굴과 손이 그대로 유지됩니다. 새 크기로 'protected'에 출력됩니다."
+      },
+      "protect_detail": {
+        "tooltip": "protect_mask 안에 Relay가 더하는 디테일을 얼마나 넣을지. 0 = 디테일러의 결과를 확대만, 1 = 보호 없음. 0.5는 고운 질감이 조금 남아서 얼굴이 붙여 넣은 것처럼 보이지 않습니다. 마스크 가장자리는 부드럽게 처리됩니다."
       }
     },
     "outputs": {
@@ -1321,6 +1327,9 @@
       },
       "1": {
         "tooltip": "LC Save Video의 relay 입력용: 몇 프레임씩 디코딩해서 저장하므로 영상이 RAM에 올라가지 않습니다. 이 출력만 연결하면 전체 크기 이미지는 만들어지지 않습니다."
+      },
+      "2": {
+        "tooltip": "새 크기의 protect_mask(연결하지 않으면 비어 있음): LC Skin Upscale / LC Skin Texture의 protect_mask에 연결하면 디테일러의 결과를 건드리지 않습니다."
       }
     }
   }

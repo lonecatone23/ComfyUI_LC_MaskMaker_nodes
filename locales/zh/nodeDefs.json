@@ -1313,6 +1313,12 @@
       },
       "detail": {
         "tooltip": "保留多少新增细节。1.0 = 模型完整输出，越低越接近普通 bicubic 放大。"
+      },
+      "protect_mask": {
+        "tooltip": "可选。LC Smart Detailer 的遮罩（多个用 max 合并）：遮罩内 Relay 少加细节，detailer 修好的脸和手保持原样。以新尺寸从 'protected' 输出。"
+      },
+      "protect_detail": {
+        "tooltip": "protect_mask 内保留多少 Relay 新增的细节。0 = detailer 的成果只放大，1 = 不保护。0.5 保留一点细颗粒，脸不会像贴上去的。遮罩边缘会羽化。"
       }
     },
     "outputs": {
@@ -1321,6 +1327,9 @@
       },
       "1": {
         "tooltip": "给 LC Save Video 的 relay 输入用：一次解码并保存几帧，视频不会全部占用内存。只接这个输出时，不会生成完整尺寸的图像。"
+      },
+      "2": {
+        "tooltip": "新尺寸的 protect_mask（没接时为空）：接到 LC Skin Upscale / LC Skin Texture 的 protect_mask，它们也不会碰 detailer 的成果。"
       }
     }
   }

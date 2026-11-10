@@ -1313,6 +1313,12 @@
       },
       "detail": {
         "tooltip": "加えたディテールをどれだけ残すか。1.0 = モデル出力そのまま、下げるほど普通の bicubic アップスケールに近づきます。"
+      },
+      "protect_mask": {
+        "tooltip": "任意。LC Smart Detailer のマスク（複数は max で合成）：マスク内では Relay が足すディテールを減らし、ディテーラーが仕上げた顔や手の見た目を保ちます。新しいサイズで 'protected' として出力されます。"
+      },
+      "protect_detail": {
+        "tooltip": "protect_mask の中に Relay が足すディテールをどれだけ入れるか。0 = ディテーラーの仕上がりを拡大するだけ、1 = 保護なし。0.5 なら細かい粒子が少し残り、顔が貼り付けたように見えません。マスクの縁はぼかされます。"
       }
     },
     "outputs": {
@@ -1321,6 +1327,9 @@
       },
       "1": {
         "tooltip": "LC Save Video の relay 入力用：数フレームずつデコードして保存するので、動画が RAM に載りません。この出力だけをつなぐと、フルサイズの画像は作られません。"
+      },
+      "2": {
+        "tooltip": "新しいサイズの protect_mask（未接続なら空）：LC Skin Upscale / LC Skin Texture の protect_mask につなぐと、ディテーラーの仕上がりに手を加えません。"
       }
     }
   }

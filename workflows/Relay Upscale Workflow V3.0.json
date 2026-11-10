@@ -1,15 +1,15 @@
 {
   "id": "d66dedb4-ed78-4b75-b7bf-4814fd4ab600",
   "revision": 0,
-  "last_node_id": 70,
-  "last_link_id": 98,
+  "last_node_id": 72,
+  "last_link_id": 101,
   "nodes": [
     {
       "id": 6,
       "type": "GetNode",
       "pos": [
-        2140,
-        -2290
+        2150,
+        -2260
       ],
       "size": [
         210,
@@ -53,8 +53,8 @@
       "id": 11,
       "type": "Fast Groups Bypasser (rgthree)",
       "pos": [
-        2140,
-        -2390
+        2150,
+        -2360
       ],
       "size": [
         220,
@@ -94,8 +94,8 @@
       "id": 12,
       "type": "GetNode",
       "pos": [
-        2140,
-        -2250
+        2150,
+        -2220
       ],
       "size": [
         210,
@@ -140,8 +140,8 @@
       "id": 13,
       "type": "LCLoadVideo",
       "pos": [
-        1660,
-        -2440
+        1670,
+        -2410
       ],
       "size": [
         270,
@@ -202,7 +202,7 @@
       "id": 15,
       "type": "LoadImage",
       "pos": [
-        1660,
+        1670,
         -3110
       ],
       "size": [
@@ -239,11 +239,11 @@
         }
       },
       "widgets_values": [
-        "MOSS Pro V6.0_00003_.png",
+        "Lonecats Krea2 Pro_00040.png",
         "image"
       ],
       "widgets_values_named": {
-        "image": "MOSS Pro V6.0_00003_.png",
+        "image": "Lonecats Krea2 Pro_00040.png",
         "upload": "image"
       },
       "color": "#233",
@@ -357,7 +357,7 @@
       "id": 27,
       "type": "SetNode",
       "pos": [
-        2030,
+        2040,
         -3110
       ],
       "size": [
@@ -407,17 +407,17 @@
       "id": 28,
       "type": "LCBatchImageComparer",
       "pos": [
-        2760,
+        3080,
         -3070
       ],
       "size": [
-        340,
-        510
+        380,
+        530
       ],
       "flags": {
         "pinned": false
       },
-      "order": 33,
+      "order": 36,
       "mode": 0,
       "inputs": [
         {
@@ -460,7 +460,7 @@
       "id": 33,
       "type": "GetNode",
       "pos": [
-        2200,
+        2210,
         -2970
       ],
       "size": [
@@ -505,7 +505,7 @@
       "id": 36,
       "type": "SetNode",
       "pos": [
-        2200,
+        2210,
         -2890
       ],
       "size": [
@@ -515,7 +515,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 32,
+      "order": 35,
       "mode": 0,
       "inputs": [
         {
@@ -555,7 +555,7 @@
       "id": 38,
       "type": "Fast Groups Bypasser (rgthree)",
       "pos": [
-        2200,
+        2210,
         -3070
       ],
       "size": [
@@ -596,7 +596,7 @@
       "id": 39,
       "type": "GetNode",
       "pos": [
-        2200,
+        2210,
         -2930
       ],
       "size": [
@@ -615,7 +615,8 @@
           "type": "IMAGE",
           "links": [
             34,
-            67
+            67,
+            99
           ]
         }
       ],
@@ -642,8 +643,8 @@
       "id": 40,
       "type": "SetNode",
       "pos": [
-        1950,
-        -2390
+        1960,
+        -2360
       ],
       "size": [
         210,
@@ -690,8 +691,8 @@
       "id": 41,
       "type": "SetNode",
       "pos": [
-        1960,
-        -2350
+        1970,
+        -2320
       ],
       "size": [
         210,
@@ -740,8 +741,8 @@
       "id": 42,
       "type": "SetNode",
       "pos": [
-        1960,
-        -2430
+        1970,
+        -2400
       ],
       "size": [
         210,
@@ -790,8 +791,8 @@
       "id": 43,
       "type": "GetNode",
       "pos": [
-        2140,
-        -2210
+        2150,
+        -2180
       ],
       "size": [
         210,
@@ -835,8 +836,8 @@
       "id": 44,
       "type": "GetNode",
       "pos": [
-        2140,
-        -2170
+        2150,
+        -2140
       ],
       "size": [
         210,
@@ -880,8 +881,8 @@
       "id": 45,
       "type": "GetNode",
       "pos": [
-        3130,
-        -3110
+        3480,
+        -3100
       ],
       "size": [
         210,
@@ -925,8 +926,8 @@
       "id": 46,
       "type": "LCEasyFolder",
       "pos": [
-        2720,
-        -2390
+        2730,
+        -2360
       ],
       "size": [
         300,
@@ -976,7 +977,7 @@
       "id": 47,
       "type": "LCEasyFolder",
       "pos": [
-        3120,
+        3480,
         -3060
       ],
       "size": [
@@ -1028,8 +1029,8 @@
       "id": 48,
       "type": "SaveImage",
       "pos": [
-        3450,
-        -3110
+        3790,
+        -3100
       ],
       "size": [
         390,
@@ -1129,7 +1130,7 @@
       ],
       "size": [
         300,
-        220
+        250
       ],
       "flags": {},
       "order": 15,
@@ -1146,26 +1147,6 @@
           "version": "7.8"
         },
         "lc_runs": [
-          {
-            "t": 0.89,
-            "at": "05:49",
-            "ok": true
-          },
-          {
-            "t": 1.02,
-            "at": "05:50",
-            "ok": true
-          },
-          {
-            "t": 0.75,
-            "at": "05:53",
-            "ok": true
-          },
-          {
-            "t": 2.75,
-            "at": "05:53",
-            "ok": true
-          },
           {
             "t": 12.64,
             "at": "15:44",
@@ -1245,6 +1226,26 @@
             "t": 2.93,
             "at": "19:42",
             "ok": true
+          },
+          {
+            "t": 6.93,
+            "at": "18:17",
+            "ok": true
+          },
+          {
+            "t": 0.89,
+            "at": "18:18",
+            "ok": true
+          },
+          {
+            "t": 0.79,
+            "at": "18:19",
+            "ok": true
+          },
+          {
+            "t": 7.65,
+            "at": "18:19",
+            "ok": true
           }
         ]
       },
@@ -1311,7 +1312,7 @@
       "type": "LCNote",
       "pos": [
         1190,
-        -2480
+        -2450
       ],
       "size": [
         430,
@@ -1330,26 +1331,26 @@
           "source": "en",
           "texts": {
             "en": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
+              "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 4x for images 🖼️\n- **Person Mask (protect mask)**\n   - You can use a mask fromn your detailers (or a separate one like I did here) to protect the skin and face from sharpening. \n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
             },
             "zh": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**这是什么？**\n\n- 一个节点搞定 Relay VSR。模型、VAE 和采样器都已内置。\n- 耗时只有 VOSR2 或 SeedVR2 的一小部分，质量还更高。\n- ✋ **首次运行会下载模型：** 每个模型 5.2 GB，外加 128 MB 的 VAE，分别放进 `models/diffusion_models` 和 `models/vae`。开始下载时会弹出提示，按 Stop 可取消。已经有了？放在哪里都能找到。\n\n**设置 ⚙️**\n\n- **source:**\n    - **video:** 帧与帧互相对齐，所以视频保持稳定。凡是来自视频的都用它。\n    - **image:** 每张图片单独放大，彼此之间不会互相影响。用于一批不同的图片。只有一张图片时两种结果相同。\n- **upscale:** 2x 或 4x。每个都是独立的模型。\n- **detail:** 1.0 为模型完整输出。越低越接近普通放大。\n\n**保存视频 💾**\n\n- **LC Save Video** 接收 **relay** 输出，一次几帧地保存视频，所以不会占满内存。详见旁边的说明。\n\n### 尺寸与耗时 ⏱️\n\n| 输入 | 时长 | 2x 输出 | 2x 耗时 | 4x 输出 | 4x 耗时 |\n|---|---|---|---|---|---|\n| 960 x 544 视频 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 视频 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 视频 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 图片 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 笔记本：** 960 x 544 视频 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 未注明的均为 RTX 5090，笔记本为 RTX 5060 8 GB。24 fps，模型已下载，不含首次下载时间。\n- 在 8 GB 笔记本上，5 秒视频的 4x 不到 2 分钟（没错，土豆 🥔 也能跑）\n- 💡 在 8 GB 显卡上 VRAM 保持平稳，所以长片段也不会慢成蜗牛。\n\n### 手动下载 📂（可选）\n\n- 节点会在首次使用时自动下载。如果不想在运行中途等待，可以自己先下载。\n\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
-              "src": "660f41ef",
+              "text": "## LC Relay VSR 放大 🧩\n\n**这是什么？**\n\n- 一个节点内集成 Relay VSR。模型、VAE 和采样器均已内置。\n- 用于图像放大至 4 倍 🖼️\n- **人物遮罩（保护遮罩）**\n   - 可以使用你的细节增强器生成的遮罩（或单独的一个，如我这里使用的），以保护皮肤和面部免受锐化影响。\n- 视频放大支持 2x 或 4x 🎞️（在较小机器上建议使用 2x）\n- 运行时间仅为 VOSR2 或 SeedVR2 的一部分，且画质更高。\n- ✋ **首次运行会下载模型：** 每个模型约 5.2 GB，加上一个 128 MB 的 VAE，保存至 `models/diffusion_models` 和 `models/vae`。系统会弹出提示告知开始下载。点击“停止”可取消。已有模型？它们将被自动从当前位置加载。\n\n**设置 ⚙️**\n\n## ⚠️ 低显存请使用 2x\n\n- **源：**\n    - **视频：** 帧之间会相互匹配，因此视频保持稳定。适用于任何来自视频的素材。\n    - **图像：** 每张图片独立放大，彼此之间无信息传递。适用于批量不同图片。无论哪种方式，单张图片输出结果一致。\n- **放大倍数：** 2x 或 4x。每个倍数对应独立模型。\n- **细节：** 1.0 是完整模型输出。数值越低，越接近基础放大。\n\n**视频 🎞️**\n\n- **源：** 视频\n- **放大倍数：** 2x\n- ✋ 首次运行将下载 2x 模型（5.2 GB）。\n\n**保存视频 💾**\n\n- **LC 保存视频** 将 **relay 输出** 分帧保存，避免内存溢出。更多说明请参见其旁注释。\n\n### 尺寸与耗时 ⏱️\n\n| 输入 | 长度 | 2x 输出 | 2x 耗时 | 4x 输出 | 4x 耗时 |\n|---|---|---|---|---|---|\n| 960 x 544 视频 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 视频 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 视频 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 图片 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 笔记本：** 960 x 544 视频 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 除非特别注明，均使用 RTX 5090；笔记本为 RTX 5060 8 GB。帧率为 24 fps，模型已预先下载，首次运行下载时间不计入。\n- 在 8 GB 笔记本上，4x 放大 5 秒视频耗时不到 2 分钟（是的，它真的能在 🥔 上跑起来）\n- 💡 8 GB 显存卡 VRAM 始终保持稳定，因此长视频不会变得缓慢。\n\n### 手动下载 📂（可选）\n\n- 节点首次使用时会自动下载这些文件。如不想在运行中等待，可自行下载：\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```",
+              "src": "bf971d99",
               "srcTitle": "Relay Notes"
             },
             "zh-TW": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**這是什麼？**\n\n- 一個節點搞定 Relay VSR。模型、VAE 和取樣器都已內建。\n- 耗時只有 VOSR2 或 SeedVR2 的一小部分，品質還更高。\n- ✋ **首次執行會下載模型：** 每個模型 5.2 GB，外加 128 MB 的 VAE，分別放進 `models/diffusion_models` 和 `models/vae`。開始下載時會跳出提示，按 Stop 可取消。已經有了？放在哪裡都找得到。\n\n**設定 ⚙️**\n\n- **source:**\n    - **video:** 影格與影格互相對齊，所以影片保持穩定。凡是來自影片的都用它。\n    - **image:** 每張圖片單獨放大，彼此之間不會互相影響。用於一批不同的圖片。只有一張圖片時兩種結果相同。\n- **upscale:** 2x 或 4x。每個都是獨立的模型。\n- **detail:** 1.0 為模型完整輸出。越低越接近一般放大。\n\n**儲存影片 💾**\n\n- **LC Save Video** 接收 **relay** 輸出，一次幾格地儲存影片，所以不會佔滿記憶體。詳見旁邊的說明。\n\n### 尺寸與耗時 ⏱️\n\n| 輸入 | 長度 | 2x 輸出 | 2x 耗時 | 4x 輸出 | 4x 耗時 |\n|---|---|---|---|---|---|\n| 960 x 544 影片 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 影片 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 影片 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 圖片 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 筆電：** 960 x 544 影片 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 未註明的均為 RTX 5090，筆電為 RTX 5060 8 GB。24 fps，模型已下載，不含首次下載時間。\n- 在 8 GB 筆電上，5 秒影片的 4x 不到 2 分鐘（沒錯，馬鈴薯 🥔 也能跑）\n- 💡 在 8 GB 顯示卡上 VRAM 保持平穩，所以長片段也不會慢成蝸牛。\n\n### 手動下載 📂（選用）\n\n- 節點會在首次使用時自動下載。如果不想在執行中途等待，可以自己先下載。\n\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
-              "src": "660f41ef",
+              "text": "## LC Relay VSR 放大 🧩\n\n**這是什麼？**\n\n- 一個節點內整合 Relay VSR。模型、VAE 與採樣器皆已內建。\n- 適用於圖片放大至 4x 🖼️\n- **人物遮罩（保護遮罩）**\n   - 可使用你自己的細節處理器所產生的遮罩（或如我這裡使用的獨立遮罩），以保護皮膚與臉部免受銳化影響。\n- 適用於影片放大 2x 或 4x 🎞️（較小機器建議使用 2x）\n- 耗時僅為 VOSR2 或 SeedVR2 的一小部分，且畫質更高。\n- ✋ **首次運行會下載模型：** 每個模型約 5.2 GB，加上 128 MB VAE，存入 `models/diffusion_models` 和 `models/vae`。系統會提示你已開始下載。按「停止」可取消。若已下載過，則會從任何存放位置載入。\n\n**設定 ⚙️**\n\n## ⚠️ 低記憶體使用 2x\n\n- **來源：**\n    - **影片：** 每幀影像彼此對應，因此影片保持穩定。適用於所有來自影片的素材。\n    - **圖片：** 每張圖片獨立放大，彼此無關聯。適用於一組不同圖片。無論使用哪種方式，單張圖片輸出結果相同。\n- **放大倍率：** 2x 或 4x。每種倍率皆為獨立模型。\n- **細節：** 1.0 為完整模型輸出。數值越低，越趨近於純粹放大。\n\n**影片 🎞️**\n\n- **來源：** 影片\n- **放大倍率：** 2x\n- ✋ 首次運行會下載 2x 模型（5.2 GB）。\n\n**儲存影片 💾**\n\n- **LC 儲存影片** 將 **relay** 輸出分段儲存，每次僅保存幾幀，因此不會填滿你的記憶體。詳情請參閱其旁邊的註解。\n\n### 尺寸與時間 ⏱️\n\n| 輸入 | 長度 | 2x 輸出 | 2x 時間 | 4x 輸出 | 4x 時間 |\n|---|---|---|---|---|---|\n| 960 x 544 影片 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 影片 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 影片 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 圖片 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 筆電：** 960 x 544 影片 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 除非另有註明，皆為 RTX 5090；筆電為 RTX 5060 8 GB。24 fps，模型已下載，首次運行下載時間不包含在內。\n- 在 8 GB 筆電上，4x 放大 5 秒影片不到 2 分鐘（是的，它真的能在 🥔 上跑起來）\n- 💡 8 GB 顯卡記憶體保持穩定，因此長影片不會變慢到幾乎停止。\n\n### 手動下載 📂（可選）\n\n- 節點首次使用時會自動下載這些檔案。若你不想在運行中等待，可自行下載：\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```",
+              "src": "bf971d99",
               "srcTitle": "Relay Notes"
             },
             "ja": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**これは何？**\n\n- Relay VSR を 1 つのノードに。モデル、VAE、サンプラーを内蔵しています。\n- VOSR2 や SeedVR2 のほんの一部の時間で、しかも高品質。\n- ✋ **初回実行でモデルをダウンロードします：** モデル 1 つにつき 5.2 GB と 128 MB の VAE を `models/diffusion_models` と `models/vae` に保存します。開始するとトーストで知らせます。Stop でキャンセル。すでに持っていれば、どこに置いてあっても見つけます。\n\n**設定 ⚙️**\n\n- **source:**\n    - **video:** フレーム同士を合わせるので、動画が安定します。動画から来たものにはこちら。\n    - **image:** 1 枚ずつ個別にアップスケールするので、画像同士で何も引き継ぎません。違う画像をまとめて処理するときに。1 枚だけならどちらでも同じ結果です。\n- **upscale:** 2x か 4x。それぞれ別のモデルです。\n- **detail:** 1.0 でモデルの出力そのまま。下げるほど普通のアップスケールに近づきます。\n\n**動画の保存 💾**\n\n- **LC Save Video** が **relay** 出力を受け取り、数フレームずつ保存するので RAM がいっぱいになりません。詳しくは隣のメモで。\n\n### サイズと時間 ⏱️\n\n| 入力 | 長さ | 2x 出力 | 2x 時間 | 4x 出力 | 4x 時間 |\n|---|---|---|---|---|---|\n| 960 x 544 動画 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 動画 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 動画 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 画像 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB ノートPC：** 960 x 544 動画 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 記載がなければ RTX 5090、ノートPC は RTX 5060 8 GB。24 fps、モデルはダウンロード済み、初回ダウンロードは含みません。\n- 8 GB ノートPC でも 5 秒の動画を 4x で 2 分以内（そう、ポテト 🥔 でも本当に動きます）\n- 💡 8 GB カードでも VRAM が一定なので、長いクリップでも極端に遅くなりません。\n\n### 手動ダウンロード 📂（任意）\n\n- ノードは初回使用時に自動でダウンロードします。実行中に待ちたくなければ先に入れておきましょう。\n\n\n- [Relay 2x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
-              "src": "660f41ef",
+              "text": "## LC Relay VSR Upscale 🧩\n\n**それは何ですか？**\n\n- 1つのノードでRelay VSR。モデル、VAE、サンプラーが内蔵されています。\n- 画像用に4xを使用 🖼️\n- **人物マスク（保護マスク）**\n   - あなたのディテイラーから得たマスク（または別途用意したマスク、ここではその例を示しています）を使用して、肌や顔をシャープニングから保護できます。\n- 動画用に2xまたは4x 🎞️（小型マシンでは2x推奨）\n- VOSR2やSeedVR2よりも短時間で、さらに高品質な結果を提供。\n- ✋ **最初の実行時にモデルがダウンロードされます：** 各モデル5.2GB、加えてVAE 128MBが、`models/diffusion_models`と`models/vae`に保存されます。進行状況を示す通知が表示されます。キャンセルする場合は「停止」を押してください。既にモデルがある場合は、どこに保存されているかに関わらず自動で検出されます。\n\n**設定 ⚙️**\n\n## ⚠️ 低VRAMの場合は2xを使用\n\n- **source:**\n    - **video:** フレーム同士が一致するため、動画は安定して再生されます。動画から得られた素材にはこのオプションを推奨します。\n    - **image:** 各画像が個別に拡大されるため、画像間で情報が継続されません。複数の異なる画像をバッチ処理する場合に使用します。どちらの方法でも、1枚の画像の出力は同じになります。\n- **upscale:** 2xまたは4x。それぞれ異なるモデルを使用します。\n- **detail:** 1.0はフルモデル出力です。値を下げると単純な拡大に近づきます。\n\n**動画 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ 初回実行時に2xモデル（5.2GB）がダウンロードされます。\n\n**動画の保存 💾**\n\n- **LC Save Video** は **relay** の出力を数フレームずつ保存するため、メモリを消費しません。その隣にある注釈で詳細を確認してください。\n\n### サイズと所要時間 ⏱️\n\n| 入力 | 長さ | 2x出力 | 2x時間 | 4x出力 | 4x時間 |\n|---|---|---|---|---|---|\n| 960 x 544動画 | 3秒 | 1920 x 1088 | 9秒 | 3840 x 2176 | 21秒 |\n| 960 x 544動画 | 5秒 | 1920 x 1088 | 12秒 | 3840 x 2176 | 34秒 |\n| 896 x 1152動画 | 6.6秒 | 1792 x 2304 | 22 - 24秒 | 3584 x 4608 | 72 - 75秒 |\n| 1056 x 1320画像 | - | - | - | 4224 x 5280 | 6秒 |\n| **8GBノートPC：960 x 544動画** | 5秒 | 1920 x 1088 | 27秒 | 3840 x 2176 | 118秒 |\n\n\\* RTX 5090（※記載がない場合）、ノートPCはRTX 5060 8GB。24fps、モデルは事前にダウンロード済み、初回のダウンロード時間は含みません。\n- 8GBノートPCで4x処理は5秒の動画に対して約2分未満（はい、実際に🥔で動く）\n- 💡 8GBカードではVRAMがフラットに保たれるため、長い動画でも処理が遅くなりません。\n\n### 手動ダウンロード 📂（オプション）\n\n- ノードは初回使用時にこれらのファイルを自動でダウンロードします。待ち時間がある場合、事前に手動で取得してください。\n\n- [Relay 2xモデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4xモデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```",
+              "src": "bf971d99",
               "srcTitle": "Relay Notes"
             },
             "ko": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**이게 뭔가요?**\n\n- Relay VSR을 노드 하나에. 모델, VAE, 샘플러가 내장되어 있습니다.\n- VOSR2나 SeedVR2에 비해 극히 일부의 시간으로, 품질은 더 높습니다.\n- ✋ **첫 실행 시 모델을 다운로드합니다:** 모델당 5.2 GB와 128 MB VAE를 `models/diffusion_models`와 `models/vae`에 저장합니다. 시작되면 토스트로 알려줍니다. Stop을 누르면 취소됩니다. 이미 있다면 어디에 있든 찾아냅니다.\n\n**설정 ⚙️**\n\n- **source:**\n    - **video:** 프레임끼리 서로 맞춰서 영상이 안정적으로 유지됩니다. 영상에서 나온 것에는 이걸 쓰세요.\n    - **image:** 사진마다 따로 업스케일하므로 서로 아무것도 이어지지 않습니다. 서로 다른 사진 묶음에 쓰세요. 사진 한 장이면 어느 쪽이든 결과가 같습니다.\n- **upscale:** 2x 또는 4x. 각각 별도의 모델입니다.\n- **detail:** 1.0은 모델 출력 그대로. 낮출수록 일반 업스케일에 가까워집니다.\n\n**영상 저장 💾**\n\n- **LC Save Video**가 **relay** 출력을 받아 몇 프레임씩 저장하므로 RAM이 가득 차지 않습니다. 자세한 내용은 옆 노트에.\n\n### 크기와 시간 ⏱️\n\n| 입력 | 길이 | 2x 출력 | 2x 시간 | 4x 출력 | 4x 시간 |\n|---|---|---|---|---|---|\n| 960 x 544 영상 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 영상 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 영상 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 사진 | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB 노트북:** 960 x 544 영상 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* 별도 표기가 없으면 RTX 5090, 노트북은 RTX 5060 8 GB. 24 fps, 모델은 이미 다운로드됨, 첫 다운로드 시간은 제외.\n- 8 GB 노트북에서도 5초 영상 4x가 2분이 안 걸립니다 (네, 감자 🥔에서도 정말 돌아갑니다)\n- 💡 8 GB 카드에서도 VRAM이 일정하게 유지되어 긴 클립도 느려지지 않습니다.\n\n### 수동 다운로드 📂 (선택)\n\n- 노드가 처음 사용할 때 자동으로 다운로드합니다. 실행 중에 기다리기 싫다면 직접 받아두세요.\n\n\n- [Relay 2x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n",
-              "src": "660f41ef",
+              "text": "## LC Relay VSR Upscale 🧩\n\n**무엇인가요?**\n\n- 하나의 노드에 Relay VSR이 구현되어 있습니다. 모델, VAE 및 샘플러가 내장되어 있습니다.\n- 이미지용으로 4x 사용 🖼️\n- **사람 마스크 (보호 마스크)**\n   - 세부화 기능에서 제공하는 마스크(또는 별도의 마스크를 사용하는 경우, 예: 여기서 제가 사용한 것처럼)를 활용하여 피부와 얼굴을 필터링으로부터 보호할 수 있습니다.\n- 영상용으로 2x 또는 4x 🎞️ (작은 기계에서는 2x 사용)\n- VOSR2 또는 SeedVR2보다 훨씬 짧은 시간에 처리되며, 더 높은 품질을 제공합니다.\n- ✋ **첫 실행 시 모델을 다운로드합니다:** 각 모델당 5.2GB, 그리고 128MB VAE를 `models/diffusion_models`과 `models/vae`에 저장합니다. 진행 상태 알림이 표시됩니다. 중단하려면 'Stop'을 누르세요. 이미 다운로드된 경우 어디에 있든 자동으로 찾습니다.\n\n**설정 ⚙️**\n\n## ⚠️ 낮은 VRAM 사용 시 2x\n\n- **source:**\n    - **영상:** 프레임들이 서로 매칭되어 영상이 안정적으로 유지됩니다. 영상에서 온 모든 것에 사용하세요.\n    - **이미지:** 각 이미지는 독립적으로 확대되므로, 서로 간에 정보가 전달되지 않습니다. 여러 개의 다른 이미지 묶음에 사용하세요. 어떤 경우든 한 장의 이미지는 결과가 동일합니다.\n- **확대 비율:** 2x 또는 4x. 각각은 독립적인 모델입니다.\n- **세부화:** 1.0은 전체 모델 출력입니다. 낮을수록 단순한 확대 방향으로 이동합니다.\n\n**영상 🎞️**\n\n- **source:** 영상\n- **확대 비율:** 2x\n- ✋ 첫 실행 시 2x 모델(5.2GB)을 다운로드합니다.\n\n**영상 저장 💾**\n\n- **LC Save Video**는 **relay** 출력을 몇 프레임씩 저장하여 RAM을 넘치지 않도록 합니다. 더 자세한 내용은 옆에 있는 노트를 참조하세요.\n\n### 크기 및 시간 ⏱️\n\n| 입력 | 길이 | 2x 출력 | 2x 소요 시간 | 4x 출력 | 4x 소요 시간 |\n|---|---|---|---|---|---|\n| 960 x 544 영상 | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 영상 | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 영상 | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 이미지 | - | - | - | 4224 x 5280 | 6 s |\n| **8GB 노트북:** 960 x 544 영상 | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090을 기준으로 하며, 노트북은 RTX 5060 8GB입니다. 24fps, 모델은 이미 다운로드됨, 첫 실행 다운로드 시간은 제외됨.\n- 8GB 노트북에서 4x는 5초 영상에 대해 약 2분 이내(예: 🥔)로 실행 가능합니다.\n- 💡 8GB 카드에서는 VRAM이 일정하게 유지되므로, 긴 영상도 느리게 실행되지 않습니다.\n\n### 수동 다운로드 📂 (선택 사항)\n\n- 노드는 첫 사용 시 자동으로 이 파일들을 다운로드합니다. 기다리는 것을 원치 않으시면 직접 다운로드하세요.\n\n\n- [Relay 2x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```",
+              "src": "bf971d99",
               "srcTitle": "Relay Notes"
             }
           },
@@ -1357,8 +1358,8 @@
             "en": "Relay Notes",
             "zh": "中继笔记",
             "zh-TW": "中繼筆記",
-            "ja": "Relay メモ",
-            "ko": "Relay 노트"
+            "ja": "リレーノート 📝",
+            "ko": "릴레이 노트"
           }
         },
         "ue_properties": {
@@ -1369,11 +1370,11 @@
       },
       "widgets_values": [
         "English ✏️",
-        "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
+        "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 4x for images 🖼️\n- **Person Mask (protect mask)**\n   - You can use a mask fromn your detailers (or a separate one like I did here) to protect the skin and face from sharpening. \n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
       ],
       "widgets_values_named": {
         "language": "English ✏️",
-        "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 2x or 4x for images 🖼️\n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
+        "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n\n- Relay VSR in one node. The model, VAE and sampler are built in.\n- Use 4x for images 🖼️\n- **Person Mask (protect mask)**\n   - You can use a mask fromn your detailers (or a separate one like I did here) to protect the skin and face from sharpening. \n- 2x or 4x for video 🎞️ (2x on smaller machines)\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- ✋ **The first run downloads the models:** 5.2 GB per model, plus a 128 MB VAE, into `models/diffusion_models` and `models/vae`. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n**Settings ⚙️**\n\n## ⚠️ LOW VRAM Use 2x\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x or 4x. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n\n**Video 🎞️**\n\n- **source:** video\n- **upscale:** 2x\n- ✋ First run downloads the 2x model (5.2 GB).\n\n**Saving the video 💾**\n\n- **LC Save Video** takes the **relay** output and saves the video a few frames at a time, so it never fills your RAM. More in the note next to it.\n\n### Sizes and times ⏱️\n\n| Input | Length | 2x output | 2x time | 4x output | 4x time |\n|---|---|---|---|---|---|\n| 960 x 544 video | 3 s | 1920 x 1088 | 9 s | 3840 x 2176 | 21 s |\n| 960 x 544 video | 5 s | 1920 x 1088 | 12 s | 3840 x 2176 | 34 s |\n| 896 x 1152 video | 6.6 s | 1792 x 2304 | 22 - 24 s | 3584 x 4608 | 72 - 75 s |\n| 1056 x 1320 picture | - | - | - | 4224 x 5280 | 6 s |\n| **8 GB laptop:** 960 x 544 video | 5 s | 1920 x 1088 | 27 s | 3840 x 2176 | 118 s |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. 24 fps, models already downloaded, first-run download not included.\n- 4x on the 8 GB laptop is under 2 minutes for 5 seconds of video (yes, it actually runs on a 🥔)\n- 💡 VRAM stays flat on 8 GB cards, so long clips do not slow to a crawl.\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    └── vae/\n        ├── relayvsr_flash_vae_x2_fp32\n        └── relayvsr_flash_vae_x4_fp32\n```\n"
       },
       "color": "#2E3A46",
       "bgcolor": "#2E3A46"
@@ -1382,21 +1383,27 @@
       "id": 57,
       "type": "LCRelayVSRUpscale",
       "pos": [
-        2440,
+        2760,
         -3030
       ],
       "size": [
         300,
-        180
+        220
       ],
       "flags": {},
-      "order": 28,
+      "order": 32,
       "mode": 0,
       "inputs": [
         {
           "name": "image",
           "type": "IMAGE",
           "link": 67
+        },
+        {
+          "name": "protect_mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": 100
         },
         {
           "name": "seed",
@@ -1420,6 +1427,11 @@
           "name": "relay",
           "type": "LC_RELAY",
           "links": []
+        },
+        {
+          "name": "protected",
+          "type": "MASK",
+          "links": null
         }
       ],
       "properties": {
@@ -1439,14 +1451,16 @@
         "2x",
         8675309,
         "fixed",
-        1
+        1,
+        0.5
       ],
       "widgets_values_named": {
         "source": "image",
         "upscale": "2x",
         "seed": 8675309,
         "control_after_generate": "fixed",
-        "detail": 1
+        "detail": 1,
+        "protect_detail": 0.5
       },
       "color": "#324b4b",
       "bgcolor": "#324b4b"
@@ -1455,12 +1469,12 @@
       "id": 58,
       "type": "LCRelayVSRUpscale",
       "pos": [
-        2380,
-        -2350
+        2390,
+        -2320
       ],
       "size": [
         320,
-        180
+        220
       ],
       "flags": {},
       "order": 22,
@@ -1470,6 +1484,12 @@
           "name": "image",
           "type": "IMAGE",
           "link": 72
+        },
+        {
+          "name": "protect_mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
         },
         {
           "name": "seed",
@@ -1492,6 +1512,11 @@
           "links": [
             94
           ]
+        },
+        {
+          "name": "protected",
+          "type": "MASK",
+          "links": null
         }
       ],
       "properties": {
@@ -1511,14 +1536,16 @@
         "2x",
         8675309,
         "fixed",
-        1
+        1,
+        0.5
       ],
       "widgets_values_named": {
         "source": "video",
         "upscale": "2x",
         "seed": 8675309,
         "control_after_generate": "fixed",
-        "detail": 1
+        "detail": 1,
+        "protect_detail": 0.5
       },
       "color": "#324b4b",
       "bgcolor": "#324b4b"
@@ -1527,11 +1554,11 @@
       "id": 59,
       "type": "LCLabel",
       "pos": [
-        2980,
+        3008,
         -3330
       ],
       "size": [
-        246,
+        188,
         121
       ],
       "flags": {},
@@ -1540,7 +1567,7 @@
       "inputs": [],
       "outputs": [],
       "properties": {
-        "text": "V2.1.2\n",
+        "text": "V3.0\n",
         "font": "Oswald",
         "size": 98,
         "bold": true,
@@ -1561,7 +1588,7 @@
         "cnr_id": "ComfyUI_LC123_nodes",
         "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
         "Node name for S&R": "LCLabel",
-        "_w": 246,
+        "_w": 188,
         "_h": 121,
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -1576,15 +1603,15 @@
       "id": 61,
       "type": "LCTextOverlay",
       "pos": [
-        4200,
-        -3110
+        4560,
+        -3100
       ],
       "size": [
         300,
         640
       ],
       "flags": {},
-      "order": 35,
+      "order": 37,
       "mode": 0,
       "inputs": [
         {
@@ -1614,15 +1641,15 @@
         "lc_overlay_text": "Before         After",
         "lc_preview_meta": [
           {
-            "filename": "lc_before_temp_exuuo_00001_.png",
+            "filename": "lc_before_temp_kghcp_00002_.png",
             "subfolder": "",
             "type": "temp",
             "metadata": {
               "kind": "image",
-              "width": 1072,
-              "height": 1344
+              "width": 2144,
+              "height": 2704
             },
-            "id": "254f3bc2-c3d7-4ca8-9a6c-0a7f10bb118e"
+            "id": "30f22e23-b89e-47af-a481-00a42be6c40b"
           }
         ]
       },
@@ -1655,15 +1682,15 @@
       "id": 62,
       "type": "SaveImage",
       "pos": [
-        4520,
-        -3020
+        4880,
+        -3010
       ],
       "size": [
         230,
         350
       ],
       "flags": {},
-      "order": 36,
+      "order": 38,
       "mode": 0,
       "inputs": [
         {
@@ -1710,8 +1737,8 @@
       "id": 63,
       "type": "PrimitiveString",
       "pos": [
-        4510,
-        -3070
+        4870,
+        -3060
       ],
       "size": [
         270,
@@ -1753,8 +1780,8 @@
       "id": 64,
       "type": "LCJoinStrings",
       "pos": [
-        4510,
-        -3110
+        4870,
+        -3100
       ],
       "size": [
         330,
@@ -1813,8 +1840,8 @@
       "id": 65,
       "type": "LCImageSplit",
       "pos": [
-        3890,
-        -3110
+        4250,
+        -3100
       ],
       "size": [
         300,
@@ -1873,12 +1900,12 @@
       "id": 68,
       "type": "LCNote",
       "pos": [
-        2380,
-        -2130
+        2390,
+        -2060
       ],
       "size": [
         320,
-        390
+        350
       ],
       "flags": {},
       "order": 20,
@@ -1936,12 +1963,12 @@
       "id": 69,
       "type": "LCSaveVideo",
       "pos": [
-        3030,
-        -2390
+        3040,
+        -2360
       ],
       "size": [
         300,
-        772
+        780
       ],
       "flags": {},
       "order": 31,
@@ -2058,8 +2085,8 @@
       "id": 70,
       "type": "LCImageLabel",
       "pos": [
-        1531,
-        -3409
+        1530,
+        -3410
       ],
       "size": [
         221,
@@ -2100,6 +2127,146 @@
       },
       "color": "#fff0",
       "bgcolor": "#fff0"
+    },
+    {
+      "id": 71,
+      "type": "LCPersonMask",
+      "pos": [
+        2450,
+        -3030
+      ],
+      "size": [
+        300,
+        490
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 99
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cutout",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            100,
+            101
+          ]
+        },
+        {
+          "name": "raw_mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC_MaskMaker_nodes",
+        "ver": "a8c3e1c6a19abfae17932561c88b32d41cf426a8",
+        "Node name for S&R": "LCPersonMask",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "segformer",
+        "models/segformer_b2_clothes (local)",
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        0.4,
+        "vitmatte",
+        "models/vitmatte (local)",
+        10,
+        10,
+        0.01,
+        0.99,
+        2,
+        false
+      ],
+      "widgets_values_named": {
+        "engine": "segformer",
+        "segformer_model": "models/segformer_b2_clothes (local)",
+        "face": true,
+        "hair": false,
+        "body": false,
+        "clothes": false,
+        "accessories": false,
+        "background": false,
+        "confidence": 0.4,
+        "refine": "vitmatte",
+        "vitmatte_model": "models/vitmatte (local)",
+        "edge_erode": 10,
+        "edge_dilate": 10,
+        "black_point": 0.01,
+        "white_point": 0.99,
+        "max_megapixels": 2,
+        "remove_features": false
+      },
+      "color": "#324b4b",
+      "bgcolor": "#324b4b"
+    },
+    {
+      "id": 72,
+      "type": "LCPreviewMask",
+      "pos": [
+        2760,
+        -2770
+      ],
+      "size": [
+        180,
+        220
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": 101
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_LC123_nodes",
+        "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
+        "Node name for S&R": "LCPreviewMask",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        ""
+      ],
+      "widgets_values_named": {
+        "lc_preview": ""
+      },
+      "color": "#222",
+      "bgcolor": "#000"
     }
   ],
   "links": [
@@ -2272,22 +2439,6 @@
       "AUDIO"
     ],
     [
-      68,
-      33,
-      0,
-      57,
-      1,
-      "INT"
-    ],
-    [
-      73,
-      6,
-      0,
-      58,
-      1,
-      "INT"
-    ],
-    [
       97,
       44,
       0,
@@ -2310,6 +2461,46 @@
       69,
       4,
       "LC_RELAY"
+    ],
+    [
+      68,
+      33,
+      0,
+      57,
+      2,
+      "INT"
+    ],
+    [
+      73,
+      6,
+      0,
+      58,
+      2,
+      "INT"
+    ],
+    [
+      99,
+      39,
+      0,
+      71,
+      0,
+      "IMAGE"
+    ],
+    [
+      100,
+      71,
+      1,
+      57,
+      1,
+      "MASK"
+    ],
+    [
+      101,
+      71,
+      1,
+      72,
+      0,
+      "MASK"
     ]
   ],
   "groups": [
@@ -2317,8 +2508,8 @@
       "id": 1,
       "title": "#Relay Upscale Video",
       "bounding": [
-        2370,
-        -2420,
+        2380,
+        -2390,
         340,
         690
       ],
@@ -2329,10 +2520,10 @@
       "id": 6,
       "title": "Image:",
       "bounding": [
-        1650,
+        1660,
         -3180,
-        2200,
-        640
+        2530,
+        660
       ],
       "color": "#b58b2a",
       "flags": {}
@@ -2341,10 +2532,10 @@
       "id": 4,
       "title": "Relay Upscale",
       "bounding": [
-        2190,
+        2200,
         -3140,
-        920,
-        590
+        1270,
+        610
       ],
       "color": "#3f789e",
       "flags": {}
@@ -2353,10 +2544,10 @@
       "id": 3,
       "title": "#Relay Upscale Image",
       "bounding": [
-        2430,
+        2440,
         -3100,
-        320,
-        260
+        630,
+        560
       ],
       "color": "#8AA",
       "flags": {}
@@ -2368,7 +2559,7 @@
         1190,
         -3180,
         430,
-        640
+        660
       ],
       "color": "#3f789e",
       "flags": {}
@@ -2377,8 +2568,8 @@
       "id": 10,
       "title": "Test (Delete if you don't want it)",
       "bounding": [
-        3880,
-        -3180,
+        4240,
+        -3170,
         880,
         720
       ],
@@ -2389,8 +2580,8 @@
       "id": 15,
       "title": "Video:",
       "bounding": [
-        1650,
-        -2510,
+        1660,
+        -2480,
         1700,
         900
       ],
@@ -2401,8 +2592,8 @@
       "id": 14,
       "title": "Video Upscale",
       "bounding": [
-        2130,
-        -2460,
+        2140,
+        -2430,
         1210,
         840
       ],
@@ -2419,10 +2610,10 @@
     },
     "links_added_by_ue": [],
     "ds": {
-      "scale": 0.35584102738367757,
+      "scale": 0.39142513012204944,
       "offset": [
-        60.21358443609178,
-        3598.3409059073188
+        232.77029208216595,
+        3718.4496649009184
       ]
     },
     "frontendVersion": "1.58.5",
