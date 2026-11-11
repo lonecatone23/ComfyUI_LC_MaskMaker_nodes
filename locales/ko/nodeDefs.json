@@ -1317,8 +1317,11 @@
       "protect_mask": {
         "tooltip": "선택. LC Smart Detailer의 마스크(여러 개는 max로 합침): 마스크 안에서는 Relay가 디테일을 덜 더해서, 디테일러가 다듬은 얼굴과 손이 그대로 유지됩니다. 새 크기로 'protected'에 출력됩니다."
       },
-      "protect_detail": {
-        "tooltip": "protect_mask 안에 Relay가 더하는 디테일을 얼마나 넣을지. 0 = 디테일러의 결과를 확대만, 1 = 보호 없음. 0.5는 고운 질감이 조금 남아서 얼굴이 붙여 넣은 것처럼 보이지 않습니다. 마스크 가장자리는 부드럽게 처리됩니다."
+      "mask_protect_strength": {
+        "tooltip": "protect_mask(또는 detect_faces가 찾은 얼굴) 안에 Relay가 더하는 디테일을 얼마나 넣을지. 0 = 디테일러의 결과를 확대만, 1 = 보호 없음. 0.5는 고운 질감이 조금 남아서 얼굴이 붙여 넣은 것처럼 보이지 않습니다. 마스크 가장자리는 부드럽게 처리됩니다."
+      },
+      "detect_faces": {
+        "tooltip": "protect_mask를 연결하지 않으면 Relay가 직접 얼굴을 찾아(RetinaFace + 얼굴 파싱, LC Skin Master가 쓰는 모델, 처음 한 번 약 55 MB) mask_protect_strength로 보호합니다. 영상에서는 3프레임마다 얼굴을 찾습니다. protect_mask를 연결하면 항상 그쪽이 우선입니다. 주근깨나 해칭이 있는 그린 얼굴에서는 끄세요."
       }
     },
     "outputs": {

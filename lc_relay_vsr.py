@@ -103,10 +103,15 @@ class LCRelayVSRUpscale:
             "protect_mask": ("MASK", {"tooltip": "Optional. LC Smart Detailer's mask (several combined with a max): inside it Relay "
                                                  "adds less detail, so the detailers' faces and hands keep their look. Comes out at "
                                                  "the new size as 'protected'."}),
-            "protect_detail": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05,
-                                         "tooltip": "How much of Relay's added detail goes inside protect_mask. 0 = the detailers' "
+            "mask_protect_strength": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05,
+                                         "tooltip": "How much of Relay's added detail goes inside protect_mask (or the faces detect_faces found). 0 = the detailers' "
                                                     "work only enlarged, 1 = no protection. 0.5 keeps a little fine grain so the "
                                                     "face doesn't look pasted in. The mask edge is feathered."}),
+            "detect_faces": ("BOOLEAN", {"default": True,
+                                       "tooltip": "With no protect_mask wired, Relay finds the faces itself "
+                                                  "(RetinaFace + face parsing, the models LC Skin Master uses, about 55 MB on first use) "
+                                                  "and protects them with mask_protect_strength. Video: faces are found every 3rd frame. A wired "
+                                                  "protect_mask always wins. Turn it off for drawn faces with freckles or hatching."}),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     RETURN_TYPES = ("IMAGE", "LC_RELAY", "MASK")
@@ -131,7 +136,8 @@ class LCRelayVSRUpscale:
             return float("nan")
         return "image linked" if linked(prompt, unique_id, 0) else "relay only"
 
-    def run(self, image, source, upscale, seed, detail, protect_mask=None, protect_detail=0.5, prompt=None, unique_id=None):
+    def run(self, image, source, upscale, seed, detail, protect_mask=None, mask_protect_strength=0.5, detect_faces=True, prompt=None,
+            unique_id=None):
         if _vsr is None:
             raise RuntimeError("[LC Relay VSR] Needs ComfyUI nightly from Nov 5, 2026 or later (RelayVSR is not in the 0.44.x stable releases). "
                                "Update ComfyUI itself to nightly, or wait for the next stable release.")
@@ -143,10 +149,13 @@ class LCRelayVSRUpscale:
         up = v.first_stage_model.upscale_factor
         out_hw = (int(image.shape[1]) * up, int(image.shape[2]) * up)
         prot = None
-        if protect_mask is not None and float(protect_detail) < 0.999:
-            prot = {"mask": protect_mask.reshape(-1, *protect_mask.shape[-2:]).float().cpu(), "keep": float(protect_detail),
+        if protect_mask is None and detect_faces and float(mask_protect_strength) < 0.999:
+            protect_mask = _face_masks(image, 3 if source == "video" else 1)  # None when no face is found (or facexlib is missing)
+        if protect_mask is not None and float(mask_protect_strength) < 0.999:
+            prot = {"mask": protect_mask.reshape(-1, *protect_mask.shape[-2:]).float().cpu(), "keep": float(mask_protect_strength),
                     "factor": up}
-        protected = _protected(protect_mask, out_hw)
+        wired = prompt is None or unique_id is None or linked(prompt, unique_id, 2)
+        protected = _protected(protect_mask if wired else None, out_hw)  # full-size masks only when the output is used
         relay = {"vae": v, "jobs": jobs, "detail": detail, "count": sum(int(p.shape[0]) for p in parts),
                  "size": (out_hw[1], out_hw[0]), "prot": prot}
         relay["frames"] = lambda batch=8: iter_relay_frames(relay, batch)
@@ -196,6 +205,80 @@ def _protected(mask, out_hw):
         return torch.zeros((1, out_hw[0], out_hw[1]), dtype=torch.float32)
     m = mask.reshape(-1, 1, *mask.shape[-2:]).float()
     return F.interpolate(m, size=out_hw, mode="bilinear", align_corners=False).clamp_(0.0, 1.0)[:, 0].cpu()
+
+
+_FACE_NETS = {}
+# BiSeNet face parsing classes kept as "face": skin, brows, eyes, glasses, ears, nose, mouth, lips (not neck or hair)
+_FACE_CLASSES = (1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13)
+
+
+def _face_net(name, dev):
+    key = (name, str(dev))
+    if key not in _FACE_NETS:
+        import folder_paths
+
+        root = os.path.join(folder_paths.models_dir, "facexlib")
+        os.makedirs(root, exist_ok=True)
+        if name == "detect":
+            from facexlib.detection import init_detection_model
+            _FACE_NETS[key] = init_detection_model("retinaface_mobile0.25", device=dev, model_rootpath=root)
+        else:
+            from facexlib.parsing import init_parsing_model
+            _FACE_NETS[key] = init_parsing_model("bisenet", device=dev, model_rootpath=root)
+    return _FACE_NETS[key]
+
+
+@torch.no_grad()
+def _face_masks(image, stride=1):
+    """detect_faces: a face mask per frame (B, H, W) at the source size, or None when no face is found. RetinaFace finds
+    the faces on a copy at most 640 px, BiSeNet parses each one (the steps LC Skin Master uses)."""
+    import time
+
+    import numpy as np
+    import torch.nn.functional as F
+
+    import comfy.model_management as mm
+
+    t0 = time.time()
+    dev = mm.get_torch_device()
+    try:
+        det, parse = _face_net("detect", dev), _face_net("parse", dev)
+    except Exception as exc:
+        print(f"[LC Relay VSR] detect_faces skipped: face models unavailable ({exc}). Wire a protect_mask instead.")
+        return None
+    B, H, W = int(image.shape[0]), int(image.shape[1]), int(image.shape[2])
+    s = min(1.0, 640 / max(H, W))
+    out = torch.zeros((B, H, W), dtype=torch.float32)
+    mean = torch.tensor([0.485, 0.456, 0.406], device=dev).view(1, 3, 1, 1)
+    std = torch.tensor([0.229, 0.224, 0.225], device=dev).view(1, 3, 1, 1)
+    keep = torch.tensor(_FACE_CLASSES, device=dev)
+    found = 0
+    keys = sorted(set(range(0, B, max(1, stride))) | {B - 1})  # video: every stride-th frame, blended between
+    for i in keys:
+        frame = image[i].to(dev, torch.float32).permute(2, 0, 1)[None]
+        small = F.interpolate(frame, scale_factor=s, mode="area") if s < 1 else frame
+        bgr = (small[0].flip(0).permute(1, 2, 0) * 255).round().clamp(0, 255).byte().cpu().numpy()
+        boxes = det.detect_faces(np.ascontiguousarray(bgr), 0.8)
+        for row in (boxes if boxes is not None else []):
+            x1, y1, x2, y2 = (float(v) / s for v in row[:4])
+            if min(x2 - x1, y2 - y1) * s < 16:
+                continue
+            cx, cy, side = (x1 + x2) / 2, (y1 + y2) / 2, max(x2 - x1, y2 - y1) * 1.7
+            l, t = int(max(0, cx - side / 2)), int(max(0, cy - side / 2 - 0.05 * side))
+            r, b = int(min(W, cx + side / 2)), int(min(H, cy + side / 2 + 0.05 * side))
+            if r - l < 8 or b - t < 8:
+                continue
+            crop = F.interpolate(frame[:, :, t:b, l:r], size=(512, 512), mode="bilinear", align_corners=False)
+            logits = F.interpolate(parse((crop - mean) / std)[0], size=(b - t, r - l), mode="bilinear", align_corners=False)
+            face = torch.isin(logits.argmax(1)[0], keep).float().cpu()
+            out[i, t:b, l:r] = torch.maximum(out[i, t:b, l:r], face)
+            found += 1
+    for a, b in zip(keys, keys[1:]):
+        for i in range(a + 1, b):
+            w = (i - a) / (b - a)
+            out[i] = out[a] * (1 - w) + out[b] * w
+    print(f"[LC Relay VSR] detect_faces: {found} face(s) in {len(keys)} of {B} frame(s), {time.time() - t0:.1f} s")
+    return out if found else None
 
 
 def _blur(x, sigma):

@@ -1317,8 +1317,11 @@
       "protect_mask": {
         "tooltip": "可选。LC Smart Detailer 的遮罩（多个用 max 合并）：遮罩内 Relay 少加细节，detailer 修好的脸和手保持原样。以新尺寸从 'protected' 输出。"
       },
-      "protect_detail": {
-        "tooltip": "protect_mask 内保留多少 Relay 新增的细节。0 = detailer 的成果只放大，1 = 不保护。0.5 保留一点细颗粒，脸不会像贴上去的。遮罩边缘会羽化。"
+      "mask_protect_strength": {
+        "tooltip": "protect_mask（或 detect_faces 找到的脸）内保留多少 Relay 新增的细节。0 = detailer 的成果只放大，1 = 不保护。0.5 保留一点细颗粒，脸不会像贴上去的。遮罩边缘会羽化。"
+      },
+      "detect_faces": {
+        "tooltip": "没接 protect_mask 时，Relay 会自己找脸（RetinaFace + 面部解析，就是 LC Skin Master 用的模型，首次使用约 55 MB），并按 mask_protect_strength 保护。视频每 3 帧找一次脸。接了 protect_mask 时总是用它。带雀斑或排线的手绘脸请关闭。"
       }
     },
     "outputs": {

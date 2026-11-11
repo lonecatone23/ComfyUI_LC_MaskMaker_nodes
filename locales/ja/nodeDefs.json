@@ -1317,8 +1317,11 @@
       "protect_mask": {
         "tooltip": "任意。LC Smart Detailer のマスク（複数は max で合成）：マスク内では Relay が足すディテールを減らし、ディテーラーが仕上げた顔や手の見た目を保ちます。新しいサイズで 'protected' として出力されます。"
       },
-      "protect_detail": {
-        "tooltip": "protect_mask の中に Relay が足すディテールをどれだけ入れるか。0 = ディテーラーの仕上がりを拡大するだけ、1 = 保護なし。0.5 なら細かい粒子が少し残り、顔が貼り付けたように見えません。マスクの縁はぼかされます。"
+      "mask_protect_strength": {
+        "tooltip": "protect_mask（または detect_faces が見つけた顔）の中に Relay が足すディテールをどれだけ入れるか。0 = ディテーラーの仕上がりを拡大するだけ、1 = 保護なし。0.5 なら細かい粒子が少し残り、顔が貼り付けたように見えません。マスクの縁はぼかされます。"
+      },
+      "detect_faces": {
+        "tooltip": "protect_mask をつないでいないとき、Relay が自分で顔を見つけ（RetinaFace + 顔のパーシング、LC Skin Master と同じモデル、初回のみ約 55 MB）、mask_protect_strength で保護します。動画では 3 フレームごとに顔を探します。protect_mask をつないだときは常にそちらが優先です。そばかすやハッチングのある描かれた顔ではオフにします。"
       }
     },
     "outputs": {
