@@ -1306,7 +1306,7 @@
         "tooltip": "video：帧与帧互相对齐，所以保持稳定。image：每张图片单独放大，彼此之间不会互相影响。"
       },
       "upscale": {
-        "tooltip": "视频用 2x，图片用 4x。每个都是独立的 5.2 GB 模型，首次使用时下载。"
+        "tooltip": "视频用 2x，图片用 4x。2x / 4x：5.2 GB 的 int8 模型。bf16：原始版本，每个 10 GB，占用更多显存和内存。⚠️ 每个模型首次使用时都会下载（diffusion_models 里已有的 wan.safetensors / wan_x2.safetensors 会直接使用）。"
       },
       "seed": {
         "tooltip": "从噪声出发的一步：seed 只会改变最细的颗粒。"

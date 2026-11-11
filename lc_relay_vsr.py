@@ -33,6 +33,14 @@ FILES = {  # factor: (model, vae, model size)
     "2x": ("relayvsr_x2_lightx2v_int8_convrot.safetensors", "relayvsr_flash_vae_x2_fp32.safetensors", "5.2 GB"),
     "4x": ("relayvsr_x4_int8_convrot.safetensors", "relayvsr_flash_vae_x4_fp32.safetensors", "5.2 GB"),
 }
+# The original bf16 releases (diffusers key names, 10 GB each), same Flash VAE as the int8 files.
+# factor: (repo, file in the repo, our name for it on disk)
+BF16 = {
+    "2x": ("lightx2v/RelayVSR_X2", "wan_x2.safetensors", "relayvsr_x2_lightx2v_bf16.safetensors"),
+    "4x": ("kopper/RelayVSR", "wan.safetensors", "relayvsr_x4_bf16.safetensors"),
+}
+BF16_TAG = " bf16 (10 GB)"
+UPSCALE = list(FILES) + [f + BF16_TAG for f in FILES]  # 2x, 4x, 2x bf16 (10 GB), 4x bf16 (10 GB): old workflows keep 2x / 4x
 CHUNK_TOKENS = 8192  # about one 4x keyframe of a 960x544 clip per chunk
 # What the model adds on top of the bicubic upscale (its residual) is softened before `detail` scales it:
 # brightness only (its colour shifts were most of Relay's colour drift) and a soft cap of 12 levels (tanh), which
@@ -62,15 +70,103 @@ def _ensure(kind, hf_folder, filename, label, size):
     return dest
 
 
+def _st_keys(path):
+    """{key: shape} from a safetensors header, without loading the file."""
+    import json
+    import struct
+
+    try:
+        with open(path, "rb") as f:
+            n = struct.unpack("<Q", f.read(8))[0]
+            if n > 50_000_000:
+                return {}
+            h = json.loads(f.read(n))
+    except (OSError, ValueError):
+        return {}
+    h.pop("__metadata__", None)
+    return {k: v.get("shape") for k, v in h.items()}
+
+
+def _is_bf16_relay(path, factor):
+    """True for an original RelayVSR file of this factor: the LQ input is pixel-unshuffled by 4 * factor."""
+    shape = _st_keys(path).get("lq_proj.conv1.weight")
+    return bool(shape) and shape[1] == 3 * (4 * factor) ** 2
+
+
+def _ensure_bf16(upscale):
+    """The original bf16 model for 2x / 4x: our own name, the repo's name, or any 'relayvsr' file in diffusion_models
+    that really is one (the repo names are generic: wan.safetensors). Else downloaded on first use."""
+    repo, src, ours = BF16[upscale]
+    factor = int(upscale[0])
+    for want in (ours, src):
+        path = _find("diffusion_models", want)
+        if path and _is_bf16_relay(path, factor):
+            return path
+    for name in folder_paths.get_filename_list("diffusion_models"):
+        if "relayvsr" in name.lower() and "int8" not in name.lower():
+            path = folder_paths.get_full_path("diffusion_models", name)
+            if _is_bf16_relay(path, factor):
+                return path
+    dest = os.path.join(folder_paths.get_folder_paths("diffusion_models")[0], ours)
+    if not os.path.isfile(dest):
+        download(hf_url(repo, src), dest, f"Relay VSR {upscale} bf16 model", "10.1 GB")
+    return dest
+
+
+# diffusers Wan names -> ComfyUI Wan names (the int8 files already use ComfyUI's)
+_BLOCK_KEYS = (("attn1.to_out.0.", "self_attn.o."), ("attn2.to_out.0.", "cross_attn.o."), ("attn1.to_", "self_attn."),
+               ("attn2.to_", "cross_attn."), ("attn1.", "self_attn."), ("attn2.", "cross_attn."),
+               ("ffn.net.0.proj.", "ffn.0."), ("ffn.net.2.", "ffn.2."), ("norm2.", "norm3."), ("scale_shift_table", "modulation"))
+_TOP_KEYS = {"condition_embedder.text_embedder.linear_1.": "text_embedding.0.",
+             "condition_embedder.text_embedder.linear_2.": "text_embedding.2.",
+             "condition_embedder.time_embedder.linear_1.": "time_embedding.0.",
+             "condition_embedder.time_embedder.linear_2.": "time_embedding.2.",
+             "condition_embedder.time_proj.": "time_projection.1.", "proj_out.": "head.head.",
+             "lq_proj.out_proj.": "lq_proj_in.linear.", "lq_proj.": "lq_proj_in."}
+
+
+def _from_diffusers(sd):
+    out = {}
+    for k, v in sd.items():
+        if k.startswith("blocks."):
+            _, idx, rest = k.split(".", 2)
+            for a, b in _BLOCK_KEYS:
+                if rest.startswith(a):
+                    rest = b + rest[len(a):]
+                    break
+            k = f"blocks.{idx}.{rest}"
+        elif k == "scale_shift_table":
+            k = "head.modulation"
+        elif k == "prompt_embeds":
+            k, v = "positive_conditioning", v.reshape(v.shape[-2:])
+        else:
+            for a, b in _TOP_KEYS.items():
+                if k.startswith(a):
+                    k = b + k[len(a):]
+                    break
+        if k.startswith("lq_proj_in.norm") and v.ndim == 3:  # [C, 1, 1] -> [C]
+            v = v.reshape(-1)
+        out[k] = v
+    return out
+
+
 def _model(path):
     key, model = _CACHE["model"]
     if key != path:
-        if model is not None:  # switching 2x <-> 4x: let the old 5 GB go before the new one loads
+        if model is not None:  # switching models: let the old one go before the new one loads
             _CACHE["model"] = (None, None)
             del model
             comfy.model_management.unload_all_models()
             comfy.model_management.soft_empty_cache()
-        model = comfy.sd.load_diffusion_model(path)
+        print(f"[LC Relay VSR] loading {os.path.basename(path)}")
+        if "lq_proj.conv1.weight" in _st_keys(path):  # an original bf16 release: rename the keys first
+            sd, metadata = comfy.utils.load_torch_file(path, return_metadata=True)
+            model = comfy.sd.load_diffusion_model_state_dict(_from_diffusers(sd), metadata=metadata)
+            del sd
+        else:
+            model = comfy.sd.load_diffusion_model(path)
+        if model is None:
+            raise RuntimeError(f"[LC Relay VSR] {os.path.basename(path)} is not a RelayVSR model ComfyUI can load.")
         _CACHE["model"] = (path, model)
     return model
 
@@ -93,8 +189,10 @@ class LCRelayVSRUpscale:
             "source": (["video", "image"], {"default": "video",
                        "tooltip": "video: the frames are matched to each other, so they stay steady. "
                                   "image: each picture is upscaled on its own, so nothing carries over between them."}),
-            "upscale": (list(FILES), {"default": "2x",
-                        "tooltip": "2x for video, 4x for pictures. Each is its own 5.2 GB model, downloaded on first use."}),
+            "upscale": (UPSCALE, {"default": "2x",
+                        "tooltip": "2x for video, 4x for pictures. 2x / 4x: 5.2 GB int8 models. bf16: the original release, "
+                                   "10 GB each, more VRAM and RAM. ⚠️ Each one downloads on first use (a wan.safetensors / "
+                                   "wan_x2.safetensors you already have in diffusion_models is used instead)."}),
             "seed": ("INT", {"default": 1, "min": 0, "max": 0xFFFFFFFFFFFFFFFF, "control_after_generate": "fixed",
                              "tooltip": "One step from noise: the seed only changes the finest grain."}),
             "detail": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01,
@@ -136,13 +234,18 @@ class LCRelayVSRUpscale:
             return float("nan")
         return "image linked" if linked(prompt, unique_id, 0) else "relay only"
 
-    def run(self, image, source, upscale, seed, detail, protect_mask=None, mask_protect_strength=0.5, detect_faces=True, prompt=None,
-            unique_id=None):
+    def run(self, image, source, upscale, seed, detail, protect_mask=None, mask_protect_strength=0.5, detect_faces=True,
+            prompt=None, unique_id=None):
         if _vsr is None:
             raise RuntimeError("[LC Relay VSR] Needs ComfyUI nightly from Nov 5, 2026 or later (RelayVSR is not in the 0.44.x stable releases). "
                                "Update ComfyUI itself to nightly, or wait for the next stable release.")
+        bf16 = upscale.endswith(BF16_TAG)
+        upscale = upscale[:-len(BF16_TAG)] if bf16 else upscale
         model_file, vae_file, size = FILES[upscale]
-        m = _model(_ensure("diffusion_models", "diffusion_models", model_file, f"Relay VSR {upscale} model", size))
+        if bf16:
+            m = _model(_ensure_bf16(upscale))
+        else:
+            m = _model(_ensure("diffusion_models", "diffusion_models", model_file, f"Relay VSR {upscale} model", size))
         v = _vae(_ensure("vae", "vae", vae_file, f"Relay VSR {upscale} VAE", "128 MB"))
         parts = [image[i:i + 1] for i in range(image.shape[0])] if source == "image" and image.shape[0] > 1 else [image]
         jobs = [(self._sample(m, p, seed), p) for p in parts]

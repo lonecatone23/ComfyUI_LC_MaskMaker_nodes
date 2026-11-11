@@ -1306,7 +1306,7 @@
         "tooltip": "video：フレーム同士を合わせるので安定します。image：1 枚ずつ個別にアップスケールし、画像同士で何も引き継ぎません。"
       },
       "upscale": {
-        "tooltip": "動画は 2x、画像は 4x。それぞれ 5.2 GB の別モデルで、初回使用時にダウンロードします。"
+        "tooltip": "動画は 2x、画像は 4x。2x / 4x：5.2 GB の int8 モデル。bf16：オリジナル版、各 10 GB、VRAM と RAM をより多く使います。⚠️ どれも初回使用時にダウンロードされます（diffusion_models に wan.safetensors / wan_x2.safetensors があればそれを使います）。"
       },
       "seed": {
         "tooltip": "ノイズからの 1 ステップ：seed が変えるのは一番細かい粒だけです。"

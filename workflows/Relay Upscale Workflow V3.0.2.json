@@ -1,7 +1,7 @@
 {
   "id": "d66dedb4-ed78-4b75-b7bf-4814fd4ab600",
   "revision": 0,
-  "last_node_id": 72,
+  "last_node_id": 73,
   "last_link_id": 101,
   "nodes": [
     {
@@ -9,7 +9,7 @@
       "type": "GetNode",
       "pos": [
         2150,
-        -2260
+        -2250
       ],
       "size": [
         210,
@@ -19,7 +19,7 @@
         "collapsed": true
       },
       "order": 0,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -54,7 +54,7 @@
       "type": "Fast Groups Bypasser (rgthree)",
       "pos": [
         2150,
-        -2360
+        -2350
       ],
       "size": [
         220,
@@ -62,7 +62,7 @@
       ],
       "flags": {},
       "order": 1,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -95,7 +95,7 @@
       "type": "GetNode",
       "pos": [
         2150,
-        -2220
+        -2210
       ],
       "size": [
         210,
@@ -105,7 +105,7 @@
         "collapsed": true
       },
       "order": 2,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -141,7 +141,7 @@
       "type": "LCLoadVideo",
       "pos": [
         1670,
-        -2410
+        -2400
       ],
       "size": [
         270,
@@ -149,7 +149,7 @@
       ],
       "flags": {},
       "order": 3,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -412,11 +412,9 @@
       ],
       "size": [
         380,
-        530
+        540
       ],
-      "flags": {
-        "pinned": false
-      },
+      "flags": {},
       "order": 36,
       "mode": 0,
       "inputs": [
@@ -644,7 +642,7 @@
       "type": "SetNode",
       "pos": [
         1960,
-        -2360
+        -2350
       ],
       "size": [
         210,
@@ -654,7 +652,7 @@
         "collapsed": true
       },
       "order": 24,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "AUDIO",
@@ -692,7 +690,7 @@
       "type": "SetNode",
       "pos": [
         1970,
-        -2320
+        -2310
       ],
       "size": [
         210,
@@ -702,7 +700,7 @@
         "collapsed": true
       },
       "order": 25,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "FLOAT",
@@ -742,7 +740,7 @@
       "type": "SetNode",
       "pos": [
         1970,
-        -2400
+        -2390
       ],
       "size": [
         210,
@@ -752,7 +750,7 @@
         "collapsed": true
       },
       "order": 23,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "IMAGE",
@@ -792,7 +790,7 @@
       "type": "GetNode",
       "pos": [
         2150,
-        -2180
+        -2170
       ],
       "size": [
         210,
@@ -802,7 +800,7 @@
         "collapsed": true
       },
       "order": 9,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -837,7 +835,7 @@
       "type": "GetNode",
       "pos": [
         2150,
-        -2140
+        -2130
       ],
       "size": [
         210,
@@ -847,7 +845,7 @@
         "collapsed": true
       },
       "order": 10,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -927,7 +925,7 @@
       "type": "LCEasyFolder",
       "pos": [
         2730,
-        -2360
+        -2350
       ],
       "size": [
         300,
@@ -935,7 +933,7 @@
       ],
       "flags": {},
       "order": 12,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -1308,78 +1306,6 @@
       "bgcolor": "#fff0"
     },
     {
-      "id": 53,
-      "type": "LCNote",
-      "pos": [
-        1190,
-        -2450
-      ],
-      "size": [
-        430,
-        790
-      ],
-      "flags": {
-        "collapsed": false
-      },
-      "order": 17,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "Relay Notes",
-      "properties": {
-        "lc_note": {
-          "source": "en",
-          "texts": {
-            "en": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n- A one-step upscaler for video and pictures (2x or 4x). The model, VAE and sampler are built in. Fast, sharp, and it adds real skin and hair detail.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- **detect_faces** finds the faces on its own and holds back Relay's grain on them, so skin keeps its look.\n- 💡 If you used detailers or want all skin protected, wire a mask into **protect_mask**. It overrides detect_faces.\n\n- ✋ **First use downloads the models:** 5.2 GB per upscale size plus a 128 MB VAE, and 55 MB for the face finder. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n---\n\n### Videos 🎥\n\n- **2x faces on** is the default. Your eye goes straight to the faces when things are moving, and everything else is background noise.\n    - Use **faces off** only when time or file size is the problem.\n- **4x** runs on an 8 GB card, but on a moving video it looks barely different from 2x. Extra sharpness can actually make it look worse.\n- Save with **LC Save Video**'s **relay** input. It saves a few frames at a time, so the upscaled video never sits in RAM (5 s at 4x: 0.3 GB instead of 12 GB).\n    - Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n| Video | 2x faces on | 2x faces off | 4x faces on | 4x faces off |\n|---|---|---|---|---|\n| 960 x 544, 5 s, 24 fps | 13 s (est.) | 12 s | 36 s (est.) | 34 s |\n| 896 x 1152, 6.6 s, 24 fps | 26 s (est.) | 22 - 24 s | 78 s (est.) | 72 - 75 s |\n| 832 x 1056, 15 s, 48 fps | 46 s | 40 s | 2.7 min | 2.6 min |\n| **8 GB laptop:** 960 x 544, 5 s, 24 fps | 28 s (est.) | 27 s | 2 min (est.) | 118 s |\n| **8 GB laptop:** 832 x 1056, 15 s, 48 fps | 4 min | 3.9 min | 18 min (est.) | 17 min (est.) |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. Models already downloaded. Faces on finds the faces every 3rd frame and costs about 4 - 15 % (measured on the 15 s clip). (est.) rows are scaled from the measured ones.\n- 💡 VRAM stays flat on 8 GB cards (7.4 GB at 2x), so long clips do not slow to a crawl. The 5090 used 13 GB at 2x and 24 GB at 4x only because it had it free.\n- ⚠️ **16 GB RAM:** the frames sit in RAM before Relay even starts. The 15 s, 48 fps clip peaked at 18.5 GB.\n    - Keep clips short, or upscale **before** frame interpolation (half the frames, half the RAM). Recommended, not tested.\n\n---\n\n### Pictures 🖼️\n\n- People actually zoom in on a picture, so 4x is worth it here. Faces cost nothing on a picture (about 4 s either way at 4x, 6 s for a 1056 x 1320 picture).\n- **Quality order:**\n    - 4x faces on\n    - 2x faces on\n    - 4x faces off\n    - 2x faces off\n- **Realism and photos:** faces on.\n- **Lineart, anime, painted, etc.:** depends on the face.\n    - Smooth or painted skin: faces on (the grain is just noise there).\n    - Freckles, hatching or other drawn detail: faces off, or that detail goes soft.\n- Small faces in a crowd: on or off makes no visible difference.\n\n**💡 Tips & tricks**\n- Adjust how much the faces are protected with **mask_protect_strength**.\n- Adjust the sharpness with **detail**.\n\n---\n\n### Settings ⚙️\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x for video, 4x for pictures. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n- **detect_faces:** typically on. Off for drawn faces with freckles or hatching.\n- **mask_protect_strength:** how much of Relay's detail still lands on the face. 0.5 is the default. Raise it to keep more texture on stylized faces.\n\n---\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---"
-            },
-            "zh": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**这是什么？**\n- 一步完成的视频和图片放大器（2x 或 4x）。模型、VAE 和采样器都已内置。速度快、清晰，还能添加真实的皮肤和头发细节。\n- 耗时只有 VOSR2 或 SeedVR2 的一小部分，质量更高。\n- **detect_faces** 会自动找到人脸，并压住 Relay 在脸上的颗粒，让皮肤保持原样。\n- 💡 如果你用了检测修复（detailer），或想保护全部皮肤，把遮罩接到 **protect_mask**。它会覆盖 detect_faces。\n\n- ✋ **首次使用会下载模型：** 每种放大倍数 5.2 GB，加一个 128 MB 的 VAE，人脸检测另需 55 MB。开始时会弹出提示。按 Stop 可取消。已经有了？无论放在哪里都能找到。\n\n---\n\n### 视频 🎥\n\n- **2x 开启人脸** 是默认设置。画面在动时，眼睛会直接盯住人脸，其余部分都成了背景噪声。\n    - 只有在时间或文件大小成为问题时，才使用 **关闭人脸**。\n- **4x** 能在 8 GB 显卡上运行，但在运动的视频里和 2x 几乎看不出区别。多出来的锐度反而可能让画面更难看。\n- 用 **LC Save Video** 的 **relay** 输入保存。它一次只保存几帧，放大后的视频永远不会整个放进内存（5 秒 4x：0.3 GB，而不是 12 GB）。\n    - Relay 节点的 **image** 输出保持空着，否则还是会生成完整视频。\n\n| 视频 | 2x 开启人脸 | 2x 关闭人脸 | 4x 开启人脸 | 4x 关闭人脸 |\n|---|---|---|---|---|\n| 960 x 544，5 秒，24 fps | 13 秒（估计） | 12 秒 | 36 秒（估计） | 34 秒 |\n| 896 x 1152，6.6 秒，24 fps | 26 秒（估计） | 22 - 24 秒 | 78 秒（估计） | 72 - 75 秒 |\n| 832 x 1056，15 秒，48 fps | 46 秒 | 40 秒 | 2.7 分钟 | 2.6 分钟 |\n| **8 GB 笔记本：** 960 x 544，5 秒，24 fps | 28 秒（估计） | 27 秒 | 2 分钟（估计） | 118 秒 |\n| **8 GB 笔记本：** 832 x 1056，15 秒，48 fps | 4 分钟 | 3.9 分钟 | 18 分钟（估计） | 17 分钟（估计） |\n\n\\* 除注明外均为 RTX 5090，笔记本为 RTX 5060 8 GB。模型已下载。开启人脸时每 3 帧检测一次人脸，多花约 4 - 15 %（在 15 秒片段上实测）。（估计）一栏由实测数据推算。\n- 💡 8 GB 显卡上显存占用保持平稳（2x 时 7.4 GB），所以长片段不会越跑越慢。5090 在 2x 用了 13 GB、4x 用了 24 GB，只是因为它有空闲显存。\n- ⚠️ **16 GB 内存：** 在 Relay 开始之前，所有帧就已经放在内存里了。15 秒、48 fps 的片段峰值为 18.5 GB。\n    - 片段保持简短，或者在插帧 **之前** 放大（帧数减半，内存减半）。推荐做法，未测试。\n\n---\n\n### 图片 🖼️\n\n- 人们真的会放大查看图片，所以这里 4x 值得。图片上开启人脸几乎不花时间（4x 时开关都约 4 秒，1056 x 1320 的图片约 6 秒）。\n- **质量排序：**\n    - 4x 开启人脸\n    - 2x 开启人脸\n    - 4x 关闭人脸\n    - 2x 关闭人脸\n- **写实和照片：** 开启人脸。\n- **线稿、动漫、绘画等：** 取决于脸。\n    - 光滑或绘画式的皮肤：开启人脸（那里的颗粒只是噪声）。\n    - 雀斑、排线或其他画出来的细节：关闭人脸，否则这些细节会变软。\n- 人群里的小脸：开或关看不出区别。\n\n**💡 小技巧**\n- 用 **mask_protect_strength** 调整人脸受保护的程度。\n- 用 **detail** 调整锐度。\n\n---\n\n### 设置 ⚙️\n\n- **source：**\n    - **video：** 帧与帧之间相互匹配，视频保持稳定。凡是来自视频的内容都用它。\n    - **image：** 每张图片单独放大，彼此之间不会互相影响。用于一批不同的图片。单张图片两种方式结果相同。\n- **upscale：** 视频用 2x，图片用 4x。每种都是独立的模型。\n- **detail：** 1.0 是完整的模型输出。调低会更接近普通放大。\n- **detect_faces：** 通常开启。对带雀斑或排线的手绘脸关闭。\n- **mask_protect_strength：** Relay 的细节还有多少会落到脸上。默认 0.5。调高可以在风格化的脸上保留更多纹理。\n\n---\n\n### 手动下载 📂（可选）\n\n- 节点会在首次使用时下载这些文件。不想在运行中途等待的话，可以自己先下载。\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---",
-              "src": "e33e674f",
-              "srcTitle": "Relay Notes"
-            },
-            "zh-TW": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**這是什麼？**\n- 一步完成的影片和圖片放大器（2x 或 4x）。模型、VAE 和取樣器都已內建。速度快、清晰，還能加上真實的皮膚和頭髮細節。\n- 耗時只有 VOSR2 或 SeedVR2 的一小部分，品質更高。\n- **detect_faces** 會自動找到人臉，並壓住 Relay 在臉上的顆粒，讓皮膚保持原樣。\n- 💡 如果你用了細節修復（detailer），或想保護全部皮膚，把遮罩接到 **protect_mask**。它會覆蓋 detect_faces。\n\n- ✋ **第一次使用會下載模型：** 每種放大倍數 5.2 GB，加一個 128 MB 的 VAE，人臉偵測另需 55 MB。開始時會跳出提示。按 Stop 可取消。已經有了？不論放在哪裡都找得到。\n\n---\n\n### 影片 🎥\n\n- **2x 開啟人臉** 是預設設定。畫面在動時，眼睛會直接盯著人臉，其餘部分都成了背景雜訊。\n    - 只有在時間或檔案大小成為問題時，才使用 **關閉人臉**。\n- **4x** 能在 8 GB 顯示卡上執行，但在動態影片裡和 2x 幾乎看不出差別。多出來的銳利度反而可能讓畫面更難看。\n- 用 **LC Save Video** 的 **relay** 輸入儲存。它一次只存幾格，放大後的影片永遠不會整個放進記憶體（5 秒 4x：0.3 GB，而不是 12 GB）。\n    - Relay 節點的 **image** 輸出保持空著，否則還是會產生完整影片。\n\n| 影片 | 2x 開啟人臉 | 2x 關閉人臉 | 4x 開啟人臉 | 4x 關閉人臉 |\n|---|---|---|---|---|\n| 960 x 544，5 秒，24 fps | 13 秒（估計） | 12 秒 | 36 秒（估計） | 34 秒 |\n| 896 x 1152，6.6 秒，24 fps | 26 秒（估計） | 22 - 24 秒 | 78 秒（估計） | 72 - 75 秒 |\n| 832 x 1056，15 秒，48 fps | 46 秒 | 40 秒 | 2.7 分鐘 | 2.6 分鐘 |\n| **8 GB 筆電：** 960 x 544，5 秒，24 fps | 28 秒（估計） | 27 秒 | 2 分鐘（估計） | 118 秒 |\n| **8 GB 筆電：** 832 x 1056，15 秒，48 fps | 4 分鐘 | 3.9 分鐘 | 18 分鐘（估計） | 17 分鐘（估計） |\n\n\\* 除註明外皆為 RTX 5090，筆電為 RTX 5060 8 GB。模型已下載。開啟人臉時每 3 格偵測一次人臉，多花約 4 - 15 %（在 15 秒片段上實測）。（估計）欄位由實測數據推算。\n- 💡 8 GB 顯示卡上顯存占用保持平穩（2x 時 7.4 GB），所以長片段不會越跑越慢。5090 在 2x 用了 13 GB、4x 用了 24 GB，只是因為它有空閒顯存。\n- ⚠️ **16 GB 記憶體：** 在 Relay 開始之前，所有畫格就已經放在記憶體裡了。15 秒、48 fps 的片段峰值為 18.5 GB。\n    - 片段保持簡短，或者在補幀 **之前** 放大（畫格減半，記憶體減半）。建議做法，未測試。\n\n---\n\n### 圖片 🖼️\n\n- 大家真的會放大檢視圖片，所以這裡 4x 值得。圖片上開啟人臉幾乎不花時間（4x 時開關都約 4 秒，1056 x 1320 的圖片約 6 秒）。\n- **品質排序：**\n    - 4x 開啟人臉\n    - 2x 開啟人臉\n    - 4x 關閉人臉\n    - 2x 關閉人臉\n- **寫實和照片：** 開啟人臉。\n- **線稿、動漫、繪畫等：** 取決於臉。\n    - 光滑或繪畫式的皮膚：開啟人臉（那裡的顆粒只是雜訊）。\n    - 雀斑、排線或其他畫出來的細節：關閉人臉，否則這些細節會變軟。\n- 人群裡的小臉：開或關看不出差別。\n\n**💡 小技巧**\n- 用 **mask_protect_strength** 調整人臉受保護的程度。\n- 用 **detail** 調整銳利度。\n\n---\n\n### 設定 ⚙️\n\n- **source：**\n    - **video：** 畫格之間互相匹配，影片保持穩定。凡是來自影片的內容都用它。\n    - **image：** 每張圖片單獨放大，彼此之間不會互相影響。用於一批不同的圖片。單張圖片兩種方式結果相同。\n- **upscale：** 影片用 2x，圖片用 4x。每種都是獨立的模型。\n- **detail：** 1.0 是完整的模型輸出。調低會更接近一般放大。\n- **detect_faces：** 通常開啟。對帶雀斑或排線的手繪臉關閉。\n- **mask_protect_strength：** Relay 的細節還有多少會落到臉上。預設 0.5。調高可以在風格化的臉上保留更多紋理。\n\n---\n\n### 手動下載 📂（可選）\n\n- 節點會在第一次使用時下載這些檔案。不想在執行中途等待的話，可以自己先下載。\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---",
-              "src": "e33e674f",
-              "srcTitle": "Relay Notes"
-            },
-            "ja": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**これは何？**\n- 動画と画像を1ステップで拡大するアップスケーラー（2x または 4x）。モデル、VAE、サンプラーはすべて内蔵。速くてシャープ、本物の肌と髪のディテールを加えます。\n- VOSR2 や SeedVR2 のほんの一部の時間で、しかも高品質。\n- **detect_faces** が顔を自動で見つけ、顔の上の Relay の粒状感を抑えるので、肌の見た目がそのまま残ります。\n- 💡 ディテーラーを使った場合や肌全体を守りたい場合は、マスクを **protect_mask** につなぎます。detect_faces より優先されます。\n\n- ✋ **初回使用時にモデルをダウンロードします：** 拡大サイズごとに 5.2 GB と 128 MB の VAE、顔検出用に 55 MB。開始するとトーストが出ます。Stop でキャンセル。もう持っている？ どこに置いてあっても見つかります。\n\n---\n\n### 動画 🎥\n\n- **2x 顔オン** がデフォルト。動いている映像では目はまっすぐ顔に向かい、それ以外は背景のノイズになります。\n    - **顔オフ** は時間やファイルサイズが問題になるときだけ使います。\n- **4x** は 8 GB のカードでも動きますが、動いている映像では 2x とほとんど違いが分かりません。余分なシャープさでかえって悪く見えることもあります。\n- **LC Save Video** の **relay** 入力で保存します。数フレームずつ保存するので、拡大した動画が丸ごとメモリに乗ることはありません（5 秒の 4x：12 GB ではなく 0.3 GB）。\n    - Relay ノードの **image** 出力は空けておきます。つなぐと結局フル動画が作られます。\n\n| 動画 | 2x 顔オン | 2x 顔オフ | 4x 顔オン | 4x 顔オフ |\n|---|---|---|---|---|\n| 960 x 544、5 秒、24 fps | 13 秒（推定） | 12 秒 | 36 秒（推定） | 34 秒 |\n| 896 x 1152、6.6 秒、24 fps | 26 秒（推定） | 22 - 24 秒 | 78 秒（推定） | 72 - 75 秒 |\n| 832 x 1056、15 秒、48 fps | 46 秒 | 40 秒 | 2.7 分 | 2.6 分 |\n| **8 GB ノートPC：** 960 x 544、5 秒、24 fps | 28 秒（推定） | 27 秒 | 2 分（推定） | 118 秒 |\n| **8 GB ノートPC：** 832 x 1056、15 秒、48 fps | 4 分 | 3.9 分 | 18 分（推定） | 17 分（推定） |\n\n\\* 注記がなければ RTX 5090、ノートPC は RTX 5060 8 GB。モデルはダウンロード済み。顔オンは 3 フレームごとに顔を検出し、約 4 - 15 % 余分にかかります（15 秒のクリップで実測）。（推定）は実測値から換算しています。\n- 💡 8 GB のカードでは VRAM が一定のまま（2x で 7.4 GB）なので、長いクリップでも極端に遅くなりません。5090 が 2x で 13 GB、4x で 24 GB 使ったのは、空きがあったからにすぎません。\n- ⚠️ **16 GB RAM：** Relay が始まる前に、フレームはすでにメモリに乗っています。15 秒、48 fps のクリップはピーク 18.5 GB。\n    - クリップは短くするか、フレーム補間の **前に** 拡大します（フレームが半分、RAM も半分）。推奨、未テスト。\n\n---\n\n### 画像 🖼️\n\n- 画像は実際にズームして見られるので、ここでは 4x の価値があります。画像なら顔オンの時間はほぼゼロ（4x でオンでもオフでも約 4 秒、1056 x 1320 の画像で 6 秒）。\n- **品質の順番：**\n    - 4x 顔オン\n    - 2x 顔オン\n    - 4x 顔オフ\n    - 2x 顔オフ\n- **リアル系と写真：** 顔オン。\n- **線画、アニメ、ペイント系など：** 顔しだい。\n    - なめらかな肌やペイントの肌：顔オン（そこでは粒状感はただのノイズ）。\n    - そばかす、ハッチング、その他描き込まれたディテール：顔オフ。そうしないとそのディテールがぼやけます。\n- 群衆の中の小さな顔：オンでもオフでも見た目の違いはありません。\n\n**💡 コツ**\n- 顔の守り具合は **mask_protect_strength** で調整します。\n- シャープさは **detail** で調整します。\n\n---\n\n### 設定 ⚙️\n\n- **source：**\n    - **video：** フレーム同士を合わせるので、動画が安定します。動画から来たものすべてに使います。\n    - **image：** 画像ごとに個別に拡大するので、画像間で何も引き継がれません。別々の画像のバッチに使います。画像1枚ならどちらでも同じ結果です。\n- **upscale：** 動画は 2x、画像は 4x。それぞれ別のモデルです。\n- **detail：** 1.0 がモデルのフル出力。下げるほど普通の拡大に近づきます。\n- **detect_faces：** 通常はオン。そばかすやハッチングのある描かれた顔ではオフ。\n- **mask_protect_strength：** Relay のディテールが顔にどれだけ乗るか。デフォルトは 0.5。上げると様式化された顔のテクスチャがより残ります。\n\n---\n\n### 手動ダウンロード 📂（任意）\n\n- ノードは初回使用時にこれらをダウンロードします。実行中に待ちたくなければ、自分で先に入手してください。\n\n- [Relay 2x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---",
-              "src": "e33e674f",
-              "srcTitle": "Relay Notes"
-            },
-            "ko": {
-              "text": "## LC Relay VSR Upscale 🧩\n\n**이게 뭔가요?**\n- 영상과 사진을 한 번에 키우는 업스케일러(2x 또는 4x). 모델, VAE, 샘플러가 모두 내장되어 있습니다. 빠르고 선명하며, 실제 피부와 머리카락 디테일을 더합니다.\n- VOSR2나 SeedVR2에 걸리는 시간의 일부만 들고, 품질은 더 높습니다.\n- **detect_faces**가 얼굴을 스스로 찾아 얼굴 위의 Relay 그레인을 눌러 주므로, 피부가 원래 모습을 유지합니다.\n- 💡 디테일러를 썼거나 피부 전체를 보호하고 싶다면 마스크를 **protect_mask**에 연결하세요. detect_faces보다 우선합니다.\n\n- ✋ **첫 사용 시 모델을 다운로드합니다:** 업스케일 크기마다 5.2 GB와 128 MB VAE, 얼굴 감지용 55 MB. 시작하면 토스트 알림이 뜹니다. Stop을 누르면 취소됩니다. 이미 있나요? 어디에 두었든 찾아냅니다.\n\n---\n\n### 영상 🎥\n\n- **2x 얼굴 켜기**가 기본입니다. 화면이 움직일 때 눈은 곧장 얼굴로 가고, 나머지는 배경 노이즈가 됩니다.\n    - **얼굴 끄기**는 시간이나 파일 크기가 문제일 때만 쓰세요.\n- **4x**는 8 GB 카드에서도 돌아가지만, 움직이는 영상에서는 2x와 거의 차이가 없습니다. 오히려 과한 선명함 때문에 더 나빠 보일 수 있습니다.\n- **LC Save Video**의 **relay** 입력으로 저장하세요. 몇 프레임씩 저장하므로, 업스케일된 영상이 통째로 RAM에 올라가지 않습니다(5초 4x: 12 GB 대신 0.3 GB).\n    - Relay 노드의 **image** 출력은 비워 두세요. 연결하면 결국 전체 영상이 만들어집니다.\n\n| 영상 | 2x 얼굴 켜기 | 2x 얼굴 끄기 | 4x 얼굴 켜기 | 4x 얼굴 끄기 |\n|---|---|---|---|---|\n| 960 x 544, 5초, 24 fps | 13초 (추정) | 12초 | 36초 (추정) | 34초 |\n| 896 x 1152, 6.6초, 24 fps | 26초 (추정) | 22 - 24초 | 78초 (추정) | 72 - 75초 |\n| 832 x 1056, 15초, 48 fps | 46초 | 40초 | 2.7분 | 2.6분 |\n| **8 GB 노트북:** 960 x 544, 5초, 24 fps | 28초 (추정) | 27초 | 2분 (추정) | 118초 |\n| **8 GB 노트북:** 832 x 1056, 15초, 48 fps | 4분 | 3.9분 | 18분 (추정) | 17분 (추정) |\n\n\\* 따로 적지 않으면 RTX 5090, 노트북은 RTX 5060 8 GB. 모델은 다운로드된 상태. 얼굴 켜기는 3프레임마다 얼굴을 찾으며 약 4 - 15 % 더 걸립니다(15초 클립에서 측정). (추정)은 측정값을 바탕으로 계산했습니다.\n- 💡 8 GB 카드에서는 VRAM이 일정하게 유지되므로(2x에서 7.4 GB), 긴 클립도 크게 느려지지 않습니다. 5090이 2x에서 13 GB, 4x에서 24 GB를 쓴 것은 여유가 있었기 때문일 뿐입니다.\n- ⚠️ **16 GB RAM:** Relay가 시작되기 전에 프레임이 이미 RAM에 올라가 있습니다. 15초, 48 fps 클립은 최고 18.5 GB였습니다.\n    - 클립을 짧게 하거나, 프레임 보간 **전에** 업스케일하세요(프레임 절반, RAM 절반). 권장, 테스트 안 됨.\n\n---\n\n### 사진 🖼️\n\n- 사람들은 사진을 실제로 확대해서 보므로, 여기서는 4x가 그만한 값을 합니다. 사진에서는 얼굴 켜기에 드는 시간이 거의 없습니다(4x에서 켜든 끄든 약 4초, 1056 x 1320 사진은 6초).\n- **품질 순서:**\n    - 4x 얼굴 켜기\n    - 2x 얼굴 켜기\n    - 4x 얼굴 끄기\n    - 2x 얼굴 끄기\n- **실사와 사진:** 얼굴 켜기.\n- **라인아트, 애니메이션, 페인팅 등:** 얼굴에 따라 다릅니다.\n    - 매끈하거나 칠한 피부: 얼굴 켜기(거기서는 그레인이 그냥 노이즈입니다).\n    - 주근깨, 해칭 등 그려 넣은 디테일: 얼굴 끄기. 안 그러면 그 디테일이 뭉개집니다.\n- 군중 속 작은 얼굴: 켜든 끄든 눈에 띄는 차이가 없습니다.\n\n**💡 팁**\n- 얼굴을 얼마나 보호할지는 **mask_protect_strength**로 조절합니다.\n- 선명도는 **detail**로 조절합니다.\n\n---\n\n### 설정 ⚙️\n\n- **source:**\n    - **video:** 프레임끼리 서로 맞추므로 영상이 안정적입니다. 영상에서 나온 것에는 모두 이것을 쓰세요.\n    - **image:** 사진마다 따로 업스케일하므로 사진 사이에 아무것도 이어지지 않습니다. 서로 다른 사진 묶음에 쓰세요. 사진 한 장은 어느 쪽이든 결과가 같습니다.\n- **upscale:** 영상은 2x, 사진은 4x. 각각 별도의 모델입니다.\n- **detail:** 1.0이 모델의 전체 출력입니다. 낮출수록 일반 업스케일에 가까워집니다.\n- **detect_faces:** 보통 켭니다. 주근깨나 해칭이 있는 그린 얼굴에서는 끕니다.\n- **mask_protect_strength:** Relay의 디테일이 얼굴에 얼마나 남는지. 기본값 0.5. 높이면 스타일화된 얼굴에 텍스처가 더 남습니다.\n\n---\n\n### 수동 다운로드 📂 (선택)\n\n- 노드가 첫 사용 시 이 파일들을 다운로드합니다. 실행 도중 기다리기 싫다면 직접 받아 두세요.\n\n- [Relay 2x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---",
-              "src": "e33e674f",
-              "srcTitle": "Relay Notes"
-            }
-          },
-          "titles": {
-            "en": "Relay Notes",
-            "zh": "中继笔记",
-            "zh-TW": "中繼筆記",
-            "ja": "リレーノート 📝",
-            "ko": "릴레이 노트"
-          }
-        },
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "English ✏️",
-        "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n- A one-step upscaler for video and pictures (2x or 4x). The model, VAE and sampler are built in. Fast, sharp, and it adds real skin and hair detail.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- **detect_faces** finds the faces on its own and holds back Relay's grain on them, so skin keeps its look.\n- 💡 If you used detailers or want all skin protected, wire a mask into **protect_mask**. It overrides detect_faces.\n\n- ✋ **First use downloads the models:** 5.2 GB per upscale size plus a 128 MB VAE, and 55 MB for the face finder. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n---\n\n### Videos 🎥\n\n- **2x faces on** is the default. Your eye goes straight to the faces when things are moving, and everything else is background noise.\n    - Use **faces off** only when time or file size is the problem.\n- **4x** runs on an 8 GB card, but on a moving video it looks barely different from 2x. Extra sharpness can actually make it look worse.\n- Save with **LC Save Video**'s **relay** input. It saves a few frames at a time, so the upscaled video never sits in RAM (5 s at 4x: 0.3 GB instead of 12 GB).\n    - Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n| Video | 2x faces on | 2x faces off | 4x faces on | 4x faces off |\n|---|---|---|---|---|\n| 960 x 544, 5 s, 24 fps | 13 s (est.) | 12 s | 36 s (est.) | 34 s |\n| 896 x 1152, 6.6 s, 24 fps | 26 s (est.) | 22 - 24 s | 78 s (est.) | 72 - 75 s |\n| 832 x 1056, 15 s, 48 fps | 46 s | 40 s | 2.7 min | 2.6 min |\n| **8 GB laptop:** 960 x 544, 5 s, 24 fps | 28 s (est.) | 27 s | 2 min (est.) | 118 s |\n| **8 GB laptop:** 832 x 1056, 15 s, 48 fps | 4 min | 3.9 min | 18 min (est.) | 17 min (est.) |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. Models already downloaded. Faces on finds the faces every 3rd frame and costs about 4 - 15 % (measured on the 15 s clip). (est.) rows are scaled from the measured ones.\n- 💡 VRAM stays flat on 8 GB cards (7.4 GB at 2x), so long clips do not slow to a crawl. The 5090 used 13 GB at 2x and 24 GB at 4x only because it had it free.\n- ⚠️ **16 GB RAM:** the frames sit in RAM before Relay even starts. The 15 s, 48 fps clip peaked at 18.5 GB.\n    - Keep clips short, or upscale **before** frame interpolation (half the frames, half the RAM). Recommended, not tested.\n\n---\n\n### Pictures 🖼️\n\n- People actually zoom in on a picture, so 4x is worth it here. Faces cost nothing on a picture (about 4 s either way at 4x, 6 s for a 1056 x 1320 picture).\n- **Quality order:**\n    - 4x faces on\n    - 2x faces on\n    - 4x faces off\n    - 2x faces off\n- **Realism and photos:** faces on.\n- **Lineart, anime, painted, etc.:** depends on the face.\n    - Smooth or painted skin: faces on (the grain is just noise there).\n    - Freckles, hatching or other drawn detail: faces off, or that detail goes soft.\n- Small faces in a crowd: on or off makes no visible difference.\n\n**💡 Tips & tricks**\n- Adjust how much the faces are protected with **mask_protect_strength**.\n- Adjust the sharpness with **detail**.\n\n---\n\n### Settings ⚙️\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x for video, 4x for pictures. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n- **detect_faces:** typically on. Off for drawn faces with freckles or hatching.\n- **mask_protect_strength:** how much of Relay's detail still lands on the face. 0.5 is the default. Raise it to keep more texture on stylized faces.\n\n---\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---"
-      ],
-      "widgets_values_named": {
-        "language": "English ✏️",
-        "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n- A one-step upscaler for video and pictures (2x or 4x). The model, VAE and sampler are built in. Fast, sharp, and it adds real skin and hair detail.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- **detect_faces** finds the faces on its own and holds back Relay's grain on them, so skin keeps its look.\n- 💡 If you used detailers or want all skin protected, wire a mask into **protect_mask**. It overrides detect_faces.\n\n- ✋ **First use downloads the models:** 5.2 GB per upscale size plus a 128 MB VAE, and 55 MB for the face finder. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n---\n\n### Videos 🎥\n\n- **2x faces on** is the default. Your eye goes straight to the faces when things are moving, and everything else is background noise.\n    - Use **faces off** only when time or file size is the problem.\n- **4x** runs on an 8 GB card, but on a moving video it looks barely different from 2x. Extra sharpness can actually make it look worse.\n- Save with **LC Save Video**'s **relay** input. It saves a few frames at a time, so the upscaled video never sits in RAM (5 s at 4x: 0.3 GB instead of 12 GB).\n    - Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n| Video | 2x faces on | 2x faces off | 4x faces on | 4x faces off |\n|---|---|---|---|---|\n| 960 x 544, 5 s, 24 fps | 13 s (est.) | 12 s | 36 s (est.) | 34 s |\n| 896 x 1152, 6.6 s, 24 fps | 26 s (est.) | 22 - 24 s | 78 s (est.) | 72 - 75 s |\n| 832 x 1056, 15 s, 48 fps | 46 s | 40 s | 2.7 min | 2.6 min |\n| **8 GB laptop:** 960 x 544, 5 s, 24 fps | 28 s (est.) | 27 s | 2 min (est.) | 118 s |\n| **8 GB laptop:** 832 x 1056, 15 s, 48 fps | 4 min | 3.9 min | 18 min (est.) | 17 min (est.) |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. Models already downloaded. Faces on finds the faces every 3rd frame and costs about 4 - 15 % (measured on the 15 s clip). (est.) rows are scaled from the measured ones.\n- 💡 VRAM stays flat on 8 GB cards (7.4 GB at 2x), so long clips do not slow to a crawl. The 5090 used 13 GB at 2x and 24 GB at 4x only because it had it free.\n- ⚠️ **16 GB RAM:** the frames sit in RAM before Relay even starts. The 15 s, 48 fps clip peaked at 18.5 GB.\n    - Keep clips short, or upscale **before** frame interpolation (half the frames, half the RAM). Recommended, not tested.\n\n---\n\n### Pictures 🖼️\n\n- People actually zoom in on a picture, so 4x is worth it here. Faces cost nothing on a picture (about 4 s either way at 4x, 6 s for a 1056 x 1320 picture).\n- **Quality order:**\n    - 4x faces on\n    - 2x faces on\n    - 4x faces off\n    - 2x faces off\n- **Realism and photos:** faces on.\n- **Lineart, anime, painted, etc.:** depends on the face.\n    - Smooth or painted skin: faces on (the grain is just noise there).\n    - Freckles, hatching or other drawn detail: faces off, or that detail goes soft.\n- Small faces in a crowd: on or off makes no visible difference.\n\n**💡 Tips & tricks**\n- Adjust how much the faces are protected with **mask_protect_strength**.\n- Adjust the sharpness with **detail**.\n\n---\n\n### Settings ⚙️\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x for video, 4x for pictures. Each one is its own model.\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n- **detect_faces:** typically on. Off for drawn faces with freckles or hatching.\n- **mask_protect_strength:** how much of Relay's detail still lands on the face. 0.5 is the default. Raise it to keep more texture on stylized faces.\n\n---\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   └── relayvsr_x4_int8_convrot (5.2 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```\n\n---"
-      },
-      "color": "#2E3A46",
-      "bgcolor": "#2E3A46"
-    },
-    {
       "id": 57,
       "type": "LCRelayVSRUpscale",
       "pos": [
@@ -1388,7 +1314,7 @@
       ],
       "size": [
         300,
-        220
+        250
       ],
       "flags": {},
       "order": 32,
@@ -1452,7 +1378,8 @@
         8675309,
         "fixed",
         1,
-        0.5
+        0.5,
+        true
       ],
       "widgets_values_named": {
         "source": "image",
@@ -1460,7 +1387,8 @@
         "seed": 8675309,
         "control_after_generate": "fixed",
         "detail": 1,
-        "mask_protect_strength": 0.5
+        "mask_protect_strength": 0.5,
+        "detect_faces": true
       },
       "color": "#324b4b",
       "bgcolor": "#324b4b"
@@ -1470,15 +1398,15 @@
       "type": "LCRelayVSRUpscale",
       "pos": [
         2390,
-        -2320
+        -2310
       ],
       "size": [
         320,
-        220
+        250
       ],
       "flags": {},
       "order": 22,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "image",
@@ -1537,7 +1465,8 @@
         8675309,
         "fixed",
         1,
-        0.5
+        0.5,
+        true
       ],
       "widgets_values_named": {
         "source": "video",
@@ -1545,7 +1474,8 @@
         "seed": 8675309,
         "control_after_generate": "fixed",
         "detail": 1,
-        "mask_protect_strength": 0.5
+        "mask_protect_strength": 0.5,
+        "detect_faces": true
       },
       "color": "#324b4b",
       "bgcolor": "#324b4b"
@@ -1554,20 +1484,20 @@
       "id": 59,
       "type": "LCLabel",
       "pos": [
-        3008,
+        3000,
         -3330
       ],
       "size": [
-        188,
+        262,
         121
       ],
       "flags": {},
-      "order": 18,
+      "order": 17,
       "mode": 0,
       "inputs": [],
       "outputs": [],
       "properties": {
-        "text": "V3.0\n",
+        "text": "V3.0.2",
         "font": "Oswald",
         "size": 98,
         "bold": true,
@@ -1588,7 +1518,7 @@
         "cnr_id": "ComfyUI_LC123_nodes",
         "ver": "e9d3f5fa5d7d6c0f603b2e19f8a8bf458ee3b8ec",
         "Node name for S&R": "LCLabel",
-        "_w": 188,
+        "_w": 262,
         "_h": 121,
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -1747,7 +1677,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 19,
+      "order": 18,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1900,16 +1830,16 @@
       "id": 68,
       "type": "LCNote",
       "pos": [
-        2390,
-        -2060
+        2730,
+        -2150
       ],
       "size": [
-        320,
-        350
+        300,
+        400
       ],
       "flags": {},
-      "order": 20,
-      "mode": 4,
+      "order": 19,
+      "mode": 0,
       "inputs": [],
       "outputs": [],
       "properties": {
@@ -1964,7 +1894,7 @@
       "type": "LCSaveVideo",
       "pos": [
         3040,
-        -2360
+        -2350
       ],
       "size": [
         300,
@@ -1972,7 +1902,7 @@
       ],
       "flags": {},
       "order": 31,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "images",
@@ -2061,8 +1991,7 @@
         false,
         false,
         true,
-        true,
-        ""
+        true
       ],
       "widgets_values_named": {
         "frame_rate": 24,
@@ -2075,8 +2004,7 @@
         "civitai_still": false,
         "pingpong": false,
         "save_output": true,
-        "prune_outputs": true,
-        "lc_video_preview": ""
+        "prune_outputs": true
       },
       "color": "#1a5a7a",
       "bgcolor": "#1a5a7a"
@@ -2093,7 +2021,7 @@
         221
       ],
       "flags": {},
-      "order": 21,
+      "order": 20,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -2225,11 +2153,11 @@
       "type": "LCPreviewMask",
       "pos": [
         2760,
-        -2770
+        -2740
       ],
       "size": [
         180,
-        220
+        200
       ],
       "flags": {},
       "order": 33,
@@ -2267,6 +2195,78 @@
       },
       "color": "#222",
       "bgcolor": "#000"
+    },
+    {
+      "id": 73,
+      "type": "LCNote",
+      "pos": [
+        1190,
+        -2440
+      ],
+      "size": [
+        430,
+        890
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 21,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Relay Notes",
+      "properties": {
+        "lc_note": {
+          "source": "en",
+          "texts": {
+            "en": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n- A one-step upscaler for video and pictures (2x or 4x). The model, VAE and sampler are built in. Fast, sharp, and it adds real skin and hair detail.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- **detect_faces** finds the faces on its own and holds back Relay's grain on them, so skin keeps its look.\n- 💡 If you used detailers or want all skin protected, wire a mask into **protect_mask**. It overrides detect_faces.\n\n- ✋ **First use downloads the models:** 5.2 GB per upscale size (10 GB for bf16) plus a 128 MB VAE, and 55 MB for the face finder. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n---\n\n### Videos 🎥\n\n- **2x faces on** is the default. Your eye goes straight to the faces when things are moving, and everything else is background noise.\n    - Use **faces off** only when time or file size is the problem.\n- **4x** runs on an 8 GB card, but on a moving video it looks barely different from 2x. Extra sharpness can actually make it look worse.\n- Save with **LC Save Video**'s **relay** input. It saves a few frames at a time, so the upscaled video never sits in RAM (5 s at 4x: 0.3 GB instead of 12 GB).\n    - Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n| Video | 2x faces on | 2x faces off | 4x faces on | 4x faces off |\n|---|---|---|---|---|\n| 960 x 544, 5 s, 24 fps | 13 s (est.) | 12 s | 36 s (est.) | 34 s |\n| 896 x 1152, 6.6 s, 24 fps | 26 s (est.) | 22 - 24 s | 78 s (est.) | 72 - 75 s |\n| 832 x 1056, 15 s, 48 fps | 46 s | 40 s | 2.7 min | 2.6 min |\n| **8 GB laptop:** 960 x 544, 5 s, 24 fps | 28 s (est.) | 27 s | 2 min (est.) | 118 s |\n| **8 GB laptop:** 832 x 1056, 15 s, 48 fps | 4 min | 3.9 min | 18 min (est.) | 17 min (est.) |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. Models already downloaded. Faces on finds the faces every 3rd frame and costs about 4 - 15 % (measured on the 15 s clip). (est.) rows are scaled from the measured ones.\n- 💡 VRAM stays flat on 8 GB cards (7.4 GB at 2x), so long clips do not slow to a crawl. The 5090 used 13 GB at 2x and 24 GB at 4x only because it had it free.\n- ⚠️ **16 GB RAM:** the frames sit in RAM before Relay even starts. The 15 s, 48 fps clip peaked at 18.5 GB.\n    - Keep clips short, or upscale **before** frame interpolation (half the frames, half the RAM). Recommended, not tested.\n\n---\n\n### Pictures 🖼️\n\n- People actually zoom in on a picture, so 4x is worth it here. Faces cost nothing on a picture (about 4 s either way at 4x, 6 s for a 1056 x 1320 picture).\n- **Quality order:**\n    - 4x faces on\n    - 2x faces on\n    - 4x faces off\n    - 2x faces off\n- **Realism and photos:** faces on.\n- **Lineart, anime, painted, etc.:** depends on the face.\n    - Smooth or painted skin: faces on (the grain is just noise there).\n    - Freckles, hatching or other drawn detail: faces off, or that detail goes soft.\n- Small faces in a crowd: on or off makes no visible difference.\n\n**💡 Tips & tricks**\n- Adjust how much the faces are protected with **mask_protect_strength**.\n- Adjust the sharpness with **detail**.\n\n---\n\n### Settings ⚙️\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x for video, 4x for pictures. Each one is its own model.\n    - **2x bf16 / 4x bf16 (10 GB):** the original release. It's an option, but not noticeably different, and it uses about 5 GB more VRAM.\n        - Quality: practically identical. The average difference is 0.12 - 0.21 levels out of 255, and the 100% crops can't be told apart.\n        - 4x on a 5090: pictures 4 s either way (10 - 11 GB vs 15 - 17 GB VRAM), a 3 s clip 22 s vs 25 s (19 GB vs 24 GB).\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n- **detect_faces:** typically on. Off for drawn faces with freckles or hatching.\n- **mask_protect_strength:** how much of Relay's detail still lands on the face. 0.5 is the default. Raise it to keep more texture on stylized faces.\n\n---\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 model (optional, 10 GB)](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 model (optional, 10 GB)](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, optional, 10 GB)\n    │   └── wan (4x bf16, optional, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```"
+            },
+            "zh": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**这是什么？**\n- 一步完成的视频和图片放大器（2x 或 4x）。模型、VAE 和采样器都已内置。速度快、清晰，还能添加真实的皮肤和头发细节。\n- 耗时只有 VOSR2 或 SeedVR2 的一小部分，质量更高。\n- **detect_faces** 会自动找到人脸，并压住 Relay 在脸上的颗粒，让皮肤保持原样。\n- 💡 如果你用了检测修复（detailer），或想保护全部皮肤，把遮罩接到 **protect_mask**。它会覆盖 detect_faces。\n\n- ✋ **首次使用会下载模型：** 每种放大倍数 5.2 GB（bf16 为 10 GB），加一个 128 MB 的 VAE，人脸检测另需 55 MB。开始时会弹出提示。按 Stop 可取消。已经有了？无论放在哪里都能找到。\n\n---\n\n### 视频 🎥\n\n- **2x 开启人脸** 是默认设置。画面在动时，眼睛会直接盯住人脸，其余部分都成了背景噪声。\n    - 只有在时间或文件大小成为问题时，才使用 **关闭人脸**。\n- **4x** 能在 8 GB 显卡上运行，但在运动的视频里和 2x 几乎看不出区别。多出来的锐度反而可能让画面更难看。\n- 用 **LC Save Video** 的 **relay** 输入保存。它一次只保存几帧，放大后的视频永远不会整个放进内存（5 秒 4x：0.3 GB，而不是 12 GB）。\n    - Relay 节点的 **image** 输出保持空着，否则还是会生成完整视频。\n\n| 视频 | 2x 开启人脸 | 2x 关闭人脸 | 4x 开启人脸 | 4x 关闭人脸 |\n|---|---|---|---|---|\n| 960 x 544，5 秒，24 fps | 13 秒（估计） | 12 秒 | 36 秒（估计） | 34 秒 |\n| 896 x 1152，6.6 秒，24 fps | 26 秒（估计） | 22 - 24 秒 | 78 秒（估计） | 72 - 75 秒 |\n| 832 x 1056，15 秒，48 fps | 46 秒 | 40 秒 | 2.7 分钟 | 2.6 分钟 |\n| **8 GB 笔记本：** 960 x 544，5 秒，24 fps | 28 秒（估计） | 27 秒 | 2 分钟（估计） | 118 秒 |\n| **8 GB 笔记本：** 832 x 1056，15 秒，48 fps | 4 分钟 | 3.9 分钟 | 18 分钟（估计） | 17 分钟（估计） |\n\n\\* 除注明外均为 RTX 5090，笔记本为 RTX 5060 8 GB。模型已下载。开启人脸时每 3 帧检测一次人脸，多花约 4 - 15 %（在 15 秒片段上实测）。（估计）一栏由实测数据推算。\n- 💡 8 GB 显卡上显存占用保持平稳（2x 时 7.4 GB），所以长片段不会越跑越慢。5090 在 2x 用了 13 GB、4x 用了 24 GB，只是因为它有空闲显存。\n- ⚠️ **16 GB 内存：** 在 Relay 开始之前，所有帧就已经放在内存里了。15 秒、48 fps 的片段峰值为 18.5 GB。\n    - 片段保持简短，或者在插帧 **之前** 放大（帧数减半，内存减半）。推荐做法，未测试。\n\n---\n\n### 图片 🖼️\n\n- 人们真的会放大查看图片，所以这里 4x 值得。图片上开启人脸几乎不花时间（4x 时开关都约 4 秒，1056 x 1320 的图片约 6 秒）。\n- **质量排序：**\n    - 4x 开启人脸\n    - 2x 开启人脸\n    - 4x 关闭人脸\n    - 2x 关闭人脸\n- **写实和照片：** 开启人脸。\n- **线稿、动漫、绘画等：** 取决于脸。\n    - 光滑或绘画式的皮肤：开启人脸（那里的颗粒只是噪声）。\n    - 雀斑、排线或其他画出来的细节：关闭人脸，否则这些细节会变软。\n- 人群里的小脸：开或关看不出区别。\n\n**💡 小技巧**\n- 用 **mask_protect_strength** 调整人脸受保护的程度。\n- 用 **detail** 调整锐度。\n\n---\n\n### 设置 ⚙️\n\n- **source：**\n    - **video：** 帧与帧之间相互匹配，视频保持稳定。凡是来自视频的内容都用它。\n    - **image：** 每张图片单独放大，彼此之间不会互相影响。用于一批不同的图片。单张图片两种方式结果相同。\n- **upscale：** 视频用 2x，图片用 4x。每种都是独立的模型。\n    - **2x bf16 / 4x bf16（10 GB）：** 原始版本。可以选，但看不出明显区别，还要多用约 5 GB 显存。\n        - 画质：几乎一样。平均差异只有 0.12 - 0.21（满分 255），100% 裁切图也看不出区别。\n        - 5090 上 4x：图片都是 4 秒（显存 10 - 11 GB 对 15 - 17 GB），3 秒视频 22 秒对 25 秒（19 GB 对 24 GB）。\n- **detail：** 1.0 是完整的模型输出。调低会更接近普通放大。\n- **detect_faces：** 通常开启。对带雀斑或排线的手绘脸关闭。\n- **mask_protect_strength：** Relay 的细节还有多少会落到脸上。默认 0.5。调高可以在风格化的脸上保留更多纹理。\n\n---\n\n### 手动下载 📂（可选）\n\n- 节点会在首次使用时下载这些文件。不想在运行中途等待的话，可以自己先下载。\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 模型（可选，10 GB）](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 模型（可选，10 GB）](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, 可选, 10 GB)\n    │   └── wan (4x bf16, 可选, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```",
+              "src": "36dc9909",
+              "srcTitle": "Relay Notes"
+            },
+            "zh-TW": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**這是什麼？**\n- 一步完成的影片和圖片放大器（2x 或 4x）。模型、VAE 和取樣器都已內建。速度快、清晰，還能加上真實的皮膚和頭髮細節。\n- 耗時只有 VOSR2 或 SeedVR2 的一小部分，品質更高。\n- **detect_faces** 會自動找到人臉，並壓住 Relay 在臉上的顆粒，讓皮膚保持原樣。\n- 💡 如果你用了細節修復（detailer），或想保護全部皮膚，把遮罩接到 **protect_mask**。它會覆蓋 detect_faces。\n\n- ✋ **第一次使用會下載模型：** 每種放大倍數 5.2 GB（bf16 為 10 GB），加一個 128 MB 的 VAE，人臉偵測另需 55 MB。開始時會跳出提示。按 Stop 可取消。已經有了？不論放在哪裡都找得到。\n\n---\n\n### 影片 🎥\n\n- **2x 開啟人臉** 是預設設定。畫面在動時，眼睛會直接盯著人臉，其餘部分都成了背景雜訊。\n    - 只有在時間或檔案大小成為問題時，才使用 **關閉人臉**。\n- **4x** 能在 8 GB 顯示卡上執行，但在動態影片裡和 2x 幾乎看不出差別。多出來的銳利度反而可能讓畫面更難看。\n- 用 **LC Save Video** 的 **relay** 輸入儲存。它一次只存幾格，放大後的影片永遠不會整個放進記憶體（5 秒 4x：0.3 GB，而不是 12 GB）。\n    - Relay 節點的 **image** 輸出保持空著，否則還是會產生完整影片。\n\n| 影片 | 2x 開啟人臉 | 2x 關閉人臉 | 4x 開啟人臉 | 4x 關閉人臉 |\n|---|---|---|---|---|\n| 960 x 544，5 秒，24 fps | 13 秒（估計） | 12 秒 | 36 秒（估計） | 34 秒 |\n| 896 x 1152，6.6 秒，24 fps | 26 秒（估計） | 22 - 24 秒 | 78 秒（估計） | 72 - 75 秒 |\n| 832 x 1056，15 秒，48 fps | 46 秒 | 40 秒 | 2.7 分鐘 | 2.6 分鐘 |\n| **8 GB 筆電：** 960 x 544，5 秒，24 fps | 28 秒（估計） | 27 秒 | 2 分鐘（估計） | 118 秒 |\n| **8 GB 筆電：** 832 x 1056，15 秒，48 fps | 4 分鐘 | 3.9 分鐘 | 18 分鐘（估計） | 17 分鐘（估計） |\n\n\\* 除註明外皆為 RTX 5090，筆電為 RTX 5060 8 GB。模型已下載。開啟人臉時每 3 格偵測一次人臉，多花約 4 - 15 %（在 15 秒片段上實測）。（估計）欄位由實測數據推算。\n- 💡 8 GB 顯示卡上顯存占用保持平穩（2x 時 7.4 GB），所以長片段不會越跑越慢。5090 在 2x 用了 13 GB、4x 用了 24 GB，只是因為它有空閒顯存。\n- ⚠️ **16 GB 記憶體：** 在 Relay 開始之前，所有畫格就已經放在記憶體裡了。15 秒、48 fps 的片段峰值為 18.5 GB。\n    - 片段保持簡短，或者在補幀 **之前** 放大（畫格減半，記憶體減半）。建議做法，未測試。\n\n---\n\n### 圖片 🖼️\n\n- 大家真的會放大檢視圖片，所以這裡 4x 值得。圖片上開啟人臉幾乎不花時間（4x 時開關都約 4 秒，1056 x 1320 的圖片約 6 秒）。\n- **品質排序：**\n    - 4x 開啟人臉\n    - 2x 開啟人臉\n    - 4x 關閉人臉\n    - 2x 關閉人臉\n- **寫實和照片：** 開啟人臉。\n- **線稿、動漫、繪畫等：** 取決於臉。\n    - 光滑或繪畫式的皮膚：開啟人臉（那裡的顆粒只是雜訊）。\n    - 雀斑、排線或其他畫出來的細節：關閉人臉，否則這些細節會變軟。\n- 人群裡的小臉：開或關看不出差別。\n\n**💡 小技巧**\n- 用 **mask_protect_strength** 調整人臉受保護的程度。\n- 用 **detail** 調整銳利度。\n\n---\n\n### 設定 ⚙️\n\n- **source：**\n    - **video：** 畫格之間互相匹配，影片保持穩定。凡是來自影片的內容都用它。\n    - **image：** 每張圖片單獨放大，彼此之間不會互相影響。用於一批不同的圖片。單張圖片兩種方式結果相同。\n- **upscale：** 影片用 2x，圖片用 4x。每種都是獨立的模型。\n    - **2x bf16 / 4x bf16（10 GB）：** 原始版本。可以選，但看不出明顯差別，還要多用約 5 GB 顯存。\n        - 畫質：幾乎一樣。平均差異只有 0.12 - 0.21（滿分 255），100% 裁切圖也看不出差別。\n        - 5090 上 4x：圖片都是 4 秒（顯存 10 - 11 GB 對 15 - 17 GB），3 秒影片 22 秒對 25 秒（19 GB 對 24 GB）。\n- **detail：** 1.0 是完整的模型輸出。調低會更接近一般放大。\n- **detect_faces：** 通常開啟。對帶雀斑或排線的手繪臉關閉。\n- **mask_protect_strength：** Relay 的細節還有多少會落到臉上。預設 0.5。調高可以在風格化的臉上保留更多紋理。\n\n---\n\n### 手動下載 📂（可選）\n\n- 節點會在第一次使用時下載這些檔案。不想在執行中途等待的話，可以自己先下載。\n\n- [Relay 2x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 模型](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 模型（選用，10 GB）](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 模型（選用，10 GB）](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, 選用, 10 GB)\n    │   └── wan (4x bf16, 選用, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```",
+              "src": "36dc9909",
+              "srcTitle": "Relay Notes"
+            },
+            "ja": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**これは何？**\n- 動画と画像を1ステップで拡大するアップスケーラー（2x または 4x）。モデル、VAE、サンプラーはすべて内蔵。速くてシャープ、本物の肌と髪のディテールを加えます。\n- VOSR2 や SeedVR2 のほんの一部の時間で、しかも高品質。\n- **detect_faces** が顔を自動で見つけ、顔の上の Relay の粒状感を抑えるので、肌の見た目がそのまま残ります。\n- 💡 ディテーラーを使った場合や肌全体を守りたい場合は、マスクを **protect_mask** につなぎます。detect_faces より優先されます。\n\n- ✋ **初回使用時にモデルをダウンロードします：** 拡大サイズごとに 5.2 GB（bf16 は 10 GB）と 128 MB の VAE、顔検出用に 55 MB。開始するとトーストが出ます。Stop でキャンセル。もう持っている？ どこに置いてあっても見つかります。\n\n---\n\n### 動画 🎥\n\n- **2x 顔オン** がデフォルト。動いている映像では目はまっすぐ顔に向かい、それ以外は背景のノイズになります。\n    - **顔オフ** は時間やファイルサイズが問題になるときだけ使います。\n- **4x** は 8 GB のカードでも動きますが、動いている映像では 2x とほとんど違いが分かりません。余分なシャープさでかえって悪く見えることもあります。\n- **LC Save Video** の **relay** 入力で保存します。数フレームずつ保存するので、拡大した動画が丸ごとメモリに乗ることはありません（5 秒の 4x：12 GB ではなく 0.3 GB）。\n    - Relay ノードの **image** 出力は空けておきます。つなぐと結局フル動画が作られます。\n\n| 動画 | 2x 顔オン | 2x 顔オフ | 4x 顔オン | 4x 顔オフ |\n|---|---|---|---|---|\n| 960 x 544、5 秒、24 fps | 13 秒（推定） | 12 秒 | 36 秒（推定） | 34 秒 |\n| 896 x 1152、6.6 秒、24 fps | 26 秒（推定） | 22 - 24 秒 | 78 秒（推定） | 72 - 75 秒 |\n| 832 x 1056、15 秒、48 fps | 46 秒 | 40 秒 | 2.7 分 | 2.6 分 |\n| **8 GB ノートPC：** 960 x 544、5 秒、24 fps | 28 秒（推定） | 27 秒 | 2 分（推定） | 118 秒 |\n| **8 GB ノートPC：** 832 x 1056、15 秒、48 fps | 4 分 | 3.9 分 | 18 分（推定） | 17 分（推定） |\n\n\\* 注記がなければ RTX 5090、ノートPC は RTX 5060 8 GB。モデルはダウンロード済み。顔オンは 3 フレームごとに顔を検出し、約 4 - 15 % 余分にかかります（15 秒のクリップで実測）。（推定）は実測値から換算しています。\n- 💡 8 GB のカードでは VRAM が一定のまま（2x で 7.4 GB）なので、長いクリップでも極端に遅くなりません。5090 が 2x で 13 GB、4x で 24 GB 使ったのは、空きがあったからにすぎません。\n- ⚠️ **16 GB RAM：** Relay が始まる前に、フレームはすでにメモリに乗っています。15 秒、48 fps のクリップはピーク 18.5 GB。\n    - クリップは短くするか、フレーム補間の **前に** 拡大します（フレームが半分、RAM も半分）。推奨、未テスト。\n\n---\n\n### 画像 🖼️\n\n- 画像は実際にズームして見られるので、ここでは 4x の価値があります。画像なら顔オンの時間はほぼゼロ（4x でオンでもオフでも約 4 秒、1056 x 1320 の画像で 6 秒）。\n- **品質の順番：**\n    - 4x 顔オン\n    - 2x 顔オン\n    - 4x 顔オフ\n    - 2x 顔オフ\n- **リアル系と写真：** 顔オン。\n- **線画、アニメ、ペイント系など：** 顔しだい。\n    - なめらかな肌やペイントの肌：顔オン（そこでは粒状感はただのノイズ）。\n    - そばかす、ハッチング、その他描き込まれたディテール：顔オフ。そうしないとそのディテールがぼやけます。\n- 群衆の中の小さな顔：オンでもオフでも見た目の違いはありません。\n\n**💡 コツ**\n- 顔の守り具合は **mask_protect_strength** で調整します。\n- シャープさは **detail** で調整します。\n\n---\n\n### 設定 ⚙️\n\n- **source：**\n    - **video：** フレーム同士を合わせるので、動画が安定します。動画から来たものすべてに使います。\n    - **image：** 画像ごとに個別に拡大するので、画像間で何も引き継がれません。別々の画像のバッチに使います。画像1枚ならどちらでも同じ結果です。\n- **upscale：** 動画は 2x、画像は 4x。それぞれ別のモデルです。\n    - **2x bf16 / 4x bf16（10 GB）：** オリジナル版。選べますが、目に見える違いはなく、VRAM を約 5 GB 多く使います。\n        - 画質：ほぼ同じ。平均差は 255 段階中 0.12 - 0.21 で、100% の切り抜きでも見分けがつきません。\n        - 5090 で 4x：画像はどちらも 4 秒（VRAM 10 - 11 GB 対 15 - 17 GB）、3 秒のクリップは 22 秒対 25 秒（19 GB 対 24 GB）。\n- **detail：** 1.0 がモデルのフル出力。下げるほど普通の拡大に近づきます。\n- **detect_faces：** 通常はオン。そばかすやハッチングのある描かれた顔ではオフ。\n- **mask_protect_strength：** Relay のディテールが顔にどれだけ乗るか。デフォルトは 0.5。上げると様式化された顔のテクスチャがより残ります。\n\n---\n\n### 手動ダウンロード 📂（任意）\n\n- ノードは初回使用時にこれらをダウンロードします。実行中に待ちたくなければ、自分で先に入手してください。\n\n- [Relay 2x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x モデル](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 モデル（任意、10 GB）](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 モデル（任意、10 GB）](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, 任意, 10 GB)\n    │   └── wan (4x bf16, 任意, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```",
+              "src": "36dc9909",
+              "srcTitle": "Relay Notes"
+            },
+            "ko": {
+              "text": "## LC Relay VSR Upscale 🧩\n\n**이게 뭔가요?**\n- 영상과 사진을 한 번에 키우는 업스케일러(2x 또는 4x). 모델, VAE, 샘플러가 모두 내장되어 있습니다. 빠르고 선명하며, 실제 피부와 머리카락 디테일을 더합니다.\n- VOSR2나 SeedVR2에 걸리는 시간의 일부만 들고, 품질은 더 높습니다.\n- **detect_faces**가 얼굴을 스스로 찾아 얼굴 위의 Relay 그레인을 눌러 주므로, 피부가 원래 모습을 유지합니다.\n- 💡 디테일러를 썼거나 피부 전체를 보호하고 싶다면 마스크를 **protect_mask**에 연결하세요. detect_faces보다 우선합니다.\n\n- ✋ **첫 사용 시 모델을 다운로드합니다:** 업스케일 크기마다 5.2 GB(bf16은 10 GB)와 128 MB VAE, 얼굴 감지용 55 MB. 시작하면 토스트 알림이 뜹니다. Stop을 누르면 취소됩니다. 이미 있나요? 어디에 두었든 찾아냅니다.\n\n---\n\n### 영상 🎥\n\n- **2x 얼굴 켜기**가 기본입니다. 화면이 움직일 때 눈은 곧장 얼굴로 가고, 나머지는 배경 노이즈가 됩니다.\n    - **얼굴 끄기**는 시간이나 파일 크기가 문제일 때만 쓰세요.\n- **4x**는 8 GB 카드에서도 돌아가지만, 움직이는 영상에서는 2x와 거의 차이가 없습니다. 오히려 과한 선명함 때문에 더 나빠 보일 수 있습니다.\n- **LC Save Video**의 **relay** 입력으로 저장하세요. 몇 프레임씩 저장하므로, 업스케일된 영상이 통째로 RAM에 올라가지 않습니다(5초 4x: 12 GB 대신 0.3 GB).\n    - Relay 노드의 **image** 출력은 비워 두세요. 연결하면 결국 전체 영상이 만들어집니다.\n\n| 영상 | 2x 얼굴 켜기 | 2x 얼굴 끄기 | 4x 얼굴 켜기 | 4x 얼굴 끄기 |\n|---|---|---|---|---|\n| 960 x 544, 5초, 24 fps | 13초 (추정) | 12초 | 36초 (추정) | 34초 |\n| 896 x 1152, 6.6초, 24 fps | 26초 (추정) | 22 - 24초 | 78초 (추정) | 72 - 75초 |\n| 832 x 1056, 15초, 48 fps | 46초 | 40초 | 2.7분 | 2.6분 |\n| **8 GB 노트북:** 960 x 544, 5초, 24 fps | 28초 (추정) | 27초 | 2분 (추정) | 118초 |\n| **8 GB 노트북:** 832 x 1056, 15초, 48 fps | 4분 | 3.9분 | 18분 (추정) | 17분 (추정) |\n\n\\* 따로 적지 않으면 RTX 5090, 노트북은 RTX 5060 8 GB. 모델은 다운로드된 상태. 얼굴 켜기는 3프레임마다 얼굴을 찾으며 약 4 - 15 % 더 걸립니다(15초 클립에서 측정). (추정)은 측정값을 바탕으로 계산했습니다.\n- 💡 8 GB 카드에서는 VRAM이 일정하게 유지되므로(2x에서 7.4 GB), 긴 클립도 크게 느려지지 않습니다. 5090이 2x에서 13 GB, 4x에서 24 GB를 쓴 것은 여유가 있었기 때문일 뿐입니다.\n- ⚠️ **16 GB RAM:** Relay가 시작되기 전에 프레임이 이미 RAM에 올라가 있습니다. 15초, 48 fps 클립은 최고 18.5 GB였습니다.\n    - 클립을 짧게 하거나, 프레임 보간 **전에** 업스케일하세요(프레임 절반, RAM 절반). 권장, 테스트 안 됨.\n\n---\n\n### 사진 🖼️\n\n- 사람들은 사진을 실제로 확대해서 보므로, 여기서는 4x가 그만한 값을 합니다. 사진에서는 얼굴 켜기에 드는 시간이 거의 없습니다(4x에서 켜든 끄든 약 4초, 1056 x 1320 사진은 6초).\n- **품질 순서:**\n    - 4x 얼굴 켜기\n    - 2x 얼굴 켜기\n    - 4x 얼굴 끄기\n    - 2x 얼굴 끄기\n- **실사와 사진:** 얼굴 켜기.\n- **라인아트, 애니메이션, 페인팅 등:** 얼굴에 따라 다릅니다.\n    - 매끈하거나 칠한 피부: 얼굴 켜기(거기서는 그레인이 그냥 노이즈입니다).\n    - 주근깨, 해칭 등 그려 넣은 디테일: 얼굴 끄기. 안 그러면 그 디테일이 뭉개집니다.\n- 군중 속 작은 얼굴: 켜든 끄든 눈에 띄는 차이가 없습니다.\n\n**💡 팁**\n- 얼굴을 얼마나 보호할지는 **mask_protect_strength**로 조절합니다.\n- 선명도는 **detail**로 조절합니다.\n\n---\n\n### 설정 ⚙️\n\n- **source:**\n    - **video:** 프레임끼리 서로 맞추므로 영상이 안정적입니다. 영상에서 나온 것에는 모두 이것을 쓰세요.\n    - **image:** 사진마다 따로 업스케일하므로 사진 사이에 아무것도 이어지지 않습니다. 서로 다른 사진 묶음에 쓰세요. 사진 한 장은 어느 쪽이든 결과가 같습니다.\n- **upscale:** 영상은 2x, 사진은 4x. 각각 별도의 모델입니다.\n    - **2x bf16 / 4x bf16 (10 GB):** 원본 릴리스. 선택할 수 있지만 눈에 띄는 차이가 없고 VRAM을 약 5 GB 더 씁니다.\n        - 화질: 사실상 같습니다. 평균 차이는 255단계 중 0.12 - 0.21이고, 100% 크롭으로도 구분이 안 됩니다.\n        - 5090에서 4x: 사진은 둘 다 4초(VRAM 10 - 11 GB 대 15 - 17 GB), 3초 클립은 22초 대 25초(19 GB 대 24 GB).\n- **detail:** 1.0이 모델의 전체 출력입니다. 낮출수록 일반 업스케일에 가까워집니다.\n- **detect_faces:** 보통 켭니다. 주근깨나 해칭이 있는 그린 얼굴에서는 끕니다.\n- **mask_protect_strength:** Relay의 디테일이 얼굴에 얼마나 남는지. 기본값 0.5. 높이면 스타일화된 얼굴에 텍스처가 더 남습니다.\n\n---\n\n### 수동 다운로드 📂 (선택)\n\n- 노드가 첫 사용 시 이 파일들을 다운로드합니다. 실행 도중 기다리기 싫다면 직접 받아 두세요.\n\n- [Relay 2x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x 모델](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 모델 (선택, 10 GB)](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 모델 (선택, 10 GB)](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, 선택, 10 GB)\n    │   └── wan (4x bf16, 선택, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```",
+              "src": "36dc9909",
+              "srcTitle": "Relay Notes"
+            }
+          },
+          "titles": {
+            "en": "Relay Notes",
+            "zh": "中继笔记",
+            "zh-TW": "中繼筆記",
+            "ja": "Relay メモ",
+            "ko": "Relay 노트"
+          }
+        },
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "English ✏️",
+        "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n- A one-step upscaler for video and pictures (2x or 4x). The model, VAE and sampler are built in. Fast, sharp, and it adds real skin and hair detail.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- **detect_faces** finds the faces on its own and holds back Relay's grain on them, so skin keeps its look.\n- 💡 If you used detailers or want all skin protected, wire a mask into **protect_mask**. It overrides detect_faces.\n\n- ✋ **First use downloads the models:** 5.2 GB per upscale size (10 GB for bf16) plus a 128 MB VAE, and 55 MB for the face finder. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n---\n\n### Videos 🎥\n\n- **2x faces on** is the default. Your eye goes straight to the faces when things are moving, and everything else is background noise.\n    - Use **faces off** only when time or file size is the problem.\n- **4x** runs on an 8 GB card, but on a moving video it looks barely different from 2x. Extra sharpness can actually make it look worse.\n- Save with **LC Save Video**'s **relay** input. It saves a few frames at a time, so the upscaled video never sits in RAM (5 s at 4x: 0.3 GB instead of 12 GB).\n    - Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n| Video | 2x faces on | 2x faces off | 4x faces on | 4x faces off |\n|---|---|---|---|---|\n| 960 x 544, 5 s, 24 fps | 13 s (est.) | 12 s | 36 s (est.) | 34 s |\n| 896 x 1152, 6.6 s, 24 fps | 26 s (est.) | 22 - 24 s | 78 s (est.) | 72 - 75 s |\n| 832 x 1056, 15 s, 48 fps | 46 s | 40 s | 2.7 min | 2.6 min |\n| **8 GB laptop:** 960 x 544, 5 s, 24 fps | 28 s (est.) | 27 s | 2 min (est.) | 118 s |\n| **8 GB laptop:** 832 x 1056, 15 s, 48 fps | 4 min | 3.9 min | 18 min (est.) | 17 min (est.) |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. Models already downloaded. Faces on finds the faces every 3rd frame and costs about 4 - 15 % (measured on the 15 s clip). (est.) rows are scaled from the measured ones.\n- 💡 VRAM stays flat on 8 GB cards (7.4 GB at 2x), so long clips do not slow to a crawl. The 5090 used 13 GB at 2x and 24 GB at 4x only because it had it free.\n- ⚠️ **16 GB RAM:** the frames sit in RAM before Relay even starts. The 15 s, 48 fps clip peaked at 18.5 GB.\n    - Keep clips short, or upscale **before** frame interpolation (half the frames, half the RAM). Recommended, not tested.\n\n---\n\n### Pictures 🖼️\n\n- People actually zoom in on a picture, so 4x is worth it here. Faces cost nothing on a picture (about 4 s either way at 4x, 6 s for a 1056 x 1320 picture).\n- **Quality order:**\n    - 4x faces on\n    - 2x faces on\n    - 4x faces off\n    - 2x faces off\n- **Realism and photos:** faces on.\n- **Lineart, anime, painted, etc.:** depends on the face.\n    - Smooth or painted skin: faces on (the grain is just noise there).\n    - Freckles, hatching or other drawn detail: faces off, or that detail goes soft.\n- Small faces in a crowd: on or off makes no visible difference.\n\n**💡 Tips & tricks**\n- Adjust how much the faces are protected with **mask_protect_strength**.\n- Adjust the sharpness with **detail**.\n\n---\n\n### Settings ⚙️\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x for video, 4x for pictures. Each one is its own model.\n    - **2x bf16 / 4x bf16 (10 GB):** the original release. It's an option, but not noticeably different, and it uses about 5 GB more VRAM.\n        - Quality: practically identical. The average difference is 0.12 - 0.21 levels out of 255, and the 100% crops can't be told apart.\n        - 4x on a 5090: pictures 4 s either way (10 - 11 GB vs 15 - 17 GB VRAM), a 3 s clip 22 s vs 25 s (19 GB vs 24 GB).\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n- **detect_faces:** typically on. Off for drawn faces with freckles or hatching.\n- **mask_protect_strength:** how much of Relay's detail still lands on the face. 0.5 is the default. Raise it to keep more texture on stylized faces.\n\n---\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 model (optional, 10 GB)](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 model (optional, 10 GB)](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, optional, 10 GB)\n    │   └── wan (4x bf16, optional, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```"
+      ],
+      "widgets_values_named": {
+        "language": "English ✏️",
+        "text": "## LC Relay VSR Upscale 🧩\n\n**What is it?**\n- A one-step upscaler for video and pictures (2x or 4x). The model, VAE and sampler are built in. Fast, sharp, and it adds real skin and hair detail.\n- A fraction of the time VOSR2 or SeedVR2 takes, and higher quality.\n- **detect_faces** finds the faces on its own and holds back Relay's grain on them, so skin keeps its look.\n- 💡 If you used detailers or want all skin protected, wire a mask into **protect_mask**. It overrides detect_faces.\n\n- ✋ **First use downloads the models:** 5.2 GB per upscale size (10 GB for bf16) plus a 128 MB VAE, and 55 MB for the face finder. A toast tells you it started. Press Stop to cancel. Already have them? They are found wherever they are.\n\n---\n\n### Videos 🎥\n\n- **2x faces on** is the default. Your eye goes straight to the faces when things are moving, and everything else is background noise.\n    - Use **faces off** only when time or file size is the problem.\n- **4x** runs on an 8 GB card, but on a moving video it looks barely different from 2x. Extra sharpness can actually make it look worse.\n- Save with **LC Save Video**'s **relay** input. It saves a few frames at a time, so the upscaled video never sits in RAM (5 s at 4x: 0.3 GB instead of 12 GB).\n    - Leave the Relay node's **image** output empty, or the full video gets built anyway.\n\n| Video | 2x faces on | 2x faces off | 4x faces on | 4x faces off |\n|---|---|---|---|---|\n| 960 x 544, 5 s, 24 fps | 13 s (est.) | 12 s | 36 s (est.) | 34 s |\n| 896 x 1152, 6.6 s, 24 fps | 26 s (est.) | 22 - 24 s | 78 s (est.) | 72 - 75 s |\n| 832 x 1056, 15 s, 48 fps | 46 s | 40 s | 2.7 min | 2.6 min |\n| **8 GB laptop:** 960 x 544, 5 s, 24 fps | 28 s (est.) | 27 s | 2 min (est.) | 118 s |\n| **8 GB laptop:** 832 x 1056, 15 s, 48 fps | 4 min | 3.9 min | 18 min (est.) | 17 min (est.) |\n\n\\* RTX 5090 unless noted, laptop is an RTX 5060 8 GB. Models already downloaded. Faces on finds the faces every 3rd frame and costs about 4 - 15 % (measured on the 15 s clip). (est.) rows are scaled from the measured ones.\n- 💡 VRAM stays flat on 8 GB cards (7.4 GB at 2x), so long clips do not slow to a crawl. The 5090 used 13 GB at 2x and 24 GB at 4x only because it had it free.\n- ⚠️ **16 GB RAM:** the frames sit in RAM before Relay even starts. The 15 s, 48 fps clip peaked at 18.5 GB.\n    - Keep clips short, or upscale **before** frame interpolation (half the frames, half the RAM). Recommended, not tested.\n\n---\n\n### Pictures 🖼️\n\n- People actually zoom in on a picture, so 4x is worth it here. Faces cost nothing on a picture (about 4 s either way at 4x, 6 s for a 1056 x 1320 picture).\n- **Quality order:**\n    - 4x faces on\n    - 2x faces on\n    - 4x faces off\n    - 2x faces off\n- **Realism and photos:** faces on.\n- **Lineart, anime, painted, etc.:** depends on the face.\n    - Smooth or painted skin: faces on (the grain is just noise there).\n    - Freckles, hatching or other drawn detail: faces off, or that detail goes soft.\n- Small faces in a crowd: on or off makes no visible difference.\n\n**💡 Tips & tricks**\n- Adjust how much the faces are protected with **mask_protect_strength**.\n- Adjust the sharpness with **detail**.\n\n---\n\n### Settings ⚙️\n\n- **source:**\n    - **video:** the frames are matched to each other, so the video stays steady. Use it for anything that came from a video.\n    - **image:** every picture is upscaled on its own, so nothing carries over between them. Use it for a batch of different pictures. One picture comes out the same either way.\n- **upscale:** 2x for video, 4x for pictures. Each one is its own model.\n    - **2x bf16 / 4x bf16 (10 GB):** the original release. It's an option, but not noticeably different, and it uses about 5 GB more VRAM.\n        - Quality: practically identical. The average difference is 0.12 - 0.21 levels out of 255, and the 100% crops can't be told apart.\n        - 4x on a 5090: pictures 4 s either way (10 - 11 GB vs 15 - 17 GB VRAM), a 3 s clip 22 s vs 25 s (19 GB vs 24 GB).\n- **detail:** 1.0 is the full model output. Lower moves toward a plain upscale.\n- **detect_faces:** typically on. Off for drawn faces with freckles or hatching.\n- **mask_protect_strength:** how much of Relay's detail still lands on the face. 0.5 is the default. Raise it to keep more texture on stylized faces.\n\n---\n\n### Manual download 📂 (optional)\n\n- The node downloads these on first use. Grab them yourself if you'd rather not wait mid-run.\n\n- [Relay 2x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x2_lightx2v_int8_convrot.safetensors?download=true)\n\n- [Relay 2x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x2_fp32.safetensors?download=true)\n\n- [Relay 4x model](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/diffusion_models/relayvsr_x4_int8_convrot.safetensors?download=true)\n\n- [Relay 4x VAE](https://huggingface.co/Comfy-Org/RelayVSR/resolve/main/vae/relayvsr_flash_vae_x4_fp32.safetensors?download=true)\n\n- [Relay 4x bf16 model (optional, 10 GB)](https://huggingface.co/kopper/RelayVSR/resolve/main/wan.safetensors?download=true)\n\n- [Relay 2x bf16 model (optional, 10 GB)](https://huggingface.co/lightx2v/RelayVSR_X2/resolve/main/wan_x2.safetensors?download=true)\n\n```\nComfyUI/\n└── models/\n    ├── diffusion_models/\n    │   ├── relayvsr_x2_lightx2v_int8_convrot (5.2 GB)\n    │   ├── relayvsr_x4_int8_convrot (5.2 GB)\n    │   ├── wan_x2 (2x bf16, optional, 10 GB)\n    │   └── wan (4x bf16, optional, 10 GB)\n    ├── vae/\n    │   ├── relayvsr_flash_vae_x2_fp32\n    │   └── relayvsr_flash_vae_x4_fp32\n    └── facexlib/\n        ├── detection_mobilenet0.25_Final.pth\n        └── parsing_bisenet.pth\n```"
+      },
+      "color": "#2E3A46",
+      "bgcolor": "#2E3A46"
     }
   ],
   "links": [
@@ -2447,36 +2447,12 @@
       "FLOAT"
     ],
     [
-      98,
-      46,
-      0,
-      69,
-      6,
-      "STRING"
-    ],
-    [
       94,
       58,
       1,
       69,
       4,
       "LC_RELAY"
-    ],
-    [
-      68,
-      33,
-      0,
-      57,
-      2,
-      "INT"
-    ],
-    [
-      73,
-      6,
-      0,
-      58,
-      2,
-      "INT"
     ],
     [
       99,
@@ -2501,6 +2477,30 @@
       72,
       0,
       "MASK"
+    ],
+    [
+      68,
+      33,
+      0,
+      57,
+      2,
+      "INT"
+    ],
+    [
+      73,
+      6,
+      0,
+      58,
+      2,
+      "INT"
+    ],
+    [
+      98,
+      46,
+      0,
+      69,
+      6,
+      "STRING"
     ]
   ],
   "groups": [
@@ -2509,9 +2509,9 @@
       "title": "#Relay Upscale Video",
       "bounding": [
         2380,
-        -2390,
+        -2380,
         340,
-        690
+        330
       ],
       "color": "#8AA",
       "flags": {}
@@ -2523,7 +2523,7 @@
         1660,
         -3180,
         2530,
-        660
+        670
       ],
       "color": "#b58b2a",
       "flags": {}
@@ -2535,7 +2535,7 @@
         2200,
         -3140,
         1270,
-        610
+        620
       ],
       "color": "#3f789e",
       "flags": {}
@@ -2547,7 +2547,7 @@
         2440,
         -3100,
         630,
-        560
+        570
       ],
       "color": "#8AA",
       "flags": {}
@@ -2559,7 +2559,7 @@
         1190,
         -3180,
         430,
-        660
+        670
       ],
       "color": "#3f789e",
       "flags": {}
@@ -2577,27 +2577,27 @@
       "flags": {}
     },
     {
-      "id": 15,
+      "id": 17,
       "title": "Video:",
       "bounding": [
         1660,
-        -2480,
+        -2470,
         1700,
-        900
+        920
       ],
-      "color": "#3f789e",
+      "color": "#A88",
       "flags": {}
     },
     {
-      "id": 14,
-      "title": "Video Upscale",
+      "id": 16,
+      "title": "Relay Video",
       "bounding": [
         2140,
-        -2430,
+        -2420,
         1210,
-        840
+        860
       ],
-      "color": "#88A",
+      "color": "#3f789e",
       "flags": {}
     }
   ],
@@ -2610,10 +2610,10 @@
     },
     "links_added_by_ue": [],
     "ds": {
-      "scale": 0.39142513012204944,
+      "scale": 1.0152559799477343,
       "offset": [
-        232.77029208216595,
-        3718.4496649009184
+        -727.7113254686565,
+        2243.8893645886237
       ]
     },
     "frontendVersion": "1.58.5",

@@ -1306,7 +1306,7 @@
         "tooltip": "video: 프레임끼리 서로 맞춰서 안정적으로 유지됩니다. image: 사진마다 따로 업스케일하므로 서로 아무것도 이어지지 않습니다."
       },
       "upscale": {
-        "tooltip": "영상은 2x, 사진은 4x. 각각 5.2 GB의 별도 모델이며 처음 사용할 때 다운로드됩니다."
+        "tooltip": "동영상은 2x, 이미지는 4x. 2x / 4x: 5.2 GB int8 모델. bf16: 원본 릴리스, 각 10 GB, VRAM과 RAM을 더 사용합니다. ⚠️ 모두 처음 사용할 때 다운로드됩니다(diffusion_models에 wan.safetensors / wan_x2.safetensors가 있으면 그것을 사용합니다)."
       },
       "seed": {
         "tooltip": "노이즈에서 한 스텝: seed는 가장 미세한 입자만 바꿉니다."
