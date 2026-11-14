@@ -70,7 +70,8 @@ _PATCH_CACHE = lc_cache.register("anypaint_patches", {})
 
 TIP = {
     "prompt": "Describe the WHOLE finished picture, not just the change: \"a woman in a red coat on a snowy street\". "
-              "Removal-only prompts (\"remove the car\") tend to leave a flat blob.",
+              "Removal-only prompts (\"remove the car\") tend to leave a flat blob. Outpaint: leave it empty and the new "
+              "area continues the picture on its own.",
     "mask": "White = paint, black = keep. Optional: no mask with LC Outpaint's canvas uses its mask. Wire LC Outpaint's "
             "control_image as the image and control_mask as the mask to outpaint.",
     "lora": "yijunwang2's krea2_anypaint_rank32 (models/loras). Applied at lora_strength for this node only.",
@@ -105,7 +106,7 @@ TIP = {
                   "shift or zoom the picture).",
     "flux3_strength": "1.5 is AusBoss's pick: the picture stays in place more often than at 1.0 on big extensions.",
     "flux3_prompt": "Describe the whole finished picture: \"a woman in a red coat on a snowy street\". The node adds the "
-                    "LoRA's fill instruction in front for you.",
+                    "LoRA's fill instruction in front for you. Outpaint: leave it empty and the new area continues the picture on its own.",
     "flux3_steps": "16 for Flux 3 Klein (Distilled). 50 with cfg 3.5 for Base is not supported here: use the Distilled model.",
 }
 TIP.update({
@@ -426,7 +427,7 @@ def _moss_model(model, lora_name, strength, turbo):
     return m.clone()
 
 
-MOSS_FILL_PROMPT = ("The same picture, extended: the scene continues past the edges with the same subject matter, style, "
+FILL_PROMPT = ("The same picture, extended: the scene continues past the edges with the same subject matter, style, "
                     "colors and lighting. Plain natural continuation, nothing new added.")
 
 
@@ -694,7 +695,7 @@ class LCKrea2AnyPaint(_Base):
 
     def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, seed, steps, sampler_name, scheduler,
               crop_to_mask, padding, inpaint_resolution, boundary_px, vlm_reference, composite):
-        self._check(prompt, steps)
+        prompt = self._fill(prompt, mask, steps)
         s = dict(model=_patched_model(model, lora, lora_strength), clip=clip, vae=vae, prompt=prompt.strip(),
                  seed=int(seed), steps=int(steps), sampler_name=sampler_name, scheduler=scheduler, crop=bool(crop_to_mask),
                  padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px), vlm=bool(vlm_reference),
@@ -702,6 +703,17 @@ class LCKrea2AnyPaint(_Base):
         return self._run(image, mask, s)
 
     EMPTY_PROMPT = "Describe the whole finished picture in the prompt."
+
+    def _fill(self, prompt, mask, steps):
+        """An outpaint with no prompt gets a neutral "continue the picture" prompt (a truly empty one makes the models
+        invent titles and characters); anything else goes through _check."""
+        if not (prompt or "").strip() and _outpaint_mask(mask):
+            print(f"[{self.NAME}] No prompt on an outpaint: continuing the picture.")
+            if int(steps) < 1:
+                raise ValueError(f"[{self.NAME}] steps is 0: check what is wired into steps (detailer_steps?).")
+            return FILL_PROMPT
+        self._check(prompt, steps)
+        return prompt
 
     def _check(self, prompt, steps):
         if not (prompt or "").strip():
@@ -765,7 +777,7 @@ class LCZImageAnyPaint(LCKrea2AnyPaint):
 
     def paint(self, model, clip, vae, image, mask, prompt, control, control_strength, seed, steps, sampler_name, scheduler,
               crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
-        self._check(prompt, steps)
+        prompt = self._fill(prompt, mask, steps)
         if not control or control.startswith("(no "):
             raise ValueError("[LC Z-Image AnyPaint] Put Alibaba's Z-Image Fun ControlNet Union 2.1 in models/model_patches "
                              "and pick it in control.")
@@ -828,7 +840,7 @@ class LCSDXLAnyPaint(LCKrea2AnyPaint):
 
     def paint(self, model, clip, vae, image, mask, prompt, negative, fooocus_inpaint, control, control_strength, seed, steps,
               cfg, sampler_name, scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
-        self._check(prompt, steps)
+        prompt = self._fill(prompt, mask, steps)
         if model.model.latent_format.latent_channels != 4:
             raise ValueError("[LC SDXL AnyPaint] This is for SDXL checkpoints (4-channel latent). Use LC Krea2 AnyPaint or "
                              "LC Z-Image AnyPaint for those models.")
@@ -880,7 +892,7 @@ class LCFlux3AnyPaint(LCKrea2AnyPaint):
 
     def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, seed, steps, sampler_name, scheduler,
               crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
-        self._check(prompt, steps)
+        prompt = self._fill(prompt, mask, steps)
         lora_on = lora not in (OFF, "", None) and float(lora_strength) > 0
         s = dict(model=_flux3_model(model, lora, lora_strength), flux3=True, lora_on=lora_on, clip=clip, vae=vae, prompt=prompt.strip(),
                  seed=int(seed), steps=int(steps), sampler_name=sampler_name, scheduler=scheduler, crop=bool(crop_to_mask),
@@ -927,15 +939,7 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
 
     def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, turbo_lora, seed, steps, sampler_name,
               scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
-        if not (prompt or "").strip() and _outpaint_mask(mask):
-            # an outpaint with no prompt: a neutral "continue it" prompt (a truly empty one makes MOSS invent titles
-            # and characters)
-            prompt = MOSS_FILL_PROMPT
-            print("[LC MOSS AnyPaint] No prompt on an outpaint: continuing the picture.")
-            if int(steps) < 1:
-                raise ValueError(f"[{self.NAME}] steps is 0: check what is wired into steps (detailer_steps?).")
-        else:
-            self._check(prompt, steps)
+        prompt = self._fill(prompt, mask, steps)
         if getattr(model.model, "__class__", type(None)).__name__ != "MOSSImage":
             raise ValueError("[LC MOSS AnyPaint] This is for MOSS Image (Base). Use the Krea 2 / Z-Image / SDXL / Flux 3 "
                              "AnyPaint node for other models.")
