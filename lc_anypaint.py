@@ -27,6 +27,11 @@ LC Flux 3 Klein AnyPaint: the same crop, keep, border and composite for Flux 3 K
 outpaint LoRA (flux-3-image-klein-outpaint, FLUX Kommunity License): the area to paint is filled flat grey #808080, that
 picture is the reference, and the trained instruction tells the model to fill the grey.
 
+LC MOSS AnyPaint: the Krea 2 recipe on MOSS-Image-Base with yijunwang2's moss-anypaint LoRA (Apache-2.0) and lodestones'
+Base 8-step DMD2 LoRA: the same median-filled 384 px reference at t=0, registered over the target grid (rope frame 1, at
+the image's text position), isolated, its K/V computed once; core MOSS runs the rest. After alexw5702-afk/moss-anypaint
+(Apache-2.0), natively instead of its separate HF runtime.
+
 The reference path runs in this node's own model wrapper, so it works even when another pack replaces Krea 2's
 forward (ComfyUI-RedNodeStudio does, which made the first version copy the flat fill). LoRAs and attention / speed-up
 options still apply. Method after yijunwang2's reference pipeline (Krea 2 Community License); the reference forward
@@ -103,6 +108,14 @@ TIP = {
                     "LoRA's fill instruction in front for you.",
     "flux3_steps": "16 for Flux 3 Klein (Distilled). 50 with cfg 3.5 for Base is not supported here: use the Distilled model.",
 }
+TIP.update({
+    "moss_model": "MOSS Image, Base or SFT (the LoRA was trained on Base; SFT paints just as well).",
+    "moss_clip": "MOSS text encoder (Qwen3.5, CLIP type moss_image).",
+    "moss_lora": "yijunwang2's moss_anypaint_rank32 (models/loras). Applied at lora_strength for this node only.",
+    "moss_turbo": "lodestones' MOSS-Image-Base 8-step DMD2 LoRA, the one AnyPaint was tested with (8 steps, cfg 1). "
+                  "off = your model already has it.",
+    "moss_steps": "8 with the DMD2 turbo LoRA.",
+})
 FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
 FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
                      "the existing picture unchanged.")
@@ -338,6 +351,93 @@ def _patched_model(model, lora_name, strength):
     return m
 
 
+# --------------------------------------------------------------------------------------- MOSS runtime
+# Core MOSS already has t=0 isolated references with cached K/V; only their rope differs from AnyPaint's training: the
+# reference sits on frame 1 at the image's text position (f = text length) with its rows/columns spread over the target
+# grid. So the K/V are computed here with that rope and handed to core's forward (method text_start keeps the image at
+# f = text length). After alexw5702-afk/moss-anypaint moss_model.py (Apache-2.0).
+def _moss_ref_kv(dit, ref, th, tw, text_len, to):
+    import comfy.ldm.flux.math as fm
+    import comfy.model_prefetch as mp
+
+    dev = ref.device
+    rh, rw = ref.shape[-2:]
+    x = dit.video_embedder(ref.flatten(2).transpose(1, 2))
+    ids = torch.zeros(1, rh * rw, 4, device=dev, dtype=torch.float32)
+    ids[0, :, 0] = 1.0
+    ids[0, :, 1] = float(text_len)
+    ids[0, :, 2] = ((torch.arange(rh, device=dev, dtype=torch.float32) + 0.5) * th / rh - 0.5 - (th - 1) / 2).repeat_interleave(rw)
+    ids[0, :, 3] = ((torch.arange(rw, device=dev, dtype=torch.float32) + 0.5) * tw / rw - 0.5 - (tw - 1) / 2).repeat(rh)
+    pe_ = torch.cat([fm.rope(ids[..., i], d, 10000) for i, d in enumerate(dit.rope_axes_dim)], dim=-3)
+    pe_ = pe_.unsqueeze(1).transpose(1, 2).contiguous()
+    vec = dit.time_embedding(timestep_embedding(torch.zeros(1, device=dev), 256).to(x.dtype))
+    mod = dit.shared_block_modulation(vec).unflatten(-1, (6, -1)).unsqueeze(2).unbind(1)
+    kv = x.new_empty((1, len(dit.layers), 2) + x.shape[1:])
+    queue = mp.make_prefetch_queue(list(dit.layers), dev, to)
+    for i, block in enumerate(dit.layers):
+        mp.prefetch_queue_pop(queue, dev, block, x.dtype)
+        x = block(x, mod, pe_, to, kv_out=kv[:, i])
+    mp.prefetch_queue_pop(queue, dev, None)
+    return kv
+
+
+def _moss_wrapper(ref):
+    cache = {}
+
+    def forward(executor, x, timestep, context, transformer_options={}, **kwargs):
+        key = (x.shape[-2], x.shape[-1], context.shape[1], x.device, x.dtype)
+        kv = cache.get(key)
+        if kv is None:
+            cache.clear()
+            kv = cache[key] = _moss_ref_kv(executor.class_obj, ref.to(x.device, x.dtype), x.shape[-2], x.shape[-1],
+                                           context.shape[1], transformer_options)
+        kwargs.pop("ref_latents", None)
+        kwargs.pop("ref_kv", None)
+        kwargs["ref_latents_method"] = "index_timestep_zero_text_start"
+        return executor(x, timestep, context, transformer_options, ref_kv=kv, **kwargs)
+
+    return forward
+
+
+def _moss_lora_sd(path):
+    """moss-anypaint ships PEFT names (layers.N.proj.q.lora_A.default.weight): renamed for ComfyUI's loader."""
+    sd = _LORA_CACHE.get(path)
+    if sd is None:
+        _LORA_CACHE.clear()
+        raw = comfy.utils.load_torch_file(path, safe_load=True)
+        sd = {}
+        for k, v in raw.items():
+            k = k.replace(".lora_A.default.", ".lora_A.").replace(".lora_B.default.", ".lora_B.")
+            sd[k if k.startswith("diffusion_model.") else "diffusion_model." + k] = v
+        _LORA_CACHE[path] = sd
+    return sd
+
+
+def _moss_model(model, lora_name, strength, turbo):
+    m = model
+    if turbo not in (OFF, "", None):
+        tpath = folder_paths.get_full_path_or_raise("loras", turbo)
+        m = comfy.sd.load_lora_for_models(m, None, comfy.utils.load_torch_file(tpath, safe_load=True), 1.0, 0.0)[0]
+    if lora_name not in (OFF, "", None) and strength:
+        m = comfy.sd.load_lora_for_models(m, None, _moss_lora_sd(folder_paths.get_full_path_or_raise("loras", lora_name)),
+                                          float(strength), 0.0)[0]
+    return m.clone()
+
+
+def _moss_lora_choices():
+    loras = folder_paths.get_filename_list("loras")
+    hits = [l for l in loras if "anypaint" in l.lower() and "moss" in l.lower()]
+    return hits + [l for l in loras if l not in hits], (hits[0] if hits else (loras[0] if loras else ""))
+
+
+def _moss_turbo_choices():
+    loras = folder_paths.get_filename_list("loras")
+    low = lambda l: l.lower().replace("\\", "/")
+    hits = [l for l in loras if "moss" in low(l) and "base" in low(l) and "dmd" in low(l)]
+    hits.sort(key=lambda l: ("dmd2" not in low(l), "wip" in low(l), l))
+    return [OFF] + hits + [l for l in loras if l not in hits], (hits[0] if hits else OFF)
+
+
 # --------------------------------------------------------------------------------------- preparation
 def _median(pixels):
     """(N,3) -> (3,) median colour, or mid grey when nothing is kept."""
@@ -471,6 +571,15 @@ def _paint(frame, gen_full, s):
         pos = node_helpers.conditioning_set_values(pos, {"reference_latents": [vae.encode(ref)]}, append=True)
         neg = _zero_out(pos)
         model = s["model"]
+    elif s.get("moss"):
+        # the median-filled reference rides in this node's wrapper, not in the conditioning (core would give it its own rope)
+        ref = _reference(up, gen)
+        clip = s["clip"]
+        pos = clip.encode_from_tokens_scheduled(clip.tokenize(s["prompt"]))
+        neg = _zero_out(pos)
+        ref_latent = s["model"].model.process_latent_in(vae.encode(ref[..., :3]))
+        model = s["model"].clone()
+        model.add_wrapper_with_key(pe.WrappersMP.DIFFUSION_MODEL, "lc_moss_anypaint", _moss_wrapper(ref_latent))
     else:
         ref = _reference(up, gen)
         pos = _encode(s["clip"], vae, s["prompt"], ref, s["vlm"])
@@ -484,7 +593,11 @@ def _paint(frame, gen_full, s):
     lh, lw = latent.shape[-2], latent.shape[-1]
     if s.get("flux3") and latent.shape[1] == 128:
         p = 1  # Flux 2 / 3 latents are already one token per latent pixel
-    noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
+    if s.get("moss"):
+        # one 16 px token per latent pixel: kept only when all its pixels are kept
+        noise_mask = _keep_tokens(gen, s["boundary"], lh * 2, lw * 2, 2)[:, ::2, ::2]
+    else:
+        noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
     if s.get("flux3") and s.get("lora_on"):
         # with the LoRA the picture stays in place on its own; a noise mask there shifts its brightness and can leave a
         # box (AusBoss's tests), so the whole canvas is painted and the original pasted back by the composite
@@ -763,7 +876,54 @@ class LCFlux3AnyPaint(LCKrea2AnyPaint):
 
 
 
+class LCMOSSAnyPaint(LCKrea2AnyPaint):
+    NAME = "LC MOSS AnyPaint"
+    DESCRIPTION = (
+        "Inpaint and outpaint for MOSS-Image-Base with yijunwang2's moss-anypaint LoRA and the Base 8-step DMD2 LoRA, done "
+        "the way it was trained: a whole-canvas reference, the kept pixels put back after every step, and a border the model "
+        "blends. Your picture outside the mask comes back unchanged. Describe the whole finished picture in the prompt.\n"
+        "Outpaint: wire LC Outpaint's or LC Outpaint, Rotate, & Pad's control_image and control_mask in."
+    )
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        base = LCKrea2AnyPaint.INPUT_TYPES()["required"]
+        loras, default = _moss_lora_choices()
+        turbos, turbo_default = _moss_turbo_choices()
+        req = {}
+        for k, v in base.items():
+            if k == "lora":
+                req[k] = (loras, _tip("moss_lora", default=default))
+            elif k == "lora_strength":
+                req[k] = v
+                req["turbo_lora"] = (turbos, _tip("moss_turbo", default=turbo_default))
+            elif k == "steps":
+                req[k] = ("INT", _tip("moss_steps", default=8, min=1, max=100))
+            elif k == "vlm_reference":
+                continue  # Krea 2 only
+            elif k == "model":
+                req[k] = ("MODEL", _tip("moss_model"))
+            elif k == "clip":
+                req[k] = ("CLIP", _tip("moss_clip"))
+            else:
+                req[k] = v
+        return {"required": req}
+
+    def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, turbo_lora, seed, steps, sampler_name,
+              scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
+        self._check(prompt, steps)
+        if getattr(model.model, "__class__", type(None)).__name__ != "MOSSImage":
+            raise ValueError("[LC MOSS AnyPaint] This is for MOSS Image (Base). Use the Krea 2 / Z-Image / SDXL / Flux 3 "
+                             "AnyPaint node for other models.")
+        s = dict(model=_moss_model(model, lora, lora_strength, turbo_lora), moss=True, clip=clip, vae=vae,
+                 prompt=prompt.strip(), seed=int(seed), steps=int(steps), sampler_name=sampler_name, scheduler=scheduler,
+                 crop=bool(crop_to_mask), padding=int(padding), res=int(inpaint_resolution), boundary=int(boundary_px),
+                 vlm=False, composite=composite)
+        return self._run(image, mask, s)
+
+
 NODE_CLASS_MAPPINGS = {"LCKrea2AnyPaint": LCKrea2AnyPaint, "LCZImageAnyPaint": LCZImageAnyPaint, "LCSDXLAnyPaint": LCSDXLAnyPaint,
-                       "LCFlux3AnyPaint": LCFlux3AnyPaint}
+                       "LCFlux3AnyPaint": LCFlux3AnyPaint, "LCMOSSAnyPaint": LCMOSSAnyPaint}
 NODE_DISPLAY_NAME_MAPPINGS = {"LCKrea2AnyPaint": "LC Krea2 AnyPaint 🩹", "LCZImageAnyPaint": "LC Z-Image AnyPaint 🩹",
-                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹"}
+                              "LCSDXLAnyPaint": "LC SDXL AnyPaint 🩹", "LCFlux3AnyPaint": "LC Flux 3 Klein AnyPaint 🩹",
+                              "LCMOSSAnyPaint": "LC MOSS AnyPaint 🩹"}

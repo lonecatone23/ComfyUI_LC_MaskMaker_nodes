@@ -24,6 +24,7 @@
 - `LCZImageAnyPaint`: LC Z-Image AnyPaint 🩹
 - `LCSDXLAnyPaint`: LC SDXL AnyPaint 🩹
 - `LCFlux3AnyPaint`: LC Flux 3 Klein AnyPaint 🩹
+- `LCMOSSAnyPaint`: LC MOSS AnyPaint 🩹
 - `LCMOSSControl`: LC MOSS Control 🕹️
 - `LCMOSSBoxEdit`: LC MOSS Box Edit 🖌️ (BETA)
 - `LCPersonMask`: LC Person Mask 🧍
