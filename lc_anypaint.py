@@ -115,6 +115,8 @@ TIP.update({
     "moss_turbo": "lodestones' MOSS-Image-Base 8-step DMD2 LoRA, the one AnyPaint was tested with (8 steps, cfg 1). "
                   "off = your model already has it.",
     "moss_steps": "8 with the DMD2 turbo LoRA.",
+    "moss_prompt": "Describe the WHOLE finished picture, not just the change: \"a woman in a red coat on a snowy street\". "
+                   "Outpaint: leave it empty and the new area continues the picture on its own.",
 })
 FLUX3_GREY = 128.0 / 255.0  # the LoRA was trained on #808080
 FLUX3_INSTRUCTION = ("Outpaint the image: replace the solid gray areas with a seamless continuation of the scene, keeping "
@@ -422,6 +424,18 @@ def _moss_model(model, lora_name, strength, turbo):
         m = comfy.sd.load_lora_for_models(m, None, _moss_lora_sd(folder_paths.get_full_path_or_raise("loras", lora_name)),
                                           float(strength), 0.0)[0]
     return m.clone()
+
+
+MOSS_FILL_PROMPT = ("The same picture, extended: the scene continues past the edges with the same subject matter, style, "
+                    "colors and lighting. Plain natural continuation, nothing new added.")
+
+
+def _outpaint_mask(mask):
+    """True when the mask runs along an edge of the canvas (a quarter of it or more): LC Outpaint's padding or the
+    corners Rotate + Pad opens up."""
+    m = mask if mask.ndim == 3 else mask[None]
+    g = (m[0] > 0.5).float()
+    return bool(max(g[0].mean(), g[-1].mean(), g[:, 0].mean(), g[:, -1].mean()) >= 0.25)
 
 
 def _moss_lora_choices():
@@ -899,6 +913,8 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
                 req["turbo_lora"] = (turbos, _tip("moss_turbo", default=turbo_default))
             elif k == "steps":
                 req[k] = ("INT", _tip("moss_steps", default=8, min=1, max=100))
+            elif k == "prompt":
+                req[k] = ("STRING", _tip("moss_prompt", default="", multiline=True))
             elif k == "vlm_reference":
                 continue  # Krea 2 only
             elif k == "model":
@@ -911,7 +927,15 @@ class LCMOSSAnyPaint(LCKrea2AnyPaint):
 
     def paint(self, model, clip, vae, image, mask, prompt, lora, lora_strength, turbo_lora, seed, steps, sampler_name,
               scheduler, crop_to_mask, padding, inpaint_resolution, boundary_px, composite):
-        self._check(prompt, steps)
+        if not (prompt or "").strip() and _outpaint_mask(mask):
+            # an outpaint with no prompt: a neutral "continue it" prompt (a truly empty one makes MOSS invent titles
+            # and characters)
+            prompt = MOSS_FILL_PROMPT
+            print("[LC MOSS AnyPaint] No prompt on an outpaint: continuing the picture.")
+            if int(steps) < 1:
+                raise ValueError(f"[{self.NAME}] steps is 0: check what is wired into steps (detailer_steps?).")
+        else:
+            self._check(prompt, steps)
         if getattr(model.model, "__class__", type(None)).__name__ != "MOSSImage":
             raise ValueError("[LC MOSS AnyPaint] This is for MOSS Image (Base). Use the Krea 2 / Z-Image / SDXL / Flux 3 "
                              "AnyPaint node for other models.")
