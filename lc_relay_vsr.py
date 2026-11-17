@@ -347,7 +347,12 @@ def _face_masks(image, stride=1):
     try:
         det, parse = _face_net("detect", dev), _face_net("parse", dev)
     except Exception as exc:
-        print(f"[LC Relay VSR] detect_faces skipped: face models unavailable ({exc}). Wire a protect_mask instead.")
+        hint = ""
+        if isinstance(exc, ImportError):
+            import sys
+            hint = (" Install facexlib: python_embeded\\python.exe -m pip install facexlib (portable)"
+                    if "python_embeded" in sys.executable.lower() else f' Install facexlib: "{sys.executable}" -m pip install facexlib')
+        print(f"[LC Relay VSR] detect_faces skipped: face models unavailable ({exc}).{hint} Or wire a protect_mask instead.")
         return None
     B, H, W = int(image.shape[0]), int(image.shape[1]), int(image.shape[2])
     s = min(1.0, 640 / max(H, W))
