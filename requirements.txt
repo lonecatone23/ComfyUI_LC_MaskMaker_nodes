@@ -1,3 +1,4 @@
 transformers
 huggingface_hub
 timm
+facexlib
