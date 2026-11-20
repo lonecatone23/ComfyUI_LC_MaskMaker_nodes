@@ -1,0 +1,7 @@
+LivePortrait network code, copied unmodified from
+    https://github.com/KwaiVGI/LivePortrait  (src/modules, src/utils/camera.py, src/config/models.yaml)
+commit 9b294b3d0536135442ea73cb01e6cb3ca7029dd3, fetched 2026-11-20.
+MIT License, Copyright (c) 2024 Kuaishou Visual Generation and Interaction Center (see LICENSE).
+Only the four networks of the paper plus the stitching MLP are used. No face detector or landmark code is included:
+LC Expression Editor finds the face with SAM 3. Weights are not included; they download on first use from
+https://huggingface.co/Kijai/LivePortrait_safetensors.

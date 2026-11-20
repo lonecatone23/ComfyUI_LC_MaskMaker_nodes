@@ -3,6 +3,7 @@
 - `LCImageOutpaint`: LC Outpaint 🖌️➕
 - `LCImageRotatePad`: LC Outpaint, Rotate, & Pad 🔄
 - `LC360View`: LC 360 View 🧭
+- `LCFaceExpression`: LC Expression Editor 😉
 - `LCFaceCrop`: LC Face Crop 📐
 - `LCSplineMask`: LC Create Mask 🖼️✏️
 - `LCTouchMask`: LC Touch Mask (BETA) 👆

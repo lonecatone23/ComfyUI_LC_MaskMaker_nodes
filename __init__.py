@@ -64,6 +64,7 @@ _load("lc_face_crop")
 _load("lc_vosr_upscale")
 _load("lc_relay_vsr")
 _load("lc_moss_box_edit")
+_load("lc_face_expression")
 
 WEB_DIRECTORY = "./web"
 

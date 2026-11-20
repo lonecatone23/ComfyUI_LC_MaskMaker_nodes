@@ -22,6 +22,7 @@ const WITH_PREVIEW = new Set([
   "LCSmartInpaint",
   "LCSmartInpaintPipe",
   "LCCharacterDetailer",
+  "LCFaceExpression",
   "LCCharacterDetailerPipe",
   "LCDetailerForEach",
   "LCKrea2AnyPaint",
