@@ -3,7 +3,7 @@ LC MOSS Box Edit 🖌️ (BETA)
 --------------------------
 Redraws only the boxes drawn on a picture with MOSS Image; everything outside them stays pixel-identical.
 
-How (the method of artfat-creator/ComfyUI-Artfat-MOSS-BBox, MIT):
+How:
 - the WHOLE picture is VAE-encoded and a soft mask made from the boxes is its noise mask, so MOSS sees all of the
   surroundings while it redraws inside the boxes (the old LC MOSS AnyPaint redrew a crop blind);
 - the prompt is MOSS's own layout JSON: a caption of the whole picture as it must look after the change, plus each

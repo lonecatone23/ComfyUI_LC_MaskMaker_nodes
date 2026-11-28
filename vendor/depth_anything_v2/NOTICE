@@ -6,7 +6,9 @@ Apache License 2.0 (see LICENSE-Apache-2.0.txt, copied verbatim from that reposi
 dinov2.py and dinov2_layers/ are the DINOv2 backbone by Meta Platforms, Inc. and affiliates
 (https://github.com/facebookresearch/dinov2, Apache License 2.0), as included in the Depth Anything V2 repository.
 
-Changes made by LC MaskMaker are marked with a "LC change:" comment. The only one is in dpt.py:
-infer_image() / image2tensor() and the cv2 / torchvision / util.transform imports they need are removed.
+Changes made by LC MaskMaker are marked with a "LC change:" or "LC:" comment:
+- dpt.py: infer_image() / image2tensor() and the cv2 / torchvision / util.transform imports they need are removed.
+- dinov2_layers/attention.py, block.py, swiglu_ffn.py (2026-11-28): xFormers is never imported; Attention runs
+  torch.nn.functional.scaled_dot_product_attention (same result) and MemEffAttention uses it too.
 The empty __init__.py files are added so the folder imports as a package.
 Weights are not included: Small is Apache-2.0, Base / Large / Giant are CC-BY-NC-4.0.

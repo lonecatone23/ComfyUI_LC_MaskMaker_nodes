@@ -8,7 +8,6 @@ decides what comes out: drag an edge out to pad, in to crop. The mask is white w
 left/top/right/bottom store the frame edges as a percentage of the source (left/right of its width, top/bottom of
 its height), measured from the base box: positive = pad outward, negative = crop inward. The base box is the whole
 turned picture (fit = expand) or the largest box with the source's shape that has no empty corners (fit = crop).
-Inspired by AusBoss's Image Crop + Rotate + Pad (ausboss-nodes, MIT); written from scratch.
 """
 
 import math

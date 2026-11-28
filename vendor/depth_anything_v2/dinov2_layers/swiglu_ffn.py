@@ -33,13 +33,9 @@ class SwiGLUFFN(nn.Module):
         return self.w3(hidden)
 
 
-try:
-    from xformers.ops import SwiGLU
-
-    XFORMERS_AVAILABLE = True
-except ImportError:
-    SwiGLU = SwiGLUFFN
-    XFORMERS_AVAILABLE = False
+# LC: xFormers is never used (plain PyTorch on every GPU; see attention.py).
+SwiGLU = SwiGLUFFN
+XFORMERS_AVAILABLE = False
 
 
 class SwiGLUFFNFused(SwiGLU):

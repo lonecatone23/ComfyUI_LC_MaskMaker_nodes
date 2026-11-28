@@ -82,8 +82,8 @@ TIP = {
     "crop_to_mask": "On: a small mask is redrawn in its own crop, scaled up to inpaint_resolution (more detail). "
                     "Off: the whole picture at inpaint_resolution.",
     "padding": "Context around the mask when cropping (px). More = the model sees more of the scene.",
-    "inpaint_resolution": "Size of the redraw (as an area: 1024 = about 1 MP). AusBoss found above about 1.6 MP Krea 2 "
-                          "starts to crease limbs and darken skies.",
+    "inpaint_resolution": "Size of the redraw (as an area: 1024 = about 1 MP). Above about 1.6 MP Krea 2 starts to "
+                          "crease limbs and darken skies.",
     "boundary_px": "Border around the mask the model redraws to blend the seam (in redraw pixels). 32 = the reference.",
     "vlm_reference": "Show the reference to the text encoder too. On = the reference recipe.",
     "composite": "keep original = only the painted area (soft edge, colour fixed) is pasted back: everything else is "
@@ -104,7 +104,7 @@ TIP = {
     "flux3_lora": "AusBoss's flux-3-image-klein-outpaint (models/loras). It fills flat grey areas while the rest stays put. "
                   "Applied at lora_strength for this node only. off = plain Flux 3 Klein with a noise mask (it tends to "
                   "shift or zoom the picture).",
-    "flux3_strength": "1.5 is AusBoss's pick: the picture stays in place more often than at 1.0 on big extensions.",
+    "flux3_strength": "1.5 is AusBoss's pick for his LoRA: the picture stays in place more often than at 1.0 on big extensions.",
     "flux3_prompt": "Describe the whole finished picture: \"a woman in a red coat on a snowy street\". The node adds the "
                     "LoRA's fill instruction in front for you. Outpaint: leave it empty and the new area continues the picture on its own.",
     "flux3_steps": "16 for Flux 3 Klein (Distilled). 50 with cfg 3.5 for Base is not supported here: use the Distilled model.",
@@ -615,7 +615,7 @@ def _paint(frame, gen_full, s):
         noise_mask = _keep_tokens(gen, s["boundary"], lh, lw, p)
     if s.get("flux3") and s.get("lora_on"):
         # with the LoRA the picture stays in place on its own; a noise mask there shifts its brightness and can leave a
-        # box (AusBoss's tests), so the whole canvas is painted and the original pasted back by the composite
+        # box, so the whole canvas is painted and the original pasted back by the composite
         noise_mask = None
     noise = comfy.sample.prepare_noise(latent, s["seed"])
     callback = latent_preview.prepare_callback(model, s["steps"])

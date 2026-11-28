@@ -16,8 +16,6 @@ Each selection is saved as a recipe (the lasso or tap, plus the chosen growth st
 what the node showed, at full resolution. The live preview needs the picture: it reads a Load Image upstream
 straight away, anything else after one run.
 
-The stroke-to-prompt idea (a box plus an inner point from a hand-drawn shape) follows AusBoss' Mask by Touch
-(ausboss-nodes, MIT).
 """
 
 import asyncio
