@@ -1,0 +1,12 @@
+Depth Anything V2 network code, from https://github.com/DepthAnything/Depth-Anything-V2
+(depth_anything_v2/: dpt.py, dinov2.py, dinov2_layers/, util/blocks.py),
+commit a561b849ebae10a6f5ef49e26c83cbbcd36c71bf, fetched 2026-11-27.
+Apache License 2.0 (see LICENSE-Apache-2.0.txt, copied verbatim from that repository).
+
+dinov2.py and dinov2_layers/ are the DINOv2 backbone by Meta Platforms, Inc. and affiliates
+(https://github.com/facebookresearch/dinov2, Apache License 2.0), as included in the Depth Anything V2 repository.
+
+Changes made by LC MaskMaker are marked with a "LC change:" comment. The only one is in dpt.py:
+infer_image() / image2tensor() and the cv2 / torchvision / util.transform imports they need are removed.
+The empty __init__.py files are added so the folder imports as a package.
+Weights are not included: Small is Apache-2.0, Base / Large / Giant are CC-BY-NC-4.0.

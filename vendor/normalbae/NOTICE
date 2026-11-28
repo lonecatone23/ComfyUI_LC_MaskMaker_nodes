@@ -1,0 +1,9 @@
+NormalBAE network code (models/NNET.py, models/submodules/), from
+https://github.com/baegwangbin/surface_normal_uncertainty, commit fe2b9f1e8a4cac1c73475b023f6454bd23827a48,
+fetched 2026-11-27. Bae et al., "Estimating and Exploiting the Aleatoric Uncertainty in Surface Normal Estimation".
+MIT License, Copyright (c) 2021 Gwangbin Bae (see LICENSE, copied verbatim from that repository).
+
+Changes made by LC MaskMaker are marked with a "LC change:" comment: package-relative imports in NNET.py and
+decoder.py, and in encoder.py the EfficientNet-B5 backbone is built with timm instead of torch.hub (no code or
+weights are downloaded; scannet.pt holds every weight). The empty __init__.py files are added so the folder
+imports as a package. Weights are not included (scannet.pt, from lllyasviel/Annotators).

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# LC change: package-relative imports (the original runs from the repository root)
 from .submodules.encoder import Encoder
 from .submodules.decoder import Decoder
 

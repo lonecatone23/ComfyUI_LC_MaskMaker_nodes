@@ -1,9 +1,11 @@
+# LC change: cv2 / torchvision / util.transform are only used by infer_image / image2tensor, which LC
+# MaskMaker does not use (lc_depth_anything.py does its own resize and normalize), so they are removed.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from .dinov2 import DINOv2
-from .blocks import FeatureFusionBlock, _make_scratch
+from .util.blocks import FeatureFusionBlock, _make_scratch
 
 
 def _make_fusion_block(features, use_bn, size=None):
@@ -170,11 +172,14 @@ class DepthAnythingV2(nn.Module):
         
         self.depth_head = DPTHead(self.pretrained.embed_dim, features, use_bn, out_channels=out_channels, use_clstoken=use_clstoken)
     
-    def forward(self, x, max_depth):
+    def forward(self, x):
         patch_h, patch_w = x.shape[-2] // 14, x.shape[-1] // 14
         
         features = self.pretrained.get_intermediate_layers(x, self.intermediate_layer_idx[self.encoder], return_class_token=True)
         
-        depth = self.depth_head(features, patch_h, patch_w) * max_depth
+        depth = self.depth_head(features, patch_h, patch_w)
+        depth = F.relu(depth)
         
         return depth.squeeze(1)
+
+    # LC change: infer_image() and image2tensor() removed (see the note at the top).

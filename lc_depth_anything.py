@@ -64,7 +64,7 @@ def estimate_depth(model, frame_hwc, resolution, dev):
     x = F.interpolate(x, size=(mh, mw), mode="bicubic", align_corners=False).clamp(0, 1)
     mean = torch.tensor([0.485, 0.456, 0.406], device=dev).view(1, 3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225], device=dev).view(1, 3, 1, 1)
-    depth = model((x - mean) / std, 1.0)  # (1,mh,mw)
+    depth = model((x - mean) / std)  # (1,mh,mw)
     depth = F.interpolate(depth[:, None], size=(h, w), mode="bilinear", align_corners=True)[0, 0]
     return depth.float().cpu()
 
